@@ -1251,6 +1251,11 @@ applyI18nToDOM() {
     setText('home-spa-count', 'pages.home.info_table.spa_count');
     setText('home-spa-time', 'pages.home.info_table.spa_time');
 
+// ── 快速資訊與警告 ──
+setText('home-badge-age', 'pages.home.badges.age_range');
+setText('home-badge-duration', 'pages.home.badges.duration');
+setHtml('home-guest-warning', 'pages.home.guest_warning'); // 關鍵：補上這行
+
     // ── 月份選單 ─────────────────────────────────────────
     const months   = ta('pages.profile.months');
     const monthSel = document.getElementById('birth-month');
