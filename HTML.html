@@ -296,7 +296,7 @@
                </tr>
                <tr style="background:#fff8e1;">
                    <td id="home-att-label" style="padding:10px 6px;white-space:nowrap;">🔴 專注力</td>
-                   <td id="home-att-desc" colspan="2" style="padding:10px 6px;white-space:nowrap;">各項綜合自動計算</td>
+                   <td id="home-table-att-desc" colspan="2" style="padding:10px 6px;white-space:nowrap;">各項綜合自動計算</td>
                </tr>
            </tbody>
        </table>
@@ -320,7 +320,7 @@
                 <button class="btn btn-success btn-large" id="btn-show-login" disabled>📧 電子郵件登入</button>
                 <button class="btn btn-success btn-large" id="btn-show-register" disabled>📝 註冊新帳號</button>
             </div>
-            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供</p>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0356</p>
         </article>
     </section>
 
@@ -412,13 +412,10 @@
         </article>
     </section>
 
-    <section id="page-instructions" class="page" aria-label="測驗說明">
+<section id="page-instructions" class="page" aria-label="測驗說明">
         <article class="card">
             <h2 class="card-title">📖 測驗說明</h2>
             <div id="instruction-content" style="max-width:700px; margin:0 auto; text-align:left;"></div>
-            <div class="alert alert-info" style="max-width:600px; margin:25px auto;">
-                💡 <strong>提示：</strong>練習題可以重複作答直到熟悉，不會計入正式成績
-            </div>
             <div class="btn-group">
                 <button class="btn btn-primary btn-large" id="btn-start-practice">開始練習題 →</button>
             </div>
@@ -1179,6 +1176,7 @@ applyI18nToDOM() {
 
     // ── 結果頁按鈕 ───────────────────────────────────────
     setText('btn-restart',  'pages.results.btn_restart');
+    setText('btn-learn-more', 'pages.results.btn_learn_more');
     setText('logout-btn',   'pages.results.btn_logout');
     setText('btn-go-home',  'pages.results.btn_home');
 
@@ -1252,10 +1250,13 @@ applyI18nToDOM() {
     setText('home-seq-time', 'pages.home.info_table.seq_time');
     setText('home-seq-time-sub', 'pages.home.info_table.seq_time_sub');
     
-    setText('home-spa-label', 'pages.home.info_table.spa_label');
+setText('home-spa-label', 'pages.home.info_table.spa_label');
     setText('home-spa-count', 'pages.home.info_table.spa_count');
     setText('home-spa-time', 'pages.home.info_table.spa_time');
-
+    
+    // ✅ 確保專注力表格欄位對應到新的 ID
+    setText('home-att-label', 'pages.home.info_table.att_label');
+    setText('home-table-att-desc', 'pages.home.info_table.att_desc');
 // ── 快速資訊與警告 ──
 setText('home-badge-age', 'pages.home.badges.age_range');
 setText('home-badge-duration', 'pages.home.badges.duration');
@@ -1828,6 +1829,7 @@ loadSequenceGridQuestion() {
     container.style.cssText = 'padding:6px 0;';   // 減少容器上下 padding
 
     // ── ① 標題列（最精簡，放最頂部）───────────────────────
+// ── ① 標題列（最精簡，放最頂部）───────────────────────
     const titleEl = document.createElement('div');
     titleEl.style.cssText = `
         text-align:center;
@@ -1836,7 +1838,8 @@ loadSequenceGridQuestion() {
         color:var(--primary-color);
         margin-bottom:6px;
         padding:0 8px;`;
-    titleEl.textContent = `數字順序 ${gridSize}×${gridSize}｜依序點選 1 → ${total}`;
+    // ✅ 改用 t() 呼叫語系檔，並傳入 size 與 total 變數
+    titleEl.textContent = t('pages.test.seq_title', { size: gridSize, total: total });
     container.appendChild(titleEl);
 
     // ── ② 格子容器（✅ 緊接在標題下方，手機不需滑動）──────
