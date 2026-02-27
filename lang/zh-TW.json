@@ -53,6 +53,7 @@
   "device_labels": {
     "mobile": "手機",
     "tablet": "平板",
+    "tablet_mobile": "手機/平板",
     "desktop": "電腦"
   },
   "pages": {
@@ -276,9 +277,9 @@
       "percentile_hint_1": "📊 百分位越高，代表您的表現優於越多同齡人。",
       "percentile_hint_2": "🎯 例：第 80 百分位 = 贏過 80% 的同齡受測者。",
       "percentile_att_note": "專注力由記憶力、反應力、空間能力綜合計算",
-      "percentile_lead": "領先",
+      "percentile_lead": "表現：",
       "percentile_barely": "僅領先",
-      "percentile_pct_people": "{pct}%",
+      "percentile_pct_people": "領先同齡 {pct}%",
       "percentile_badge_good": "✓ 達標",
       "percentile_badge_poor": "需加強",
       "history_count": "共 {n} 筆記錄",
