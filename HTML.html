@@ -2553,12 +2553,13 @@ computeRkFromRecord(record) {
     return computed;
 },
 
-    // ==================== 顯示結果 ====================
+// ==================== 顯示結果 (修正版) ====================
 displayResults(computed) {
-    const section = document.getElementById('results-section');
-    if (!section) return;
+    // 1. 修正：對應正確的頁面 ID
+    const page = document.getElementById('page-results');
+    if (!page) return;
 
-    // ✅ Bug 12 修正：user_info / test_time 改用 t()
+    // 2. 更新使用者資訊與時間
     const userInfoEl = document.getElementById('result-user-info');
     if (userInfoEl) {
         userInfoEl.textContent = t('pages.results.user_info', {
@@ -2567,22 +2568,24 @@ displayResults(computed) {
         });
     }
 
-    const testTimeEl = document.getElementById('result-test-time');
+    const testTimeEl = document.getElementById('result-datetime');
     if (testTimeEl) {
         testTimeEl.textContent = t('pages.results.test_time', {
             datetime: new Date().toLocaleString(),
         });
     }
 
-    // 各子模組渲染
+    // 3. 呼叫子模組渲染
     this.renderAbilityResults(computed);
-    this.renderRadarChart(computed, this.userData.age);
+    
+    // 修正：將 this.adviceData 改為 ADVICE_JSON
+    this.renderRecommendations(computed, ADVICE_JSON);
+    
     this.renderPercentileInfo(computed, this.userData.age, this.userData.gender);
-    this.renderRecommendations(computed, this.adviceData);
-    this.renderHistoryTable(this.historyRecords || []);
+    this.loadAndDisplayHistory();
 
-    section.style.display = 'block';
-    section.scrollIntoView({ behavior: 'smooth' });
+    // 4. 使用統一的切換頁面函式
+    this.showPage('results');
 },
 
     // ==================== 能力卡片 ====================
@@ -2636,7 +2639,7 @@ renderAbilityResults(computed) {
                     <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
                         ${t('pages.results.total_time')} ${d.totalTime}s
                         &nbsp;|&nbsp;
-                        ${t('pages.results.correct')} ${d.correct}
+                        ${t('pages.results.correct')} ${d.correctCount}
                     </div>
                 </div>
                 <div class="level-badge level-${d.level}"
@@ -2776,7 +2779,7 @@ renderRadarChart(computed, age) {
 
 // ==================== 【修改】建議區塊 — 只顯示最差能力的整合建議 ====================
 renderRecommendations(computed, adviceData) {
-    const container = document.getElementById('recommendations-container');
+    const container = document.getElementById('recommendations');
     if (!container) return;
     // ✅ Bug 7 修正：能力名稱改用 t()
     const nameMap = {
@@ -2830,7 +2833,7 @@ renderRecommendations(computed, adviceData) {
 
     // ==================== 百分位 ====================
 renderPercentileInfo(computed, age, gender) {
-    const container = document.getElementById('percentile-container');
+    const container = document.getElementById('percentile-info');
     if (!container) return;
 
     const ageRange = this.getAgeRange(age);
