@@ -1,0 +1,3146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="認知能力測驗系統 - 評估記憶力、反應力和空間能力">
+    <meta name="theme-color" content="#4a90e2">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>認知能力測驗系統</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --primary-color: #4a90e2; --primary-dark: #357abd;
+        --success-color: #5cb85c; --danger-color: #d9534f;
+        --warning-color: #f0ad4e; --bg-color: #f5f7fa;
+        --card-bg: #ffffff; --text-color: #333; --light-text: #666;
+        --border-color: #ddd; --border-radius: 12px;
+        --input-border-radius: 8px; --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        --font-base: 16px;
+    }
+    body {
+        font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+        background: var(--bg-color); color: var(--text-color);
+        line-height: 1.6; font-size: var(--font-base);
+        -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .page { display: none; animation: fadeIn 0.4s ease-out; }
+    .page.active { display: block; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+        background: var(--card-bg); border-radius: var(--border-radius);
+        padding: 30px; box-shadow: var(--shadow);
+        margin-bottom: 25px; text-align: center;
+    }
+    .card-title {
+        font-size: 2.2rem; font-weight: bold;
+        margin-bottom: 25px; color: var(--primary-color); text-align: center;
+    }
+    .btn {
+        padding: 12px 28px; font-size: 1rem; border: none;
+        border-radius: var(--input-border-radius); cursor: pointer;
+        transition: all 0.3s ease; font-weight: 600; margin: 8px;
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 8px; min-width: 120px;
+    }
+    .btn-primary { background: var(--primary-color); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+    .btn-success { background: var(--success-color); color: white; }
+    .btn-success:hover { background: #4cae4c; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+    .btn-danger { background: var(--danger-color); color: white; }
+    .btn-danger:hover { background: #c9302c; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+    .btn-large { padding: 16px 36px; font-size: 1.15rem; min-width: 160px; }
+    .btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+    form { max-width: 500px; margin: 0 auto; text-align: left; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--light-text); font-size: 0.95rem; }
+    .form-group input, .form-group select {
+        width: 100%; padding: 12px; border: 1px solid var(--border-color);
+        border-radius: var(--input-border-radius); font-size: 1rem; transition: border-color 0.2s ease;
+    }
+    .form-group input:focus, .form-group select:focus {
+        outline: none; border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
+    }
+    .stimulus {
+        width: 100px; height: 100px; border-radius: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #eee; border: 2px solid transparent;
+        flex-shrink: 0; display: inline-block; margin: 5px;
+    }
+    .selectable-stimulus { cursor: pointer; border: 3px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .selectable-stimulus:hover { border-color: var(--primary-color); transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    .selectable-stimulus.selected {
+        outline: 3px solid #e74c3c;
+        outline-offset: 3px;
+        transform: scale(1.06);
+        transition: transform 0.15s ease, outline 0.15s ease;
+        cursor: pointer;
+        opacity: 1;
+        pointer-events: auto;
+        box-shadow: 0 0 15px rgba(231, 76, 60, 0.6);
+    }
+    .progress-bar { width: 100%; height: 30px; background: #e0e0e0; border-radius: 15px; overflow: hidden; margin-bottom: 25px; }
+    .progress-fill {
+        height: 100%; background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        transition: width 0.3s ease; display: flex; align-items: center;
+        justify-content: center; color: white; font-weight: bold; font-size: 0.9rem;
+    }
+    .timer { font-size: 3.5rem; font-weight: bold; text-align: center; margin: 25px 0; color: var(--primary-color); font-variant-numeric: tabular-nums; }
+    .timer.warning { color: var(--warning-color); animation: pulse 0.7s infinite alternate; }
+    @keyframes pulse { from { transform: scale(1); opacity: 1; } to { transform: scale(1.05); opacity: 0.8; } }
+    .test-instruction-text {
+        font-size: 1.1rem; margin-bottom: 20px; color: var(--light-text);
+        min-height: 60px; display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .sequence-display { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; padding: 20px 0; min-height: 150px; }
+    .sequence-input { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; justify-items: center; margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 12px; }
+    .reaction-buttons { display: flex; justify-content: center; gap: 20px; margin-top: 30px; flex-wrap: wrap; }
+    .result-section { margin-bottom: 40px; text-align: left; }
+    .result-section h3 { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 20px; text-align: center; font-weight: 600; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; }
+    .result-user-info { font-size: 1.8rem; color: var(--text-color); margin-bottom: 10px; font-weight: 600; }
+    .result-datetime { font-size: 1rem; color: var(--light-text); margin-bottom: 20px; }
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+    .ability-result-card { padding: 25px; border-radius: 12px; color: white; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+    .ability-result-card:hover { transform: translateY(-5px); }
+    .ability-result-card h4 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 600; }
+    .ability-result-card p { margin: 8px 0; font-size: 0.95rem; }
+    .level-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin-top: 15px; font-size: 0.95rem; }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .history-table thead { background: linear-gradient(135deg, var(--primary-color), var(--success-color)); color: white; }
+    .history-table th, .history-table td { padding: 15px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+    .history-table th { font-weight: 600; font-size: 0.95rem; }
+    .history-table tbody tr:hover { background-color: #f8f9fa; }
+    .history-table tbody tr:last-child td { border-bottom: none; }
+    .alert { padding: 15px 20px; border-radius: 8px; margin: 20px auto; font-size: 0.95rem; line-height: 1.6; text-align: center; }
+    .alert-info { background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    .alert-warning { background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+    .user-badge { display: inline-block; background: linear-gradient(135deg, var(--primary-color), var(--success-color)); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.95rem; margin-bottom: 20px; }
+    button[disabled] { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .level-最佳表現 { background-color: #1a7a35 !important; color: white !important; }
+    .level-良好     { background-color: #27ae60 !important; color: white !important; }
+    .level-正常     { background-color: #3498db !important; color: white !important; }
+    .level-接近正常 { background-color: #2980b9 !important; color: white !important; }
+    .level-待加強   { background-color: #f39c12 !important; color: white !important; }
+    .level-不太好   { background-color: #e67e22 !important; color: white !important; }
+    .level-需要加強 { background-color: #e74c3c !important; color: white !important; }
+
+    .test-stimulus-row {
+        display: flex; flex-direction: row; justify-content: center;
+        align-items: center; gap: 12px; flex-wrap: nowrap; margin: 8px 0;
+    }
+    .test-stimulus-row .stimulus-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .test-stimulus-row .stimulus-box p { font-size: 0.9rem; margin: 0; }
+    .test-vs-label { font-size: 1.2rem; color: var(--light-text); flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+        body { font-size: 14px; }
+        .container { padding: 10px; }
+        .card { padding: 20px; }
+        .card-title { font-size: 1.8rem; }
+        .btn { padding: 8px 18px; font-size: 0.9rem; min-width: 100px; }
+        .btn-large { padding: 12px 28px; font-size: 1rem; }
+        .btn-group { flex-direction: column; gap: 10px; }
+        .stimulus { width: 60px; height: 60px; }
+        .timer { font-size: 2.5rem; }
+        .result-grid { grid-template-columns: 1fr; }
+        .test-stimulus-row .stimulus-box p { font-size: 0.75rem !important; }
+        .test-vs-label { font-size: 1.2rem !important; }
+        .reaction-buttons {
+            position: fixed !important; bottom: 0 !important; left: 0 !important;
+            width: 100% !important; background: rgba(255,255,255,0.97) !important;
+            padding: 10px 16px !important; box-shadow: 0 -2px 10px rgba(0,0,0,0.15) !important;
+            display: flex !important; justify-content: center !important;
+            gap: 16px !important; margin: 0 !important; z-index: 998 !important;
+            border-top: 1px solid var(--border-color) !important;
+        }
+        .reaction-buttons .btn { flex: 1 !important; max-width: 160px !important; padding: 14px 8px !important; font-size: 1rem !important; }
+        #page-test .card { padding-bottom: 80px !important; }
+        .sequence-input { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 8px !important; padding: 10px !important; }
+        .sequence-input .stimulus { width: 55px !important; height: 55px !important; }
+        .timer-floating {
+            position: fixed; top: 10px; right: 10px;
+            background: rgba(255,255,255,0.95); border: 2px solid var(--primary-color);
+            border-radius: 10px; padding: 3px 10px; font-size: 1.2rem !important;
+            font-weight: bold; color: var(--primary-color); z-index: 999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin: 0 !important;
+        }
+        .timer-floating.warning { border-color: var(--warning-color); color: var(--warning-color); }
+        .timer-desktop { display: none !important; }
+        .mem-watch-mode .test-instruction-text { font-size:0.85rem; min-height:unset; margin-bottom:6px; }
+        .mem-watch-mode .progress-bar          { height:18px; margin-bottom:10px; }
+        .mem-watch-mode #test-type             { font-size:1.2rem; margin-bottom:2px; }
+        .mem-watch-mode #test-level            { font-size:0.85rem; }
+        .mem-watch-mode .card                  { padding:10px; }
+    }
+    @media (min-width: 769px) {
+        .timer-floating { display: none !important; }
+        .timer-desktop  { display: block; }
+    }
+    #toast-container {
+        position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%); z-index: 9998; pointer-events: none;
+    }
+    .toast-msg {
+        background: rgba(30,30,30,0.92); color: white;
+        padding: 18px 32px; border-radius: 16px; font-size: 1.15rem;
+        font-weight: 600; text-align: center; line-height: 1.6;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        animation: toastIn 0.25s ease-out; white-space: pre-line;
+    }
+    @keyframes toastIn {
+        from { opacity:0; transform:scale(0.85); }
+        to   { opacity:1; transform:scale(1); }
+    }
+</style>
+</head>
+<body>
+<div id="loading-overlay" style="
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(255,255,255,0.97); display:flex;
+    align-items:center; justify-content:center;
+    z-index:9999; flex-direction:column; gap:20px;">
+    <div style="border:5px solid #f3f3f3; border-top:5px solid #4a90e2;
+        border-radius:50%; width:60px; height:60px;
+        animation:spin 1s linear infinite;"></div>
+    <p id="loading-status" style="font-size:1.2rem; color:#333;">載入中...</p>
+</div>
+
+<main class="container" role="main">
+
+    <section id="page-home" class="page active" aria-label="首頁">
+        <article class="card">
+<h1 class="card-title" id="home-title">🧠 認知能力測驗</h1>
+<div style="margin-bottom:30px;">
+    <p id="home-subtitle" style="font-size:1.2rem; line-height:1.8; color:var(--light-text); max-width:700px; margin:0 auto; white-space: pre-line;">
+        歡迎使用此認知能力評估
+        由認知專家巫奉約設計
+        本測驗將全面評估您的：
+    </p>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin:30px 0; text-align:left;">
+    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; padding:20px; border-radius:12px;">
+        <h3 id="home-mem-title" style="margin-bottom:10px;">🧠 記憶力</h3>
+        <p id="home-mem-desc" style="font-size:0.95rem;">記住順序，評估短期記憶能力</p>
+    </div>
+    <div style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%); color:white; padding:20px; border-radius:12px;">
+        <h3 id="home-rea-title" style="margin-bottom:10px;">⚡ 反應力</h3>
+        <p id="home-rea-desc" style="font-size:0.95rem;">是/否測試，評估反應與抑制力</p>
+    </div>
+    <div style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%); color:white; padding:20px; border-radius:12px;">
+        <h3 id="home-spa-title" style="margin-bottom:10px;">🔄 空間力</h3>
+        <p id="home-spa-desc" style="font-size:0.95rem;">思維翻轉，評估空間想像能力</p>
+    </div>
+    <div style="background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%); color:white; padding:20px; border-radius:12px;">
+        <h3 id="home-att-title" style="margin-bottom:10px;">🎯 專注力</h3>
+        <p id="home-att-desc" style="font-size:0.95rem;">三力平均，評估專注力穩定度</p>
+    </div>
+</div>
+
+<div style="
+    background:#f8f9fa;
+    border-radius:12px;
+    padding:20px 16px;
+    max-width:560px;
+    width:100%;
+    margin:0 auto;
+    font-size:0.92rem;
+    line-height:1.7;
+    color:#333;
+    box-sizing:border-box;">
+
+<h3 id="home-table-title" style="text-align:center;color:var(--primary-color); margin:0 0 14px;font-size:1.1rem;">🧠 認知能力測驗/以完成速度為評分標準</h3>
+   <div style="background:#fff;border-radius:8px; overflow:hidden;border:1px solid #dee2e6;margin-bottom:14px;">
+       <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; table-layout:fixed;">
+           <colgroup><col style="width:30%;"><col style="width:35%;"><col style="width:35%;"></colgroup>
+           <thead>
+               <tr style="background:var(--primary-color);color:white;">
+                   <th id="home-col-item" style="padding:10px 6px;white-space:nowrap;">測驗項目</th>
+                   <th id="home-col-count" style="padding:10px 6px;white-space:nowrap;">題數／關卡</th>
+                   <th id="home-col-time" style="padding:10px 6px;white-space:nowrap;">時間</th>
+               </tr>
+           </thead>
+           <tbody>
+               <tr style="border-bottom:1px solid #eee;">
+                   <td id="home-mem-label" style="padding:10px 6px;white-space:nowrap;">🔵 記憶力</td>
+                   <td id="home-mem-count" style="padding:10px 6px;white-space:nowrap;">5 題</td>
+                   <td id="home-mem-time" style="padding:10px 6px;white-space:nowrap;">每題 10 秒</td>
+               </tr>
+               <tr style="border-bottom:1px solid #eee;background:#f9f9f9;">
+                   <td id="home-rea-label" style="padding:10px 6px;white-space:nowrap;">🟡 反應力</td>
+                   <td id="home-rea-count" style="padding:10px 6px;white-space:nowrap;">10 題</td>
+                   <td id="home-rea-time" style="padding:10px 6px;white-space:nowrap;">每題 5 秒</td>
+               </tr>
+               <tr style="border-bottom:1px solid #eee;">
+                   <td id="home-seq-label" style="padding:10px 6px;white-space:nowrap;">🔢 數字順序</td>
+                   <td style="padding:10px 6px;">
+                       <span id="home-seq-count" style="white-space:nowrap;">2 關</span><br>
+                       <span id="home-seq-count-sub" style="font-size:0.75rem;color:#888;white-space:nowrap;">3×3 & 4×4</span>
+                   </td>
+                   <td style="padding:10px 6px;">
+                       <span id="home-seq-time" style="white-space:nowrap;">速度計時</span><br>
+                       <span id="home-seq-time-sub" style="white-space:nowrap;font-size:0.8rem;color:#555;">無時限</span>
+                   </td>
+               </tr>
+               <tr style="border-bottom:1px solid #eee;background:#f9f9f9;">
+                   <td id="home-spa-label" style="padding:10px 6px;white-space:nowrap;">🟢 空間力</td>
+                   <td id="home-spa-count" style="padding:10px 6px;white-space:nowrap;">10 題</td>
+                   <td id="home-spa-time" style="padding:10px 6px;white-space:nowrap;">每題 5 秒</td>
+               </tr>
+               <tr style="background:#fff8e1;">
+                   <td id="home-att-label" style="padding:10px 6px;white-space:nowrap;">🔴 專注力</td>
+                   <td id="home-att-desc" colspan="2" style="padding:10px 6px;white-space:nowrap;">各項綜合自動計算</td>
+               </tr>
+           </tbody>
+       </table>
+   </div>
+
+
+    <!-- 快速資訊 -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+       <span id="home-badge-age" style="background:#e8f5e9;color:#2e7d32; padding:4px 12px;border-radius:20px;font-size:0.82rem; white-space:nowrap;">✅ 適合 5～120 歲</span>
+       <span id="home-badge-duration" style="background:#e3f2fd;color:#1565c0; padding:4px 12px;border-radius:20px;font-size:0.82rem; white-space:nowrap;">⏱ 約 3～5 分鐘</span>
+   </div>
+   <div id="home-guest-warning" style="background:#fff3cd;border-left:4px solid #f39c12; border-radius:6px;padding:10px 14px; font-size:0.85rem;color:#7d4e00;">
+        ⚠️ <strong>訪客模式</strong>無法儲存成績，也無法追蹤認知能力的進退步。<br>
+        建議 <strong>登入後使用</strong>，來完整記錄您的認知變化趨勢。
+    </div>
+</div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary btn-large" id="btn-start-guest" disabled>👤 訪客開始測驗</button>
+                <button class="btn btn-success btn-large" id="btn-google" disabled>🔐 Google 快速登入</button>
+                <button class="btn btn-success btn-large" id="btn-show-login" disabled>📧 電子郵件登入</button>
+                <button class="btn btn-success btn-large" id="btn-show-register" disabled>📝 註冊新帳號</button>
+            </div>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供</p>
+        </article>
+    </section>
+
+    <section id="page-login" class="page" aria-label="電子郵件登入">
+        <article class="card">
+            <h2 class="card-title" id="login-title">🔐 使用者登入</h2>
+            <div class="alert alert-info" id="login-info" style="max-width:500px; margin:0 auto 20px;">登入後可查看您的歷史測驗記錄與進步趨勢</div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email" id="label-login-email">📧 電子郵件</label>
+                    <input type="email" id="login-email" required placeholder="請輸入您的電子郵件" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password" id="label-login-password">🔒 密碼</label>
+                    <input type="password" id="login-password" required placeholder="請輸入密碼" autocomplete="current-password">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary btn-large" id="btn-login-submit">登入</button>
+                    <button type="button" class="btn btn-danger" id="btn-login-cancel">取消</button>
+                </div>
+            </form>
+        </article>
+    </section>
+
+    <section id="page-register" class="page" aria-label="註冊新帳號">
+        <article class="card">
+            <h2 class="card-title" id="register-title">📝 註冊新帳號</h2>
+            <div class="alert alert-info" id="register-info" style="max-width:500px; margin:0 auto 20px;">註冊帳號後可保存測驗記錄並追蹤您的進步</div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-email" id="label-register-email">📧 電子郵件</label>
+                    <input type="email" id="register-email" required placeholder="your@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password" id="label-register-password">🔒 密碼（至少 6 位）</label>
+                    <input type="password" id="register-password" required minlength="6" placeholder="請設定密碼" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm" id="label-register-confirm">🔒 確認密碼</label>
+                    <input type="password" id="register-confirm" required minlength="6" placeholder="再次輸入密碼" autocomplete="new-password">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success btn-large" id="btn-register-submit">註冊</button>
+                    <button type="button" class="btn btn-danger" id="btn-register-cancel">取消</button>
+                </div>
+            </form>
+        </article>
+    </section>
+
+    <section id="page-profile" class="page" aria-label="填寫基本資料">
+        <article class="card">
+            <div id="user-info-display"></div>
+            <h2 class="card-title" id="profile-title">📝 基本資料</h2>
+            <div class="alert alert-warning" id="profile-warning" style="max-width:500px; margin:0 auto 25px;">⚠️ 請務必填寫真實資料，以便獲得準確的年齡常模比較</div>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="nickname" id="label-nickname">✏️ 暱稱 *</label>
+                    <input type="text" id="nickname" required placeholder="請輸入您的暱稱" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="birth-year" id="label-birth-year">📅 出生年份 *</label>
+                    <select id="birth-year" required><option value="">請選擇年份</option></select>
+                </div>
+                <div class="form-group">
+                    <label for="birth-month" id="label-birth-month">📅 出生月份 *</label>
+                    <select id="birth-month" required>
+                        <option value="">請選擇月份</option>
+                        <option value="1">1月</option><option value="2">2月</option>
+                        <option value="3">3月</option><option value="4">4月</option>
+                        <option value="5">5月</option><option value="6">6月</option>
+                        <option value="7">7月</option><option value="8">8月</option>
+                        <option value="9">9月</option><option value="10">10月</option>
+                        <option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gender" id="label-gender">⚧ 性別 *</label>
+                    <select id="gender" required>
+                        <option value="">請選擇性別</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary btn-large" id="btn-profile-start">開始測驗 →</button>
+                    <button type="button" class="btn btn-success" id="view-history-btn" style="display:none;">📊 查看歷史成績</button>
+                </div>
+            </form>
+        </article>
+    </section>
+
+    <section id="page-instructions" class="page" aria-label="測驗說明">
+        <article class="card">
+            <h2 class="card-title">📖 測驗說明</h2>
+            <div id="instruction-content" style="max-width:700px; margin:0 auto; text-align:left;"></div>
+            <div class="alert alert-info" style="max-width:600px; margin:25px auto;">
+                💡 <strong>提示：</strong>練習題可以重複作答直到熟悉，不會計入正式成績
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary btn-large" id="btn-start-practice">開始練習題 →</button>
+            </div>
+        </article>
+    </section>
+
+    <section id="page-test" class="page" aria-label="測驗進行中">
+        <article class="card">
+            <div class="timer timer-floating" id="timer-floating" aria-hidden="true">10.00</div>
+            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="測驗進度">
+                <div class="progress-fill" id="progress-fill" style="width:0%">
+                    <span id="progress-text">0/10</span>
+                </div>
+            </div>
+            <div style="margin-bottom:25px;">
+                <h3 id="test-type" style="font-size:1.8rem; margin-bottom:8px; color:var(--primary-color);">記憶測試</h3>
+                <p id="test-level" style="font-size:1.1rem; color:var(--light-text);">練習題</p>
+            </div>
+            <div class="timer timer-desktop" id="timer" aria-label="剩餘時間" aria-live="off">10.00</div>
+            <div class="test-instruction-text" id="test-instruction" aria-live="polite">請專心觀看</div>
+            <div id="question-container" role="region" aria-label="題目區域"></div>
+            <div style="text-align:center; margin-top:30px;">
+                <button class="btn btn-primary btn-large" id="submit-btn" style="display:none;" aria-label="提交答案">提交答案</button>
+            </div>
+        </article>
+    </section>
+
+    <section id="page-spa-break" class="page" aria-label="空間測驗後半段規則說明">
+        <article class="card">
+            <div style="text-align:center; margin-bottom:24px;">
+                <div style="font-size:3rem;">🧩</div>
+                <h2 id="spa-break-title" style="margin:10px 0 4px; color:var(--primary-color);">空間能力測驗 — 後半段</h2>
+                <p id="spa-break-subtitle" style="color:var(--light-text); font-size:0.95rem;">前五題已完成，接下來難度將會提升。<br>請再次確認以下規則後繼續。</p>
+            </div>
+            <div style="background:#f8f9fa; border-left:4px solid var(--primary-color); border-radius:10px; padding:20px 24px; margin-bottom:28px; text-align:left; max-width:600px; margin-left:auto; margin-right:auto;">
+                <h3 id="spa-break-rules-title" style="margin:0 0 12px; color:var(--primary-color);">📋 規則提醒</h3>
+                <ol id="spa-break-rules" style="margin:0; padding-left:20px; line-height:2.2; font-size:1.05rem;">
+                    <li>螢幕同時顯示<strong>兩個圖形</strong></li>
+                    <li>後 5 題：只需判斷<strong>形狀是否相同</strong>（顏色不計）</li>
+                    <li>在腦中將圖形「轉回去」，忽略旋轉角度差異</li>
+                    <li>每題限時 <strong>5 秒</strong>，請快速作答</li>
+                    <li>答錯不會即時告知，但會影響最終分數</li>
+                </ol>
+                <div id="spa-break-tip" style="background:#fff3cd; padding:12px 16px; border-radius:8px; margin-top:16px; border-left:4px solid #ffc107;">
+                    <strong>💡 提示：</strong>後五題<strong>只看形狀，忽略顏色</strong>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn btn-primary btn-large" id="btn-spa-break-continue">✅ 我了解規則，繼續後五題</button>
+            </div>
+        </article>
+    </section>
+
+    <section id="page-results" class="page" aria-label="測驗結果">
+        <article class="card">
+            <h2 class="card-title" id="results-title">🎉 測驗結果</h2>
+            <div class="result-section" style="text-align:center;">
+                <h3 class="result-user-info" id="result-user-info"></h3>
+                <p class="result-datetime" id="result-datetime"></p>
+            </div>
+            <section class="result-section" aria-label="能力評估結果">
+                <h3 id="results-ability-section">📊 能力評估結果</h3>
+                <div id="ability-results"></div>
+            </section>
+            <section class="result-section" aria-label="個人化建議">
+                <h3 id="results-recommend-section">💡 給您的建議</h3>
+                <div id="recommendations"></div>
+            </section>
+            <section class="result-section" aria-label="百分位參考">
+                <h3 id="results-percentile-section">🌍 百分位參考</h3>
+                <div id="percentile-info"></div>
+            </section>
+            <section class="result-section" aria-label="歷史記錄">
+                <h3 id="results-history-section">📈 您的歷史記錄</h3>
+                <div id="history-records"></div>
+            </section>
+            <div class="btn-group" style="margin-top:40px;">
+                <button class="btn btn-primary btn-large" id="btn-restart">🔄 再測一次</button>
+                <a href="https://portaly.cc/zcwtw" target="_blank" rel="noopener noreferrer"
+                    class="btn btn-success btn-large" id="btn-learn-more" style="text-decoration:none; display:inline-flex;">
+                    💡 想了解更多提升認知的方法
+                </a>
+            </div>
+            <div class="btn-group" style="margin-top:15px;">
+                <button class="btn btn-danger" id="logout-btn" style="display:none;">🚪 登出</button>
+                <button class="btn btn-primary" id="btn-go-home">🏠 返回首頁</button>
+            </div>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供</p>
+        </article>
+    </section>
+
+</main>
+
+<div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app":      "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+    "firebase/auth":     "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js",
+    "firebase/analytics":"https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js"
+  }
+}
+</script>
+
+<script type="module">
+(async function () {
+'use strict';
+
+function setStatus(msg) {
+    const el = document.getElementById('loading-status');
+    if (el) el.textContent = msg;
+    console.log('[狀態]', msg);
+}
+function hideOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (!overlay) return;
+    overlay.style.transition = 'opacity 0.4s';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 400);
+}
+
+// ==================== 【新增】從 GitHub 抓取 JSON ====================
+
+// ==================== i18n 語系系統 ====================
+
+const LANG_BASE_URL =
+    'https://raw.githubusercontent.com/marketed-bit/tsettool/main/lang/';
+
+const LANG_MAP = {
+    'zh-TW': 'zh-TW',
+    'zh-HK': 'zh-TW',
+    'zh':    'zh-TW',
+    'ja':    'ja',
+    'ja-JP': 'ja',
+};
+
+const FALLBACK_LANG = 'zh-TW';
+
+let i18n = null;
+
+// ── 偵測瀏覽器語系 ──────────────────────────────────────
+function detectLang() {
+    const preferred = [
+        ...(navigator.languages || []),
+        navigator.language || '',
+    ];
+    for (const raw of preferred) {
+        if (LANG_MAP[raw])              return LANG_MAP[raw];
+        const base = raw.split('-')[0];
+        if (LANG_MAP[base])             return LANG_MAP[base];
+    }
+    return FALLBACK_LANG;
+}
+
+// ── 從 GitHub 抓語系 JSON ────────────────────────────────
+async function fetchLang(langCode) {
+    const url = `${LANG_BASE_URL}${langCode}.json`;
+    try {
+        setStatus(langCode === 'ja'
+            ? '言語ファイルを読み込み中...'
+            : '載入語系資源...'
+        );
+        const res = await fetch(url, {
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json; charset=utf-8' }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const buffer  = await res.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        i18n = JSON.parse(decoder.decode(buffer));
+        
+        // 👇 加入這行，讓 t() 函式能讀取到翻譯資料
+        window._i18n = i18n; 
+
+        document.documentElement.lang = i18n.meta?.lang || langCode;
+// ... 後面保持原樣 ...
+        document.title = i18n.meta?.title || document.title;
+
+        console.log(`✅ 語系 [${langCode}] 載入完成`);
+        return i18n;
+
+    } catch (err) {
+        console.warn(`⚠️ 語系 [${langCode}] 載入失敗，嘗試備用語系...`, err);
+        if (langCode !== FALLBACK_LANG) {
+            return await fetchLang(FALLBACK_LANG);
+        }
+        console.error('❌ 所有語系均載入失敗，使用硬編碼備用文字');
+        i18n = null;
+        return null;
+    }
+}
+
+// ── 翻譯取值 t() ─────────────────────────────────────────
+// ══════════════════════════════════════════════
+// 翻譯輔助函式（正確順序：t → tLevel → ta）
+// ══════════════════════════════════════════════
+
+function t(path, vars = {}) {
+    if (!window._i18n) return path;
+    const keys = path.split('.');
+    let val = window._i18n;
+    for (const k of keys) {
+        if (val == null) return path;
+        val = val[k];
+    }
+    if (typeof val !== 'string') return path;
+    return val.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
+}
+
+// ✅ Bug 1 修正：tLevel() 緊接在 t() 之後定義，不再放到全域執行區
+function tLevel(zhLevel) {
+    return t(`pages.level_labels.${zhLevel}`) || zhLevel;
+}
+
+// ── 取陣列翻譯 ──
+function ta(path) {
+    if (!window._i18n) return [];
+    const keys = path.split('.');
+    let val = window._i18n;
+    for (const k of keys) {
+        if (val == null) return [];
+        val = val[k];
+    }
+    return Array.isArray(val) ? val : [];
+}
+
+// ==================== Advice JSON（建議文字）====================
+
+const ADVICE_JSON_URL =
+    'https://raw.githubusercontent.com/marketed-bit/tsettool/main/advice.json';
+
+let ADVICE_JSON = null;
+
+async function fetchAdviceJSON() {
+    if (ADVICE_JSON) return ADVICE_JSON;
+    try {
+        // ✅ 載入提示文字：優先使用已載入的語系，否則用硬編碼備用
+        setStatus(t('loading.advice_json'));
+
+        const res = await fetch(ADVICE_JSON_URL, {
+            cache: 'no-store',
+            headers: { 'Accept': 'application/json; charset=utf-8' }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const buffer  = await res.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text    = decoder.decode(buffer);
+        ADVICE_JSON   = JSON.parse(text);
+
+        console.log('✅ ADVICE JSON 載入完成');
+        return ADVICE_JSON;
+
+    } catch (err) {
+        console.error('❌ ADVICE JSON 載入失敗，使用備用文字:', err);
+        ADVICE_JSON = null;
+        return null;
+    }
+}
+
+// ==================== 【新增】對應新 JSON 結構的 getAdvice() ====================
+// JSON 結構：
+//   module_a_performance[stage][level]   → mem / rea / spa / att 的表現文字
+//   module_b_weakness[ability][stage]    → 弱項共鳴描述（mem/rea/spa/att）
+//   module_c_call_to_action[ageKey]      → 結尾呼籲
+
+// age → stage key（module_a / module_b 使用）
+function getStageKey(age) {
+    if (age >= 5  && age <= 26) return 'stage_1_foundation';
+    if (age >= 27 && age <= 59) return 'stage_2_transition';
+    return 'stage_3_senior';  // 60+
+}
+
+// level 中文 → JSON 英文 key
+const LEVEL_KEY_MAP = {
+    '最佳表現': 'L1_best',
+    '良好':     'L2_good',
+    '正常':     'L3_normal',
+    '接近正常': 'L4_near_normal',
+    '待加強':   'L5_needs_improvement',
+    '不太好':   'L6_poor',
+    '需要加強': 'L7_needs_much_improvement',
+};
+
+// ability 中文 key → module_b JSON key
+const ABILITY_B_KEY_MAP = {
+    mem: 'mem',
+    rea: 'rea',
+    spa: 'spa',
+    att: 'att',
+};
+// ✅ 需要顯示 module_b 的等級（表現不佳才共鳴）
+const WEAK_LEVELS = new Set([
+    '待加強',
+    '不太好',
+    '需要加強',
+]);
+
+function getAdvice(age, ability, level) {
+    const json = ADVICE_JSON;
+    if (!json) return t('alerts.advice_fallback');
+
+    const stageKey   = getStageKey(age);
+    const levelKey   = LEVEL_KEY_MAP[level] || 'L3_normal';
+    const ageKey     = getAgeKey(age);
+    const abilityKey = ABILITY_B_KEY_MAP[ability] || ability;
+
+    try {
+        // ── Module A：表現評語（所有等級都顯示）─────────────────
+        const moduleA = json.module_a_performance?.[stageKey]?.[levelKey]
+            ?? '目前無對應建議，請尋求專業單位協助評估。';
+
+        // ── Module B：弱項共鳴
+        //    ✅ 只在「待加強 / 不太好 / 需要加強」才顯示
+        //    ✅ att 沒有對應的 module_b，跳過
+        let moduleB = '';
+        if (ability !== 'att' && WEAK_LEVELS.has(level)) {
+            moduleB = json.module_b_weakness?.[abilityKey]?.[stageKey] ?? '';
+        }
+
+        // ── Module C：結尾呼籲（所有等級都顯示）─────────────────
+        const moduleC = json.module_c_call_to_action?.[ageKey] ?? '';
+
+        // ── 組合（Module B 有內容且符合條件才加入）──────────────
+        const parts = [moduleA];
+        if (moduleB) parts.push(moduleB);
+        if (moduleC) parts.push(moduleC);
+
+        return parts.join('\n\n');
+
+    } catch (e) {
+        console.error('getAdvice 錯誤:', e);
+        return t('alerts.advice_fallback');
+    }
+}
+
+// ==================== 配置常數 ====================
+const CONFIG = {
+    MEM_TIME_LIMITS:    [10, 15, 20, 25, 30],
+    MEM_PENALTY_CAPS:   [15, 20, 25, 30, 35],
+    MEM_PENALTY_PER_ERROR: 4,
+    REACTION_TIME_LIMIT: 5.00,
+    VISITOR_TOKEN_TTL: 60 * 60 * 1000,
+BASE_RK: { mem: 50, rea: 10, spa: 12, seq: 25 },
+    MEM_AGE_MULTIPLIERS: {
+        'toddler': 2.00, 'child': 1.50, 'teen': 0.90,
+        'young_adult': 0.80, 'pre_middle': 0.95, 'middle': 1.00,
+    },
+    REA_SPA_AGE_MULTIPLIERS: {
+        'toddler': 4.00, 'child': 3.00, 'teen': 0.90,
+        'young_adult': 0.80, 'pre_middle': 0.95, 'middle': 1.00,
+    },
+    AGE_MULTIPLIERS: {
+         40: 1.000,  45: 1.070,  50: 1.145,  55: 1.225,
+         60: 1.310,  65: 1.400,  70: 1.495,  75: 1.595,
+         80: 1.700,  85: 1.810,  90: 1.925,  95: 2.045,
+        100: 2.170, 105: 2.300, 110: 2.435, 115: 2.575,
+        120: 2.750
+    },
+};
+
+// ==================== 年齡組 ====================
+function getAgeKey(age) {
+    if (age >= 5  && age <= 7)  return 'toddler';
+    if (age >= 8  && age <= 12) return 'child';
+    if (age >= 13 && age <= 16) return 'teen';
+    if (age >= 17 && age <= 26) return 'young_adult';
+    if (age >= 27 && age <= 39) return 'pre_middle';
+    if (age >= 40 && age <= 49) return 'middle';
+    if (age >= 50 && age <= 59) return 'senior_1';
+    if (age >= 60 && age <= 69) return 'senior_2';
+    if (age >= 70 && age <= 79) return 'senior_3';
+    if (age >= 80 && age <= 89) return 'senior_4';
+    if (age >= 90)              return 'oldest';
+    return 'middle';
+}
+
+// ==================== 常模函式 ====================
+// ❌ 27-39 歲使用 CONFIG.REA_SPA_AGE_MULTIPLIERS['pre_middle'] = 0.95
+// 40+ 歲使用 CONFIG.AGE_MULTIPLIERS（40歲=1.000）
+// → seq 的 seqNorm = BASE_RK.seq(25) * 1.000 * deviceMult
+//   但 rea 的 norm  = BASE_RK.rea(10) * 1.000 * deviceMult
+// 兩者年齡倍率邏輯不一致，40~49 歲邊界可能有跳變
+
+// ✅ 建議在 getAgeNormMultiplier() 補上 40~49 的明確判斷
+function getAgeNormMultiplier(age) {
+    if (age >= 5  && age <= 7)  return CONFIG.REA_SPA_AGE_MULTIPLIERS['toddler'];
+    if (age >= 8  && age <= 12) return CONFIG.REA_SPA_AGE_MULTIPLIERS['child'];
+    if (age >= 13 && age <= 16) return CONFIG.REA_SPA_AGE_MULTIPLIERS['teen'];
+    if (age >= 17 && age <= 26) return CONFIG.REA_SPA_AGE_MULTIPLIERS['young_adult'];
+    if (age >= 27 && age <= 39) return CONFIG.REA_SPA_AGE_MULTIPLIERS['pre_middle'];
+    if (age >= 40 && age <= 49) return CONFIG.AGE_MULTIPLIERS[40]; // ✅ 明確指定
+    const ageKey = Math.min(120, Math.ceil(age / 5) * 5);
+    return CONFIG.AGE_MULTIPLIERS[ageKey] || CONFIG.AGE_MULTIPLIERS[120];
+}
+
+function getReaSpaBaseRk(age, ability) {
+    const ageMult = getAgeNormMultiplier(age);
+    return CONFIG.BASE_RK[ability] * ageMult;
+}
+
+function getSequenceLengths(age) {
+    if      (age <= 6)  return [2, 3, 3, 4, 4]; // toddler
+    else if (age <= 12) return [3, 3, 4, 4, 5]; // child
+    else if (age <= 17) return [3, 4, 4, 5, 6]; // teen
+    else if (age <= 39) return [3, 4, 5, 6, 7]; // adult（18–39）
+    else if (age <= 59) return [3, 4, 4, 5, 6]; // 中年（40–59）
+    else if (age <= 69) return [3, 3, 4, 4, 5]; // 初老（60–69）
+    else if (age <= 79) return [2, 3, 3, 4, 5]; // 老年（70–79）
+    else                return [2, 2, 3, 3, 4]; // 高齡（80+）
+}
+
+function getReaSpaTimeLimit(age) {
+    if (age >= 5  && age <= 7)  return 10;
+    if (age >= 8  && age <= 12) return 8;
+    const base = CONFIG.REACTION_TIME_LIMIT;
+    if (age >= 70) {
+        const extra = Math.floor((Math.min(age, 120) - 65) / 5);
+        return parseFloat((base + extra).toFixed(2));
+    }
+    return base;
+}
+
+// ==================== 裝置偵測 ====================
+const DeviceDetector = {
+    isTouchDevice() {
+        const ua = navigator.userAgent || '';
+        const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(ua);
+        const isNarrow   = window.screen.width <= 1024;
+        const hasTouch   = navigator.maxTouchPoints > 1;
+        return isMobileUA || (hasTouch && isNarrow);
+    },
+// ✅ 改用 t() 取語系文字
+getLabel() {
+    const ua = navigator.userAgent || '';
+    if (/iPad|Tablet|tablet/i.test(ua))
+        return t('device_labels.tablet');
+    if (/iPhone|Android.*Mobile|Mobile/i.test(ua))
+        return t('device_labels.mobile');
+    if (this.isTouchDevice())
+        return t('device_labels.tablet_mobile');
+    return t('device_labels.desktop');
+},
+    getNormMultiplier() {
+        return this.isTouchDevice() ? (1 / 1.15) : 1.0;
+    }
+};
+
+// ==================== 刺激物生成器 ====================
+const StimuliGenerator = {
+    colors: [
+        { name: 'blue',       fill: '#2980b9' },
+        { name: 'green',      fill: '#1e8449' },
+        { name: 'orange-red', fill: '#c0392b' },
+        { name: 'black',      fill: '#1a1a1a' },
+        { name: 'gray',       fill: '#7f8c8d' },
+    ],
+    shapes: [
+        {
+            name: 'circle', display: '圓形',
+            draw(fill) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                el.setAttribute('cx', '50'); el.setAttribute('cy', '50'); el.setAttribute('r', '38');
+                el.setAttribute('fill', fill); el.setAttribute('stroke', '#fff'); el.setAttribute('stroke-width', '2');
+                return el;
+            }
+        },
+        {
+            name: 'square', display: '方形',
+            draw(fill) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                el.setAttribute('x', '12'); el.setAttribute('y', '12');
+                el.setAttribute('width', '76'); el.setAttribute('height', '76'); el.setAttribute('rx', '6');
+                el.setAttribute('fill', fill); el.setAttribute('stroke', '#fff'); el.setAttribute('stroke-width', '2');
+                return el;
+            }
+        },
+        {
+            name: 'star', display: '星形',
+            draw(fill) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                el.setAttribute('points', '50,10 61,35 88,38 68,58 74,85 50,70 26,85 32,58 12,38 39,35');
+                el.setAttribute('fill', fill); el.setAttribute('stroke', '#fff'); el.setAttribute('stroke-width', '2');
+                return el;
+            }
+        },
+        {
+            name: 'diamond', display: '菱形',
+            draw(fill) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                el.setAttribute('points', '50,8 92,50 50,92 8,50');
+                el.setAttribute('fill', fill); el.setAttribute('stroke', '#fff'); el.setAttribute('stroke-width', '2');
+                return el;
+            }
+        },
+        {
+            name: 'triangle', display: '三角形',
+            draw(fill) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                el.setAttribute('points', '50,8 94,92 6,92');
+                el.setAttribute('fill', fill); el.setAttribute('stroke', '#fff'); el.setAttribute('stroke-width', '2');
+                return el;
+            }
+        }
+    ],
+    generate(count) {
+        const stimuli = [], used = new Set();
+        let attempts = 0;
+        while (stimuli.length < count && attempts < count * 100) {
+            attempts++;
+            const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            const shape = this.shapes[Math.floor(Math.random() * this.shapes.length)];
+            const key   = `${color.name}-${shape.name}`;
+            if (!used.has(key)) { used.add(key); stimuli.push({ color, shape, key }); }
+        }
+        return stimuli;
+    },
+    generateForReaction(count) {
+        const stimuli = [], used = new Set();
+        let attempts = 0;
+        while (stimuli.length < count && attempts < count * 100) {
+            attempts++;
+            const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            const shape = this.shapes[Math.floor(Math.random() * this.shapes.length)];
+            const key   = `${color.name}-${shape.name}`;
+            if (!used.has(key)) { used.add(key); stimuli.push({ color, shape, key }); }
+        }
+        return stimuli;
+    },
+    generateForSpatial(count) {
+        const allowedShapes = this.shapes.filter(s => s.name !== 'circle');
+        const stimuli = [], used = new Set();
+        let attempts = 0;
+        while (stimuli.length < count && attempts < count * 100) {
+            attempts++;
+            const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            const shape = allowedShapes[Math.floor(Math.random() * allowedShapes.length)];
+            const key   = `${color.name}-${shape.name}`;
+            if (!used.has(key)) { used.add(key); stimuli.push({ color, shape, key }); }
+        }
+        return stimuli;
+    },
+    render(stim, size = 100, showLabel = false, rotation = 0, selectable = false) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('stimulus');
+        if (selectable) wrapper.classList.add('selectable-stimulus');
+        wrapper.style.width   = size + 'px';
+        wrapper.style.height  = size + 'px';
+        wrapper.style.display = 'inline-flex';
+        wrapper.style.alignItems     = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.borderRadius   = '8px';
+        wrapper.style.background     = 'transparent';
+
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', size); svg.setAttribute('height', size);
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.style.overflow = 'visible';
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        if (rotation !== 0) g.setAttribute('transform', `rotate(${rotation}, 50, 50)`);
+
+        const shape = stim.shape.draw(stim.color.fill);
+        g.appendChild(shape);
+        svg.appendChild(g);
+        wrapper.appendChild(svg);
+        wrapper.dataset.stimKey = stim.key;
+        return wrapper;
+    }
+};
+
+// ==================== Firebase 初始化 ====================
+setStatus('載入 Firebase SDK...');
+let fb;
+try {
+    const [
+        { initializeApp },
+        { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+          signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged },
+        { getDatabase, ref, set, get, push, query, orderByChild, limitToLast, update },
+        { getAnalytics }
+    ] = await Promise.all([
+        import('firebase/app'),
+        import('firebase/auth'),
+        import('firebase/database'),
+        import('firebase/analytics')
+    ]);
+
+    setStatus('連線 Firebase...');
+    const firebaseConfig = {
+        apiKey:            "AIzaSyCGVl6iHyWJXGMqCqq8DR2EHCoI5G2CTto",
+        authDomain:        "testtool-cc280.firebaseapp.com",
+        databaseURL:       "https://testtool-cc280-default-rtdb.firebaseio.com",
+        projectId:         "testtool-cc280",
+        storageBucket:     "testtool-cc280.firebasestorage.app",
+        messagingSenderId: "1015213381684",
+        appId:             "1:1015213381684:web:bb8b5a88cb1785d90e1261",
+        measurementId:     "G-P6N4L72MLL"
+    };
+
+    const firebaseApp    = initializeApp(firebaseConfig);
+    const auth           = getAuth(firebaseApp);
+    const database       = getDatabase(firebaseApp);
+    const googleProvider = new GoogleAuthProvider();
+    try { getAnalytics(firebaseApp); } catch(_) {}
+
+    fb = {
+        auth, database, googleProvider,
+        ref, set, get, push, query, orderByChild, limitToLast, update,
+        createUserWithEmailAndPassword, signInWithEmailAndPassword,
+        signInWithPopup, signOut, onAuthStateChanged
+    };
+    console.log('✅ Firebase 初始化完成');
+
+} catch (err) {
+    console.error('❌ Firebase 載入失敗:', err);
+    setStatus('⚠️ Firebase 載入失敗，以離線模式啟動...');
+    await new Promise(r => setTimeout(r, 1500));
+    fb = null;
+}
+
+// ==================== 【新增】預先載入 ADVICE JSON ====================
+// ✅ Firebase 初始化完成後，立即並行抓取 JSON，不阻塞主流程
+// ==================== 語系 + Advice JSON 並行載入 ====================
+// ==================== 主應用程式 ====================
+const app = {
+    currentUser:  null,
+    isGuest:      true,
+    visitorToken: null,
+    userData:     null,
+    currentTest:  null,
+    isSubmitting: false,
+
+    testState: {
+        ability: null, level: 0, isPractice: true,
+        startTime: null, timeRemaining: 0, timerInterval: null,
+        answers: [], results: { mem:[], rea:[], spa:[], seq:[] },
+        currentSequence: [], currentTargetKey: null,
+        currentTestKey: null, currentCorrectKey: null,
+        userAnswer: null, userSequence: [],
+        currentTimeLimit: 0
+    },
+
+    selectedMemoryElement: null,
+    isLocked: false,
+
+    // ==================== Toast ====================
+    showToast(msg, duration = 1800) {
+        return new Promise(resolve => {
+            const container = document.getElementById('toast-container');
+            if (!container) { resolve(); return; }
+            container.innerHTML = '';
+            const div = document.createElement('div');
+            div.className   = 'toast-msg';
+            div.textContent = msg;
+            container.appendChild(div);
+            setTimeout(() => {
+                div.style.transition = 'opacity 0.25s';
+                div.style.opacity    = '0';
+                setTimeout(() => { container.innerHTML = ''; resolve(); }, 260);
+            }, duration);
+        });
+    },
+
+    // ==================== 初始化 ====================
+    init() {
+        console.log('🚀 app.init() 執行中...');
+        this.initYearSelector();
+        this.bindAllEvents();
+        this.generateVisitorToken();
+
+        if (fb) {
+            fb.onAuthStateChanged(fb.auth, (user) => {
+                if (user) {
+                    this.currentUser = user;
+                    this.isGuest     = false;
+                    console.log('✅ 已登入:', user.email);
+                    const profilePage = document.getElementById('page-profile');
+                    if (profilePage && profilePage.classList.contains('active')) {
+                        this.loadUserProfile();
+                    }
+                } else {
+                    this.currentUser = null;
+                    this.isGuest     = true;
+                    console.log('👤 訪客模式');
+                }
+            });
+        }
+this.applyI18nToDOM(); // ← 移到 } 之前
+        document.querySelectorAll('button[disabled]').forEach(b => { b.disabled = false; });
+                hideOverlay();
+        console.log('✅ app.init() 完成');
+        
+    },  // ← init 結束
+
+// ── 將語系套用到固定 HTML 文字 ──────────────────────────
+applyI18nToDOM() {
+    if (!i18n) return;
+
+    const setText = (id, key, vars = {}) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = t(key, vars);
+    };
+
+    // ── 首頁標題與能力卡片 ──────────────────────────────────
+    setText('home-title', 'pages.home.title');
+    setText('home-subtitle', 'pages.home.subtitle');
+    setText('home-mem-title', 'pages.home.ability_cards.mem_title');
+    setText('home-mem-desc', 'pages.home.ability_cards.mem_desc');
+    setText('home-rea-title', 'pages.home.ability_cards.rea_title');
+    setText('home-rea-desc', 'pages.home.ability_cards.rea_desc');
+    setText('home-spa-title', 'pages.home.ability_cards.spa_title');
+    setText('home-spa-desc', 'pages.home.ability_cards.spa_desc');
+    setText('home-att-title', 'pages.home.ability_cards.att_title');
+    setText('home-att-desc', 'pages.home.ability_cards.att_desc');
+
+    // ── Loading ───────────────────────────────────────────
+    setText('loading-status', 'loading.default');
+
+// ── 基本資料頁面文字與標籤 ────────────────────────────────
+    setText('profile-title', 'pages.profile.title');
+    setText('profile-warning', 'pages.profile.warning');
+    setText('label-nickname', 'pages.profile.nickname_label');
+    setText('label-birth-year', 'pages.profile.birth_year_label');
+    setText('label-birth-month', 'pages.profile.birth_month_label');
+    setText('label-gender', 'pages.profile.gender_label');
+    setText('btn-profile-start', 'pages.profile.btn_start');
+    setText('view-history-btn', 'pages.profile.btn_history');
+
+    // ── 基本資料頁面 Placeholder (輸入框提示文字) ─────────────
+    const nicknameInput = document.getElementById('nickname');
+    if (nicknameInput) {
+        nicknameInput.placeholder = t('pages.profile.nickname_placeholder');
+    }
+
+    // ── 按鈕文字 ─────────────────────────────────────────
+    setText('btn-start-guest',   'pages.home.btn_guest');
+    setText('btn-google',        'pages.home.btn_google');
+    setText('btn-show-login',    'pages.home.btn_login');
+    setText('btn-show-register', 'pages.home.btn_register');
+
+    // ── 說明頁按鈕 ───────────────────────────────────────
+    setText('btn-start-practice',     'pages.instructions.btn_practice');
+    setText('btn-spa-break-continue', 'pages.spa_break.btn_continue');
+
+    // ── 測驗頁按鈕 ───────────────────────────────────────
+    setText('submit-btn', 'pages.test.submit_btn');
+
+    // ── 結果頁按鈕 ───────────────────────────────────────
+    setText('btn-restart',  'pages.results.btn_restart');
+    setText('logout-btn',   'pages.results.btn_logout');
+    setText('btn-go-home',  'pages.results.btn_home');
+
+// ── 登入/註冊頁面 ──────────────────────────────────────────
+    setText('login-title', 'pages.login.title');
+    setText('login-info', 'pages.login.info');
+    setText('label-login-email', 'pages.login.email_label');
+    setText('label-login-password', 'pages.login.password_label');
+    setText('btn-login-submit', 'pages.login.btn_submit');
+    const loginEmail = document.getElementById('login-email');
+    if (loginEmail) loginEmail.placeholder = t('pages.login.email_placeholder');
+    const loginPw = document.getElementById('login-password');
+    if (loginPw) loginPw.placeholder = t('pages.login.password_placeholder');
+
+    setText('register-title', 'pages.register.title');
+    setText('register-info', 'pages.register.info');
+    setText('label-register-email', 'pages.register.email_label');
+    setText('label-register-password', 'pages.register.password_label');
+    setText('label-register-confirm', 'pages.register.confirm_label');
+    setText('btn-register-submit', 'pages.register.btn_submit');
+    const regEmail = document.getElementById('register-email');
+    if (regEmail) regEmail.placeholder = t('pages.register.email_placeholder');
+    const regPw = document.getElementById('register-password');
+    if (regPw) regPw.placeholder = t('pages.register.password_placeholder');
+    const regConf = document.getElementById('register-confirm');
+    if (regConf) regConf.placeholder = t('pages.register.confirm_placeholder');
+
+    // ── 結果頁面標題 ──────────────────────────────────────────
+    setText('results-title', 'pages.results.title');
+    setText('results-ability-section', 'pages.results.ability_section');
+    setText('results-recommend-section', 'pages.results.recommend_section');
+    setText('results-percentile-section', 'pages.results.percentile_section');
+    setText('results-history-section', 'pages.results.history_section');
+
+    // ── 空間測驗中場休息頁面 ─────────────────────────────────
+    setText('spa-break-title', 'pages.spa_break.title');
+    const spaSub = document.getElementById('spa-break-subtitle');
+    if (spaSub) spaSub.innerHTML = t('pages.spa_break.subtitle');
+    setText('spa-break-rules-title', 'pages.spa_break.rules_title');
+    const spaRules = document.getElementById('spa-break-rules');
+    if (spaRules) {
+        const rulesArray = ta('pages.spa_break.rules');
+        spaRules.innerHTML = rulesArray.map(r => `<li style="margin-bottom:6px;">${r}</li>`).join('');
+    }
+    const spaTip = document.getElementById('spa-break-tip');
+    if (spaTip) spaTip.innerHTML = `<strong>💡 </strong>${t('pages.spa_break.tip')}`;
+
+// 用於支援包含 HTML 標籤（如 <strong>、<br>）的翻譯
+    const setHtml = (id, key, vars = {}) => {
+        const el = document.getElementById(id);
+        if (el && t(key)) el.innerHTML = t(key, vars);
+    };
+
+    // ── 首頁：表格、徽章、警告 ─────────────────────────────
+    setText('home-table-title', 'pages.home.info_table.heading');
+    setText('home-col-item', 'pages.home.info_table.col_item');
+    setText('home-col-count', 'pages.home.info_table.col_count');
+    setText('home-col-time', 'pages.home.info_table.col_time');
+    
+    setText('home-mem-label', 'pages.home.info_table.mem_label');
+    setText('home-mem-count', 'pages.home.info_table.mem_count');
+    setText('home-mem-time', 'pages.home.info_table.mem_time');
+    
+    setText('home-rea-label', 'pages.home.info_table.rea_label');
+    setText('home-rea-count', 'pages.home.info_table.rea_count');
+    setText('home-rea-time', 'pages.home.info_table.rea_time');
+    
+    setText('home-seq-label', 'pages.home.info_table.seq_label');
+    setText('home-seq-count', 'pages.home.info_table.seq_count');
+    setText('home-seq-count-sub', 'pages.home.info_table.seq_count_sub');
+    setText('home-seq-time', 'pages.home.info_table.seq_time');
+    setText('home-seq-time-sub', 'pages.home.info_table.seq_time_sub');
+    
+    setText('home-spa-label', 'pages.home.info_table.spa_label');
+    setText('home-spa-count', 'pages.home.info_table.spa_count');
+    setText('home-spa-time', 'pages.home.info_table.spa_time');
+
+    // ── 月份選單 ─────────────────────────────────────────
+    const months   = ta('pages.profile.months');
+    const monthSel = document.getElementById('birth-month');
+    if (monthSel && months.length === 12) {
+        const placeholder = t('pages.profile.birth_month_placeholder');
+        monthSel.innerHTML =
+            `<option value="">${placeholder}</option>` +
+            months.map((m, i) =>
+                `<option value="${i + 1}">${m}</option>`
+            ).join('');
+    }
+
+    // ── 性別選單 ────────────────────────
+const genderSel = document.getElementById('gender');
+if (genderSel) {
+    genderSel.innerHTML = `
+        <option value="">${t('pages.profile.gender_placeholder')}</option>
+        <option value="male">${t('pages.profile.gender_male')}</option>
+        <option value="female">${t('pages.profile.gender_female')}</option>
+    `;
+}
+
+},  // ← applyI18nToDOM 結束
+
+// ==================== 年份選擇器 ====================
+initYearSelector() {
+    const sel = document.getElementById('birth-year');
+    if (!sel) return;
+    const cur = new Date().getFullYear();
+    sel.innerHTML = `<option value="">${t('pages.profile.birth_year_placeholder')}</option>`;
+    for (let y = cur - 5; y >= cur - 120; y--) {
+        const o = document.createElement('option');
+o.value = y;
+        o.textContent = y + t('pages.profile.birth_year_suffix');
+        sel.appendChild(o);
+    }
+},
+
+    // ==================== 事件綁定 ====================
+    bindAllEvents() {
+        const on = (id, ev, fn) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(ev, fn.bind(this));
+            else console.warn(`⚠️ 找不到元素 #${id}`);
+        };
+
+        on('btn-start-guest',        'click',  this.startAsGuest);
+        on('btn-google',             'click',  this.loginWithGoogle);
+        on('btn-show-login',         'click',  () => this.showPage('login'));
+        on('btn-show-register',      'click',  () => this.showPage('register'));
+        on('login-form',             'submit', (e) => { e.preventDefault(); this.handleLogin(); });
+        on('register-form',          'submit', (e) => { e.preventDefault(); this.handleRegister(); });
+        on('btn-login-cancel',       'click',  () => this.showPage('home'));
+        on('btn-register-cancel',    'click',  () => this.showPage('home'));
+        on('profile-form',           'submit', (e) => { e.preventDefault(); this.saveProfile(); });
+        on('view-history-btn',       'click',  this.viewHistory);
+        on('btn-start-practice',     'click',  this.startPractice);
+        on('submit-btn',             'click',  this.submitAnswer);
+        on('btn-restart',            'click',  this.restart);
+        on('logout-btn',             'click',  this.logout);
+        on('btn-go-home',            'click',  () => this.showPage('home'));
+        on('btn-spa-break-continue', 'click',  () => this.nextQuestion());
+
+        console.log('✅ 事件綁定完成');
+    },
+
+    // ==================== 頁面切換 ====================
+    showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById('page-' + pageId);
+        if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+        else console.warn(`⚠️ 找不到頁面 #page-${pageId}`);
+    },
+
+    // ==================== 訪客開始 ====================
+    startAsGuest() {
+        this.isGuest     = true;
+        this.currentUser = null;
+        this.showPage('profile');
+    },
+
+    // ==================== 訪客 Token ====================
+    generateVisitorToken() {
+        const existing  = localStorage.getItem('visitor_token');
+        const tokenTime = localStorage.getItem('visitor_token_time');
+        if (existing && tokenTime && (Date.now() - parseInt(tokenTime)) < CONFIG.VISITOR_TOKEN_TTL) {
+            this.visitorToken = existing; return;
+        }
+        this.visitorToken = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitor_token', this.visitorToken);
+        localStorage.setItem('visitor_token_time', Date.now().toString());
+    },
+
+    // ==================== 登入 ====================
+    async handleLogin() {
+        if (!fb) { alert(t('alerts.login_offline')); return; }
+        const email    = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        if (!email || !password) { alert(t('alerts.login_empty')); return; }
+        try {
+            await fb.signInWithEmailAndPassword(fb.auth, email, password);
+            alert(t('alerts.login_success'));
+            await this.loadUserProfile();
+            this.showPage('profile');
+        } catch (err) {
+            const msgs = {
+                'auth/user-not-found': t('alerts.login_not_found'),
+                'auth/wrong-password': t('alerts.login_wrong_password'),
+                'auth/invalid-email': t('alerts.login_invalid_email'),
+                'auth/invalid-credential':t('alerts.login_invalid_credential')
+            };
+            alert(msgs[err.code] || t('alerts.login_fail') + err.message);
+        }
+    },
+
+    // ==================== 註冊 ====================
+// ✅ 新
+async handleRegister() {
+    if (!fb) { alert(t('alerts.register_offline')); return; }
+    const email    = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    const confirm  = document.getElementById('register-confirm').value;
+    if (!email || !password || !confirm) { alert(t('alerts.register_empty')); return; }
+    if (password !== confirm) { alert(t('alerts.register_mismatch')); return; }
+    if (password.length < 6)  { alert(t('alerts.register_short_pw')); return; }
+    try {
+        await fb.createUserWithEmailAndPassword(fb.auth, email, password);
+        alert(t('alerts.register_success'));
+        this.showPage('profile');
+    } catch (err) {
+        const msgs = {
+            'auth/email-already-in-use': t('alerts.register_email_used'),
+            'auth/invalid-email':        t('alerts.login_invalid_email'),
+            'auth/weak-password':        t('alerts.register_weak_pw')
+        };
+        alert(msgs[err.code] || t('alerts.register_fail') + err.message);
+    }
+},
+
+    // ==================== Google 登入 ====================
+// ✅ 新
+async loginWithGoogle() {
+    if (!fb) { alert(t('alerts.google_offline')); return; }
+    try {
+        await fb.signInWithPopup(fb.auth, fb.googleProvider);
+        alert(t('alerts.google_success'));
+        await this.loadUserProfile();
+        this.showPage('profile');
+    } catch (err) {
+        if (err.code !== 'auth/popup-closed-by-user') {
+            alert(t('alerts.google_fail') + err.message);
+        }
+    }
+},
+
+    // ==================== 登出 ====================
+// ✅ 新
+async logout() {
+    if (!confirm(t('alerts.logout_confirm'))) return;
+    try {
+        if (fb) await fb.signOut(fb.auth);
+        this.currentUser = null;
+        this.isGuest     = true;
+        this.userData    = null;
+        alert(t('alerts.logout_success'));
+        this.showPage('home');
+    } catch (err) {
+        alert(t('alerts.logout_fail') + err.message);
+    }
+},
+
+    // ==================== 載入使用者資料 ====================
+    async loadUserProfile() {
+        if (!this.currentUser || !fb) return;
+        try {
+            const snapshot = await fb.get(fb.ref(fb.database, `users/${this.currentUser.uid}`));
+            if (snapshot.exists()) {
+                this.userData = snapshot.val();
+                const set = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = val || '';
+                };
+                set('nickname',    this.userData.nickname);
+                set('birth-year',  this.userData.birthYear);
+                set('birth-month', this.userData.birthMonth);
+                set('gender',      this.userData.gender);
+                const vhBtn = document.getElementById('view-history-btn');
+                if (vhBtn) vhBtn.style.display = 'inline-flex';
+            }
+            const uid = document.getElementById('user-info-display');
+            if (uid) uid.innerHTML = `<div class="user-badge">👤 ${this.currentUser.email}</div>`;
+        } catch (err) {
+            console.error('❌ 載入使用者資料失敗:', err);
+        }
+    },
+
+    // ==================== 儲存個人資料 ====================
+    async saveProfile() {
+        const nickname   = document.getElementById('nickname').value.trim();
+        const birthYear  = document.getElementById('birth-year').value;
+        const birthMonth = document.getElementById('birth-month').value;
+        const gender     = document.getElementById('gender').value;
+
+        if (!nickname || !birthYear || !birthMonth || !gender) {
+            alert(t('alerts.profile_empty')); return;
+        }
+        const age = this.calculateAge(parseInt(birthYear), parseInt(birthMonth));
+        if (age < 4 || age > 120) {
+            alert(t('alerts.profile_age_range')); return;
+        }
+
+        this.userData = {
+            nickname,
+            birthYear:  parseInt(birthYear),
+            birthMonth: parseInt(birthMonth),
+            gender, age
+        };
+
+        if (!this.isGuest && this.currentUser && fb) {
+            try {
+                await fb.set(fb.ref(fb.database, `users/${this.currentUser.uid}`), this.userData);
+                console.log('✅ 個人資料已儲存');
+            } catch (err) {
+                console.error('❌ 儲存個人資料失敗:', err);
+            }
+        }
+
+        // ✅ 【新增】進入測驗前確保 ADVICE JSON 已載入
+// ✅ 應使用 advice_retry
+if (!ADVICE_JSON) {
+    setStatus(t('loading.advice_retry'));   // ← 顯示「重新載入建議文字資源...」✅
+    await fetchAdviceJSON();
+}
+
+        this.testState.results = { mem:[], rea:[], spa:[], seq:[] };
+        this.currentTest = 'mem';
+        this.showInstructions('mem');
+    },
+
+    // ==================== 計算年齡 ====================
+    calculateAge(birthYear, birthMonth) {
+        const now = new Date();
+        let age = now.getFullYear() - birthYear;
+        if ((now.getMonth() + 1) < birthMonth) age--;
+        return age;
+    },
+
+    // ==================== 測驗說明 ====================
+showInstructions(ability) {
+    const page = document.getElementById('page-instructions');
+    if (!page) return;
+
+    let steps;
+    if (ability === 'mem') {
+        const seqLengths = this.getSequenceLengths ? this.getSequenceLengths(this.userData?.age) : { min: 3, max: 7 };
+        steps = ta('pages.instructions.mem.steps').map(s =>
+            s.replace('{min}', seqLengths.min).replace('{max}', seqLengths.max)
+        );
+    } else {
+        steps = ta(`pages.instructions.${ability}.steps`);
+    }
+
+    const stepsHtml = steps.map(s => `<li style="margin-bottom:8px;">${s}</li>`).join('');
+
+    const title   = t(`pages.instructions.${ability}.title`);
+    const howLabel = t(`pages.instructions.${ability}.how_label`);
+    const tip      = t(`pages.instructions.${ability}.tip`);
+    const practiceHint = t('pages.instructions.practice_hint');
+    const btnPractice  = t('pages.instructions.btn_practice');
+
+    const content = `
+        <h3 style="color:var(--primary-color);margin-bottom:15px;">${howLabel}</h3>
+        <ol style="line-height:2;font-size:1.05rem;padding-left:20px;">
+            ${stepsHtml}
+        </ol>
+        <div style="background:#fff3cd;padding:15px;border-radius:8px; margin-top:20px;border-left:4px solid #ffc107;font-size:0.95rem;">
+            <strong>💡 </strong>${tip}
+        </div>
+        <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px; margin-top:14px;font-size:0.88rem;">
+            ${practiceHint}
+        </div>
+    `;
+
+    // 填入 page-instructions 內部元素
+    const titleEl   = page.querySelector('.card-title'); // 改為選取 class
+    const contentEl = document.getElementById('instruction-content');
+    const btnEl     = document.getElementById('btn-start-practice');
+    
+    if (titleEl)   titleEl.textContent  = title;
+    if (contentEl) contentEl.innerHTML  = content;
+    if (btnEl)     btnEl.textContent    = btnPractice;
+
+    // 👇 使用 showPage 正確切換到說明頁
+    this.showPage('instructions');
+},
+    // ==================== 開始練習題 ====================
+    startPractice() {
+        this.testState.ability    = this.currentTest;
+        this.testState.level      = 0;
+        this.testState.isPractice = true;
+        this.testState.answers    = [];
+        this.loadQuestion();
+    },
+
+    // ==================== 開始正式測驗 ====================
+    startFormalTest() {
+        this.testState.ability    = this.currentTest;
+        this.testState.level      = 0;
+        this.testState.isPractice = false;
+        this.testState.answers    = [];
+        this.loadQuestion();
+    },
+
+    // ==================== 載入題目 ====================
+    loadQuestion() {
+        this.isSubmitting = false;
+        this.isLocked     = false;
+        this.showPage('test');
+
+        const { ability, level, isPractice } = this.testState;
+        const totalQ = ability === 'mem' ? 5 : ability === 'seq' ? 2 : 10;
+        const pct    = ((level / totalQ) * 100).toFixed(0);
+
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('progress-text').textContent = `${level}/${totalQ}`;
+        document.getElementById('test-type').textContent = 
+t(`pages.test.type_labels.${ability}`);
+        document.getElementById('test-level').textContent =
+ isPractice ? t('pages.test.practice_label') : t('pages.test.question_label', { n: level + 1 });
+        document.getElementById('submit-btn').style.display  = 'none';
+        document.getElementById('question-container').innerHTML = '';
+
+if      (ability === 'mem') this.loadMemoryQuestion();
+else if (ability === 'rea') this.loadReactionQuestion();
+else if (ability === 'seq') this.loadSequenceGridQuestion();
+else if (ability === 'spa') this.loadSpatialQuestion();
+    },
+
+    // ==================== 記憶力題目 ====================
+    loadMemoryQuestion() {
+        const levelIdx   = this.testState.level;
+        const age        = this.userData?.age || 40;
+        const seqLengths = getSequenceLengths(age);
+        const seqLen     = seqLengths[levelIdx] || 4;
+        const sequence   = StimuliGenerator.generate(seqLen);
+
+        this.testState.currentSequence = sequence;
+        this.testState.userSequence    = [];
+
+        const card = document.querySelector('#page-test .card');
+        if (card) card.classList.add('mem-watch-mode');
+
+        const container = document.getElementById('question-container');
+        container.innerHTML = '<div class="sequence-display" id="sequence-display"></div>';
+        document.getElementById('test-instruction').textContent =
+            t('pages.test.mem_watch');
+ 
+        const display = document.getElementById('sequence-display');
+        let idx = 0;
+        const showNext = () => {
+            display.innerHTML = '';
+            if (idx < sequence.length) {
+                display.appendChild(StimuliGenerator.render(sequence[idx], 100, false));
+                idx++;
+                setTimeout(showNext, 2000);
+            } else {
+                this.showMemoryInput();
+            }
+        };
+        setTimeout(showNext, 500);
+    },
+
+    // ==================== 記憶力作答 ====================
+    showMemoryInput() {
+        const card = document.querySelector('#page-test .card');
+        if (card) card.classList.remove('mem-watch-mode');
+
+        document.getElementById('test-instruction').textContent =
+            t('pages.test.mem_answer');
+
+        const shuffled = [...this.testState.currentSequence].sort(() => Math.random() - 0.5);
+        const container = document.getElementById('question-container');
+        container.innerHTML = '<div class="sequence-input" id="sequence-input"></div>';
+        const inputArea = document.getElementById('sequence-input');
+
+        this.selectedMemoryElement  = null;
+        this.isLocked               = false;
+        this.testState.userSequence = [];
+
+        shuffled.forEach((stimulus) => {
+            const elem = StimuliGenerator.render(stimulus, 80, false, 0, true);
+// ❌ 現況：使用者只能逐一選擇，但每次點選後 selectedMemoryElement 
+//    只追蹤最後一個，取消只能取消「最後一個」
+// 多圖題（5~7個）無法取消中間的選擇
+
+// ✅ 修正建議：改為允許點擊「已選中項目」取消，並支援多選追蹤
+elem.addEventListener('click', () => {
+    if (this.isLocked) return;
+
+    if (elem.classList.contains('selected')) {
+        // 取消該項目
+        elem.classList.remove('selected');
+        const idx = this.testState.userSequence.indexOf(stimulus.key);
+        if (idx !== -1) this.testState.userSequence.splice(idx, 1);
+        return;
+    }
+
+    elem.classList.add('selected');
+    this.testState.userSequence.push(stimulus.key);
+
+    if (this.testState.userSequence.length === this.testState.currentSequence.length) {
+        this.isLocked = true;
+        setTimeout(() => {
+            this.isLocked = false;
+            this.submitAnswer();
+        }, 300);
+    }
+});
+            inputArea.appendChild(elem);
+        });
+
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            submitBtn.textContent = t('pages.test.mem_skip');
+            submitBtn.className   = 'btn btn-danger btn-large';
+            submitBtn.setAttribute('aria-label', '放棄本題並以空白答案跳過');
+            submitBtn.style.display = 'inline-flex';
+
+            const newBtn = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
+            newBtn.addEventListener('click', () => {
+                if (this.isLocked) return;
+                this.isLocked = true;
+                this.testState.userSequence = [];
+                this.stopTimer();
+                this.submitAnswer();
+            }, { once: true });
+        }
+
+        const timeLimit = CONFIG.MEM_TIME_LIMITS[this.testState.level] || 10;
+        this.testState.currentTimeLimit = timeLimit;
+        this.startTimer(timeLimit);
+    },
+
+    // ==================== 反應力題目 ====================
+    loadReactionQuestion() {
+        const allStimuli = StimuliGenerator.generateForReaction(10);
+        const targetStim = allStimuli[0];
+        const isSame     = Math.random() < 0.5;
+        const testStim   = isSame ? targetStim : allStimuli[1];
+
+        this.testState.currentTargetKey = targetStim.key;
+        this.testState.currentTestKey   = testStim.key;
+        this.testState.userAnswer       = null;
+
+        const container = document.getElementById('question-container');
+// ✅ 新
+container.innerHTML = `
+    <div class="test-stimulus-row">
+        <div class="stimulus-box">
+            <p style="font-size:0.9rem;color:var(--light-text);">
+                ${t('pages.test.rea_target_label')}
+            </p>
+            <div id="target-display"></div>
+        </div>
+        <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
+        <div class="stimulus-box">
+            <p style="font-size:0.9rem;color:var(--light-text);">
+                ${t('pages.test.rea_test_label')}
+            </p>
+            <div id="test-display"></div>
+        </div>
+    </div>
+    <div class="reaction-buttons">
+        <button class="btn btn-success btn-large" id="btn-same">
+            ${t('pages.test.rea_btn_same')}
+        </button>
+        <button class="btn btn-danger btn-large" id="btn-different">
+            ${t('pages.test.rea_btn_different')}
+        </button>
+    </div>`;
+
+        const stimSize = window.innerWidth <= 768 ? 65 : 100;
+        document.getElementById('target-display')
+            .appendChild(StimuliGenerator.render(targetStim, stimSize, false));
+        document.getElementById('test-display')
+            .appendChild(StimuliGenerator.render(testStim, stimSize, false));
+
+        // ✅ instruction 文字
+document.getElementById('test-instruction').textContent =
+            t('pages.test.rea_instruction');
+
+        const btnSame = document.getElementById('btn-same');
+        const btnDiff = document.getElementById('btn-different');
+
+        const handleAnswer = (ans) => {
+            btnSame.disabled = true;
+            btnDiff.disabled = true;
+            this.testState.userAnswer = ans;
+            this.submitAnswer();
+        };
+        btnSame.addEventListener('click', () => handleAnswer('same'),      { once: true });
+        btnDiff.addEventListener('click', () => handleAnswer('different'), { once: true });
+
+        const reaSpaTime = getReaSpaTimeLimit(this.userData?.age || 40);
+        this.testState.currentTimeLimit = reaSpaTime;
+        this.startTimer(reaSpaTime);
+    },
+// ==================== 數字順序格測驗 ====================
+loadSequenceGridQuestion() {
+    this.stopTimer();
+    const levelIdx  = this.testState.level;
+    const gridSizes = [3, 4];
+    const gridSize  = gridSizes[levelIdx] || 3;
+    const total     = gridSize * gridSize;
+
+    this.testState.seqNextNum   = 1;
+    this.testState.seqTotal     = total;
+    this.testState.seqPenalty   = 0;
+    this.testState.seqStartTime = Date.now();
+
+    // 產生隨機排列
+    const nums = Array.from({ length: total }, (_, i) => i + 1);
+    for (let i = nums.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nums[i], nums[j]] = [nums[j], nums[i]];
+    }
+
+    // ✅ 響應式格子大小
+    const screenW      = Math.min(window.innerWidth, 480);
+    const padding      = 48;
+    const gap          = 6;
+    const maxCell      = 80;
+    const cellByScreen = Math.floor((screenW - padding - gap * (gridSize - 1)) / gridSize);
+    const cellSize     = Math.min(maxCell, cellByScreen);
+    const fontSize     = Math.max(14, Math.floor(cellSize * 0.42));
+
+    // ✅ 隱藏頁面上方的 instruction 文字（節省空間）
+    const instrEl = document.getElementById('test-instruction');
+    if (instrEl) instrEl.style.display = 'none';
+
+    // ✅ 隱藏計時器（不限時）
+    ['timer', 'timer-floating'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.visibility = 'hidden';
+    });
+
+    const container = document.getElementById('question-container');
+    container.innerHTML = '';
+    container.style.cssText = 'padding:6px 0;';   // 減少容器上下 padding
+
+    // ── ① 標題列（最精簡，放最頂部）───────────────────────
+    const titleEl = document.createElement('div');
+    titleEl.style.cssText = `
+        text-align:center;
+        font-size:0.95rem;
+        font-weight:700;
+        color:var(--primary-color);
+        margin-bottom:6px;
+        padding:0 8px;`;
+    titleEl.textContent = `數字順序 ${gridSize}×${gridSize}｜依序點選 1 → ${total}`;
+    container.appendChild(titleEl);
+
+    // ── ② 格子容器（✅ 緊接在標題下方，手機不需滑動）──────
+    const grid = document.createElement('div');
+    grid.style.cssText = `
+        display:grid;
+        grid-template-columns:repeat(${gridSize}, ${cellSize}px);
+        gap:${gap}px;
+        justify-content:center;
+        margin:0 auto 10px;
+        padding:4px;
+        touch-action:manipulation;`;
+    container.appendChild(grid);
+
+    nums.forEach(num => {
+        const cell = document.createElement('button');
+        cell.textContent    = num;
+        cell.dataset.num    = num;
+        cell.style.cssText  = `
+            width:${cellSize}px;
+            height:${cellSize}px;
+            font-size:${fontSize}px;
+            font-weight:700;
+            border:2px solid #bbb;
+            border-radius:10px;
+            background:#fff;
+            cursor:pointer;
+            transition:background 0.12s, transform 0.1s;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 2px 5px rgba(0,0,0,0.12);
+            -webkit-tap-highlight-color:transparent;
+            user-select:none;`;
+
+        cell.addEventListener('click', () => {
+            const expected = this.testState.seqNextNum;
+            const clicked  = parseInt(cell.dataset.num);
+
+            if (clicked === expected) {
+                // ✅ 答對
+                cell.style.background    = '#27ae60';
+                cell.style.color         = 'white';
+                cell.style.borderColor   = '#1e8449';
+                cell.style.transform     = 'scale(0.93)';
+                cell.style.pointerEvents = 'none';
+                this.testState.seqNextNum++;
+
+                const prog = document.getElementById('seq-progress');
+                if (prog) {
+                    prog.textContent = this.testState.seqNextNum > total
+                        ? t('pages.test.seq_done')
+                        : t('pages.test.seq_next', { n: this.testState.seqNextNum });
+                }
+
+                if (this.testState.seqNextNum > total) {
+                    setTimeout(() => this.finishSequenceRound(), 300);
+                }
+            } else {
+                // ❌ 答錯：閃紅 + 罰時
+                this.testState.seqPenalty += 2;
+                cell.style.background = '#e74c3c';
+                cell.style.color      = 'white';
+                setTimeout(() => {
+                    cell.style.background = '#fff';
+                    cell.style.color      = '';
+                }, 380);
+
+                const penEl = document.getElementById('seq-penalty');
+                if (penEl) { 
+penEl.textContent = t('pages.test.seq_penalty', {
+ sec: this.testState.seqPenalty
+ });
+}
+            }
+        });
+
+        grid.appendChild(cell);
+    });
+
+    // ── ③ 進度顯示（格子下方）──────────────────────────────
+    const progressEl = document.createElement('div');
+    progressEl.id = 'seq-progress';
+    progressEl.style.cssText = `
+        text-align:center;
+        font-size:1.1rem;
+        font-weight:700;
+        color:var(--primary-color);
+        margin-top:4px;`;
+    progressEl.textContent = t('pages.test.seq_next', { n: 1 });
+    container.appendChild(progressEl);
+
+    // ── ④ 罰時顯示（進度下方）──────────────────────────────
+    const penaltyEl = document.createElement('div');
+    penaltyEl.id = 'seq-penalty';
+    penaltyEl.style.cssText = `
+        text-align:center;
+        font-size:0.88rem;
+        color:#e74c3c;
+        min-height:22px;
+        margin-top:6px;`;
+    container.appendChild(penaltyEl);
+
+    // ✅ 頁面自動滾到最頂部，確保格子在可視範圍
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+},
+
+finishSequenceRound() {
+    // ✅ 還原 instruction 顯示
+    const instrEl = document.getElementById('test-instruction');
+    if (instrEl) instrEl.style.display = '';
+
+    const elapsed   = (Date.now() - this.testState.seqStartTime) / 1000;
+    const penalty   = this.testState.seqPenalty || 0;
+    const finalTime = parseFloat((elapsed + penalty).toFixed(3));
+    const levelIdx  = this.testState.level;
+
+    // 恢復計時器顯示
+    ['timer', 'timer-floating'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.visibility = '';
+    });
+
+    this.testState.answers.push({
+        ability:     'seq',
+        level:       levelIdx,
+        correct:     true,
+        time:        parseFloat(elapsed.toFixed(3)),
+        penaltyTime: penalty,
+        finalTime,
+        itemCorrect: null,
+        itemTotal:   null,
+    });
+
+    const gridSizes = [3, 4];   // ✅ 只剩兩關
+    const gridSize  = gridSizes[levelIdx] || 3;
+
+// ✅ 新（含練習題 answers 清空修正）
+if (this.testState.isPractice) {
+    this.showToast(
+        t('toast.seq_practice_done', { time: elapsed.toFixed(1) }), 1800
+    ).then(() => {
+        this.testState.answers = [];    // ← Bug #1 修正
+        this.startFormalTest();
+    });
+    return;
+}
+
+this.showToast(
+    t('toast.seq_round_done', {
+        size:    gridSize,
+        time:    elapsed.toFixed(1),
+        penalty: penalty
+    }), 1400
+).then(() => {
+    this.testState.level++;
+    if (this.testState.level >= 2) {
+        this.finishAbilityTest();
+    } else {
+        this.loadQuestion();
+    }
+});
+},
+    // ==================== 空間能力題目 ====================
+    loadSpatialQuestion() {
+        const level      = this.testState.level;
+        const strictMode = level < 5;
+        const allStimuli = StimuliGenerator.generateForSpatial(6);
+        const correctStim = allStimuli[0];
+        const rotations  = [15, 35, 45, 75, 135, 300];
+        const rotation   = rotations[Math.floor(Math.random() * rotations.length)];
+
+        let testStim, isSame;
+
+        if (strictMode) {
+            if (Math.random() < 0.5) {
+                testStim = correctStim; isSame = true;
+            } else {
+                testStim = allStimuli[1]; isSame = false;
+            }
+        } else {
+            const diffColorStimuli = allStimuli.filter(
+                s => s.color.name !== correctStim.color.name
+            );
+            if (Math.random() < 0.5) {
+                const sameShapeDiffColor = diffColorStimuli.find(
+                    s => s.shape.name === correctStim.shape.name
+                );
+                if (sameShapeDiffColor) {
+                    testStim = sameShapeDiffColor; isSame = true;
+                } else {
+                    const diffColor = StimuliGenerator.colors.find(
+                        c => c.name !== correctStim.color.name
+                    );
+                    testStim = {
+                        color: diffColor,
+                        shape: correctStim.shape,
+                        key:   `${diffColor.name}-${correctStim.shape.name}`
+                    };
+                    isSame = true;
+                }
+            } else {
+                const diffShapeDiffColor = diffColorStimuli.find(
+                    s => s.shape.name !== correctStim.shape.name
+                );
+                if (diffShapeDiffColor) {
+                    testStim = diffShapeDiffColor; isSame = false;
+                } else {
+                    testStim = diffColorStimuli[0] || allStimuli[1];
+                    isSame   = testStim.shape.name === correctStim.shape.name;
+                }
+            }
+        }
+
+        this.testState.currentCorrectKey = isSame ? 'yes' : 'no';
+        this.testState.userAnswer        = null;
+
+        const container = document.getElementById('question-container');
+// ✅ 新
+container.innerHTML = `
+    <div style="margin-bottom:8px;">
+        <p style="font-size:0.95rem;color:var(--light-text);text-align:center;">
+            ${strictMode
+                ? t('pages.test.spa_strict_question')
+                : t('pages.test.spa_loose_question')}
+        </p>
+    </div>
+    <div class="test-stimulus-row">
+        <div class="stimulus-box"><div id="spa-left"></div></div>
+        <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
+        <div class="stimulus-box"><div id="spa-right"></div></div>
+    </div>
+    <div class="reaction-buttons">
+        <button class="btn btn-success btn-large" id="btn-spa-yes">
+            ${t('pages.test.spa_btn_yes')}
+        </button>
+        <button class="btn btn-danger btn-large" id="btn-spa-no">
+            ${t('pages.test.spa_btn_no')}
+        </button>
+    </div>`;
+
+
+        const stimSize = window.innerWidth <= 768 ? 65 : 120;
+        document.getElementById('spa-left').appendChild(
+            StimuliGenerator.render(correctStim, stimSize, false, rotation));
+        document.getElementById('spa-right').appendChild(
+            StimuliGenerator.render(testStim, stimSize, false, 0));
+
+        // ✅ instruction 文字
+document.getElementById('test-instruction').textContent = strictMode
+           ? t('pages.test.spa_strict_instruction')
+           : t('pages.test.spa_loose_instruction');
+
+
+        const handleSpa = (ans) => {
+            document.getElementById('btn-spa-yes').disabled = true;
+            document.getElementById('btn-spa-no').disabled  = true;
+            this.testState.userAnswer = ans;
+            this.submitAnswer();
+        };
+        document.getElementById('btn-spa-yes')
+            .addEventListener('click', () => handleSpa('yes'), { once: true });
+        document.getElementById('btn-spa-no')
+            .addEventListener('click', () => handleSpa('no'),  { once: true });
+
+        const reaSpaTime = getReaSpaTimeLimit(this.userData?.age || 40);
+        this.testState.currentTimeLimit = reaSpaTime;
+        this.startTimer(reaSpaTime);
+    },
+
+    // ==================== 計時器 ====================
+    startTimer(seconds) {
+        this.stopTimer();
+        this.testState.timeRemaining = seconds;
+        this.testState.startTime     = Date.now();
+        this.updateTimerDisplay();
+
+        const interval = DeviceDetector.isTouchDevice() ? 100 : 50;
+        this.testState.timerInterval = setInterval(() => {
+            const elapsed = (Date.now() - this.testState.startTime) / 1000;
+            this.testState.timeRemaining = Math.max(0, seconds - elapsed);
+            this.updateTimerDisplay();
+            if (this.testState.timeRemaining <= 0) this.handleTimeout();
+        }, interval);
+    },
+
+    stopTimer() {
+        if (this.testState.timerInterval) {
+            clearInterval(this.testState.timerInterval);
+            this.testState.timerInterval = null;
+        }
+    },
+
+    updateTimerDisplay() {
+        const val       = this.testState.timeRemaining.toFixed(2);
+        const isWarning = this.testState.timeRemaining <= 2;
+        ['timer', 'timer-floating'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = val;
+            el.classList.toggle('warning', isWarning);
+        });
+    },
+
+    // ==================== 逾時處理 ====================
+// ❌ seq 不使用計時器，但若意外觸發 handleTimeout()
+//    會執行 this.testState.userAnswer = null 並呼叫 submitAnswer()
+//    造成非預期行為
+
+// ✅ 加上 seq 的防護
+handleTimeout() {
+    this.stopTimer();
+    if (this.isSubmitting) return;
+    if (this.testState.ability === 'seq') return; // ← 新增防護
+    if (this.testState.ability === 'mem') {
+        this.testState.userSequence = [];
+    } else {
+        this.testState.userAnswer = null;
+    }
+    this.submitAnswer();
+},
+    // ==================== 提交答案 ====================
+    submitAnswer() {
+        if (this.isSubmitting) return;
+        this.isSubmitting = true;
+        this.isLocked     = true;
+        this.stopTimer();
+
+        const ability  = this.testState.ability;
+        const levelIdx = this.testState.level;
+
+        const timeLimit  = this.testState.currentTimeLimit || CONFIG.REACTION_TIME_LIMIT;
+        const timeTaken  = parseFloat(
+            (timeLimit - this.testState.timeRemaining).toFixed(3)
+        );
+
+        let isCorrect = false;
+        if      (ability === 'mem') isCorrect = this.verifyMemoryAnswer();
+        else if (ability === 'rea') isCorrect = this.verifyReactionAnswer();
+        else if (ability === 'spa') isCorrect = this.verifySpatialAnswer();
+
+        let penaltyTime = 0;
+        if (!isCorrect) {
+            if (ability === 'mem') {
+                const wrongCount = this._memWrongCount || 1;
+                const cap        = CONFIG.MEM_PENALTY_CAPS[levelIdx] || 15;
+                const maxAdd     = Math.max(0, cap - timeTaken);
+                const rawPenalty = CONFIG.MEM_PENALTY_PER_ERROR * wrongCount;
+                penaltyTime      = Math.min(rawPenalty, maxAdd);
+            } else {
+                const ageTimeLimit = getReaSpaTimeLimit(this.userData?.age || 40);
+                const cap    = ageTimeLimit + 2;
+                const maxAdd = Math.max(0, cap - timeTaken);
+                penaltyTime  = Math.min(2, maxAdd);
+            }
+        }
+
+        const finalTime = parseFloat((timeTaken + penaltyTime).toFixed(3));
+
+        this.testState.answers.push({
+            ability,
+            level:       levelIdx,
+            correct:     isCorrect,
+            time:        timeTaken,
+            penaltyTime,
+            finalTime,
+            itemCorrect: (ability === 'mem') ? (this._memCorrectItems || 0) : null,
+            itemTotal:   (ability === 'mem') ? (this._memTotalItems   || 0) : null,
+        });
+
+        const answeredSpa = (ability === 'spa' && !this.testState.isPractice)
+            ? this.testState.answers.filter(a => a.ability === 'spa').length
+            : -1;
+
+        setTimeout(() => {
+            this.isSubmitting = false;
+
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.textContent = t('pages.test.submit_btn');
+                submitBtn.className   = 'btn btn-primary btn-large';
+                submitBtn.removeAttribute('aria-label');
+                submitBtn.style.display = 'none';
+            }
+
+            if (answeredSpa === 5) {
+                this.showPage('spa-break');
+            } else {
+                this.nextQuestion();
+            }
+        }, 500);
+    },
+
+    // ==================== 驗證答案 ====================
+    verifyMemoryAnswer() {
+        const correct = this.testState.currentSequence.map(s => s.key);
+        const user    = this.testState.userSequence;
+        const totalItems = correct.length;
+
+        if (user.length !== correct.length) {
+            this._memWrongCount   = totalItems;
+            this._memCorrectItems = 0;
+            this._memTotalItems   = totalItems;
+            return false;
+        }
+
+        let wrongCount = 0, correctCount = 0;
+        correct.forEach((k, i) => {
+            if (k === user[i]) correctCount++;
+            else wrongCount++;
+        });
+
+        this._memWrongCount   = wrongCount;
+        this._memCorrectItems = correctCount;
+        this._memTotalItems   = totalItems;
+        return wrongCount === 0;
+    },
+
+    verifyReactionAnswer() {
+        if (this.testState.userAnswer === null) return false;
+        const isSame       = this.testState.currentTargetKey === this.testState.currentTestKey;
+        const userSaidSame = this.testState.userAnswer === 'same';
+        return isSame === userSaidSame;
+    },
+
+    verifySpatialAnswer() {
+        if (this.testState.userAnswer === null) return false;
+        return this.testState.userAnswer === this.testState.currentCorrectKey;
+    },
+
+    // ==================== 下一題 ====================
+    nextQuestion() {
+        const ability = this.testState.ability;
+        const totalQ = ability === 'mem' ? 5 : ability === 'seq' ? 2 : 10;
+
+        if (this.testState.isPractice) {
+            const last = this.testState.answers[this.testState.answers.length - 1];
+            if (last.correct) {
+                this.showToast(t('toast.practice_correct'), 1600).then(() => {
+                    this.startFormalTest();
+                });
+            } else {
+                this.showToast(t('toast.practice_wrong'), 1600).then(() => {
+                    this.testState.level   = 0;
+                    this.testState.answers = [];
+                    this.loadQuestion();
+                });
+            }
+            return;
+        }
+
+        this.testState.level++;
+        if (this.testState.level >= totalQ) this.finishAbilityTest();
+        else this.loadQuestion();
+    },
+
+    // ==================== 完成單項測驗 ====================
+async finishAbilityTest() {
+    const ability = this.testState.ability;
+    this.testState.results[ability] = [...this.testState.answers];
+
+    if (ability === 'mem') {
+        this.currentTest = 'rea';
+        await this.showToast(t('toast.mem_done'), 1800);
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 50));
+        this.showInstructions('rea');
+
+    } else if (ability === 'rea') {
+        this.currentTest = 'seq';
+        await this.showToast(t('toast.rea_done'), 1800);
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 50));
+        this.showInstructions('seq');
+
+    } else if (ability === 'seq') {
+        this.currentTest = 'spa';
+        await this.showToast(t('toast.seq_done'), 1800);
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 50));
+        this.showInstructions('spa');
+
+    } else if (ability === 'spa') {
+        await this.showToast(t('toast.spa_done'), 1500);
+        await new Promise(r => requestAnimationFrame(r));
+        await new Promise(r => setTimeout(r, 50));
+        this.calculateResults();
+    }
+},
+
+// ==================== 計算結果 (修正未計算的 att 與 score) ====================
+async calculateResults() {
+    const results     = this.testState.results;
+    const age         = this.userData.age;
+    const deviceMult  = DeviceDetector.getNormMultiplier();
+    const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
+
+    this.userData.deviceLabel = deviceLabel;
+    this.userData.deviceMult  = deviceMult;
+
+    const final = {};
+
+    // 🌟 輔助函式：將 Rk (反應係數) 轉換為 0-100 的分數
+    const calcScore = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 45)));
+
+    // ── mem ───────────────────────────────────────────────────
+    {
+        const ab        = 'mem';
+        const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+        const norm  = CONFIG.BASE_RK.mem * deviceMult;
+        const Rk    = totalTime / norm;
+        final[ab]   = {
+            totalTime:   parseFloat(totalTime.toFixed(2)),
+            norm:        parseFloat(norm.toFixed(2)),
+            Rk:          parseFloat(Rk.toFixed(3)),
+            level:       this._rkToLevel(Rk),
+            score:       calcScore(Rk), // 新增分數計算
+            correctCount: results[ab].reduce((s, a) => s + (a.itemCorrect ?? 0), 0),
+            totalCount:  results[ab].reduce((s, a) => s + (a.itemTotal   ?? 0), 0),
+        };
+    }
+
+    // ── spa ───────────────────────────────────────────────────
+    {
+        const ab        = 'spa';
+        const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+        const norm  = getReaSpaBaseRk(age, ab) * deviceMult;
+        const Rk    = totalTime / norm;
+        final[ab]   = {
+            totalTime:   parseFloat(totalTime.toFixed(2)),
+            norm:        parseFloat(norm.toFixed(2)),
+            Rk:          parseFloat(Rk.toFixed(3)),
+            level:       this._rkToLevel(Rk),
+            score:       calcScore(Rk), // 新增分數計算
+            correctCount: results[ab].filter(a => a.correct).length,
+            totalCount:   results[ab].length,
+        };
+    }
+
+    // ── rea（舊反應力）───────────────────────────────────────
+    const reaTotalTime = results.rea.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+    const reaNorm = getReaSpaBaseRk(age, 'rea') * deviceMult;
+    const reaRk   = reaTotalTime / reaNorm;
+
+    // ── seq（數字順序格）────────────────────────────────────
+    const seqTotalTime = results.seq.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+    const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * deviceMult;
+    const seqRk   = seqTotalTime / seqNorm;
+
+    const combinedReaRk = parseFloat(((reaRk + seqRk) / 2).toFixed(3));
+
+    final.rea = {
+        totalTime:   parseFloat((reaTotalTime + seqTotalTime).toFixed(2)),
+        norm:         parseFloat(((reaNorm + seqNorm) / 2).toFixed(2)),
+        Rk:           combinedReaRk,
+        level:       this._rkToLevel(combinedReaRk),
+        score:       calcScore(combinedReaRk), // 新增分數計算
+        correctCount: results.rea.filter(a => a.correct).length,
+        totalCount:   results.rea.length,
+        _reaRk:      parseFloat(reaRk.toFixed(3)),
+        _seqRk:      parseFloat(seqRk.toFixed(3)),
+        _seqTime:    parseFloat(seqTotalTime.toFixed(2)),
+    };
+
+    // ── att（專注力：由前三項綜合計算）───────────────────────────
+    const attRk = parseFloat(((final.mem.Rk + final.rea.Rk + final.spa.Rk) / 3).toFixed(3));
+    final.att = {
+        totalTime: parseFloat(((final.mem.totalTime + final.rea.totalTime + final.spa.totalTime) / 3).toFixed(2)),
+        correctCount: Math.round((final.mem.correctCount + final.rea.correctCount + final.spa.correctCount) / 3),
+        totalCount: Math.round((final.mem.totalCount + final.rea.totalCount + final.spa.totalCount) / 3),
+        Rk: attRk,
+        level: this._rkToLevel(attRk),
+        score: calcScore(attRk) // 新增分數計算
+    };
+
+    console.log(`📊 reaRk=${reaRk.toFixed(3)}, seqRk=${seqRk.toFixed(3)}, combined=${combinedReaRk}, level=${final.rea.level}`);
+
+    await this.saveTestRecord(final);
+    this.displayResults(final);
+},
+
+// ==================== Rk → 等級 helper ====================
+_rkToLevel(Rk) {
+    if      (Rk <= 0.80) return '最佳表現';
+    else if (Rk <  0.95) return '良好';
+    else if (Rk <= 1.05) return '正常';
+    else if (Rk <= 1.10) return '接近正常';
+    else if (Rk <= 1.20) return '待加強';
+    else if (Rk <  1.30) return '不太好';
+    else                 return '需要加強';
+},
+
+// ==================== 儲存測驗記錄 ====================
+async saveTestRecord(computed) {
+    if (!this.currentUser && this.isGuest == false) return; 
+    
+    // 組裝要儲存的完整 record 物件
+    const record = {
+        uid:        this.currentUser ? this.currentUser.uid : 'guest',
+        nickname:  this.userData.nickname,
+        age:        this.userData.age,
+        gender:     this.userData.gender,
+        date:       new Date().toLocaleString(),
+        timestamp:  Date.now(), 
+        deviceMult: this.userData.deviceMult || 1.0,
+        results: {
+            mem: computed.mem,
+            att: computed.att,
+            rea: {
+                totalTime:    computed.rea.totalTime,
+                correctCount: computed.rea.correctCount,
+                totalCount:   computed.rea.totalCount,
+                seqTime:      computed.rea._seqTime ?? 0,
+                reaRk:        computed.rea._reaRk ?? null,
+                seqRk:        computed.rea._seqRk ?? null,
+                combinedRk:   computed.rea.Rk ?? null,
+                level:        computed.rea.level,
+                score:        computed.rea.score
+            },
+            spa: {
+                totalTime:    computed.spa.totalTime,
+                correctCount: computed.spa.correctCount,
+                totalCount:   computed.spa.totalCount,
+                level:        computed.spa.level,
+                score:        computed.spa.score
+            }
+        }
+    };
+
+    const publicRecord = {
+        age:        record.age,
+        gender:     record.gender,
+        timestamp:  record.timestamp,
+        deviceMult: record.deviceMult,
+        results:    record.results
+    };
+
+    // 🌟 終極防呆：利用 JSON 轉換特性，自動剔除所有 undefined 的屬性，確保 Firebase 絕對不報錯
+    const cleanRecord = JSON.parse(JSON.stringify(record));
+    const cleanPublicRecord = JSON.parse(JSON.stringify(publicRecord));
+
+    try {
+        if (!this.isGuest && this.currentUser && fb) {
+            // 存入 Firebase Realtime Database
+            const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+            await fb.push(recordsRef, cleanRecord);
+
+            const publicRef = fb.ref(fb.database, 'public_records');
+            await fb.push(publicRef, cleanPublicRecord);
+
+            const userRef = fb.ref(fb.database, `users/${this.currentUser.uid}`);
+            await fb.update(userRef, { lastTestDate: cleanRecord.date });
+
+            console.log('✅ Firebase 儲存完成（個人記錄 + 公共統計）');
+        } else {
+            // 訪客存入 LocalStorage
+            const arr = JSON.parse(localStorage.getItem('guest_records') || '[]');
+            arr.push(cleanRecord);
+            if (arr.length > 10) arr.shift();
+            localStorage.setItem('guest_records', JSON.stringify(arr));
+            console.log('✅ localStorage 儲存完成（訪客記錄）');
+        }
+    } catch (err) {
+        console.error('❌ 儲存失敗:', err);
+        alert(t('alerts.save_fail'));
+    }
+},
+
+    // ==================== 即時重算 Rk ====================
+computeRkFromRecord(record) {
+    const age        = record.age;
+    const deviceMult = record.deviceMult || 1.0;
+
+    const computed = {};
+
+    // ── mem ───────────────────────────────────────────────────
+    {
+        const totalTime = record.results.mem?.totalTime ?? 0;
+        const norm      = CONFIG.BASE_RK.mem * deviceMult;
+        const Rk        = parseFloat((totalTime / norm).toFixed(3));
+        computed.mem = {
+            totalTime,
+            correctCount: record.results.mem?.correctCount ?? '—',
+            totalCount:   record.results.mem?.totalCount   ?? '—',
+            norm:         parseFloat(norm.toFixed(2)),
+            Rk,
+            level: this._rkToLevel(Rk),
+        };
+    }
+
+    // ── spa ───────────────────────────────────────────────────
+    {
+        const totalTime = record.results.spa?.totalTime ?? 0;
+        const norm      = getReaSpaBaseRk(age, 'spa') * deviceMult;
+        const Rk        = parseFloat((totalTime / norm).toFixed(3));
+        computed.spa = {
+            totalTime,
+            correctCount: record.results.spa?.correctCount ?? '—',
+            totalCount:   record.results.spa?.totalCount   ?? '—',
+            norm:         parseFloat(norm.toFixed(2)),
+            Rk,
+            level: this._rkToLevel(Rk),
+        };
+    }
+
+    // ── rea（優先使用已儲存的 Rk，其次重算）────────────────
+    {
+        const reaData = record.results.rea ?? {};
+
+        let finalRk;
+
+        if (reaData.combinedRk != null) {
+            // ✅ 新格式：直接使用 Firebase 儲存的合併 Rk
+            finalRk = reaData.combinedRk;
+            console.log(`📦 rea 使用 Firebase combinedRk: ${finalRk}`);
+
+        } else if (reaData.reaRk != null && reaData.seqRk != null) {
+            // ✅ 有分開的 Rk：直接平均
+            finalRk = parseFloat(((reaData.reaRk + reaData.seqRk) / 2).toFixed(3));
+            console.log(`📦 rea 用 reaRk(${reaData.reaRk}) + seqRk(${reaData.seqRk}) 平均: ${finalRk}`);
+
+        } else {
+            // ⚠️ 舊格式相容：只有 totalTime，用舊方式計算（僅反應力，無 seq）
+            const totalTime = reaData.totalTime ?? 0;
+            const norm      = getReaSpaBaseRk(age, 'rea') * deviceMult;
+            finalRk         = parseFloat((totalTime / norm).toFixed(3));
+            console.log(`⚠️ rea 舊格式相容計算 totalTime=${totalTime}, norm=${norm}, Rk=${finalRk}`);
+        }
+
+        computed.rea = {
+            totalTime:    reaData.totalTime    ?? 0,
+            correctCount: reaData.correctCount ?? '—',
+            totalCount:   reaData.totalCount   ?? '—',
+            Rk:           finalRk,
+            level:        this._rkToLevel(finalRk),
+        };
+    }
+
+    return computed;
+},
+
+    // ==================== 顯示結果 ====================
+displayResults(computed) {
+    const section = document.getElementById('results-section');
+    if (!section) return;
+
+    // ✅ Bug 12 修正：user_info / test_time 改用 t()
+    const userInfoEl = document.getElementById('result-user-info');
+    if (userInfoEl) {
+        userInfoEl.textContent = t('pages.results.user_info', {
+            nickname: this.userData.nickname,
+            age:      this.userData.age,
+        });
+    }
+
+    const testTimeEl = document.getElementById('result-test-time');
+    if (testTimeEl) {
+        testTimeEl.textContent = t('pages.results.test_time', {
+            datetime: new Date().toLocaleString(),
+        });
+    }
+
+    // 各子模組渲染
+    this.renderAbilityResults(computed);
+    this.renderRadarChart(computed, this.userData.age);
+    this.renderPercentileInfo(computed, this.userData.age, this.userData.gender);
+    this.renderRecommendations(computed, this.adviceData);
+    this.renderHistoryTable(this.historyRecords || []);
+
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth' });
+},
+
+    // ==================== 能力卡片 ====================
+renderAbilityResults(computed) {
+    const container = document.getElementById('ability-results');
+    if (!container) return;
+
+    // ✅ Bug 4 修正：能力名稱改用 t()
+    const names = {
+        mem: t('pages.results.ability_names.mem'),
+        rea: t('pages.results.ability_names.rea'),
+        spa: t('pages.results.ability_names.spa'),
+        att: t('pages.results.ability_names.att'),
+    };
+
+    const colors = {
+        mem: 'linear-gradient(135deg,#667eea,#764ba2)',
+        rea: 'linear-gradient(135deg,#f093fb,#f5576c)',
+        spa: 'linear-gradient(135deg,#4facfe,#00f2fe)',
+        att: 'linear-gradient(135deg,#43e97b,#38f9d7)',
+    };
+
+    const order = ['mem', 'rea', 'spa', 'att'];
+    container.innerHTML = '';
+
+    order.forEach(ab => {
+        const d = computed[ab];
+        if (!d) return;
+
+        const card = document.createElement('div');
+        card.className = 'ability-card';
+        card.style.cssText = `
+            background:${colors[ab]};
+            border-radius:16px;
+            padding:20px;
+            color:white;
+            margin-bottom:16px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.15);
+        `;
+
+        // ✅ Bug 5 修正：level-badge 改用 tLevel()
+        card.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                    <div style="font-size:1.2rem;font-weight:bold;margin-bottom:6px;">
+                        ${names[ab]}
+                    </div>
+                    <div style="font-size:2rem;font-weight:bold;">
+                        ${d.score}<span style="font-size:1rem;"> / 100</span>
+                    </div>
+                    <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
+                        ${t('pages.results.total_time')} ${d.totalTime}s
+                        &nbsp;|&nbsp;
+                        ${t('pages.results.correct')} ${d.correct}
+                    </div>
+                </div>
+                <div class="level-badge level-${d.level}"
+                    style="background:rgba(0,0,0,0.25);
+                           color:white;
+                           padding:6px 14px;
+                           border-radius:20px;
+                           font-size:0.9rem;
+                           font-weight:bold;
+                           white-space:nowrap;">
+                    ${tLevel(d.level)}
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+},
+
+    // ==================== 雷達圖 ====================
+renderRadarChart(computed, age) {
+    const container = document.getElementById('radar-chart-container');
+    if (!container) return;
+
+    const memScore = computed.mem?.score ?? 0;
+    const reaScore = computed.rea?.score ?? 0;
+    const spaScore = computed.spa?.score ?? 0;
+    const focScore = computed.att?.score ?? 0;
+
+    // 取出正確的裝置標籤
+   const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
+   
+   // 修正：使用 deviceLabel 取代 undefined 的 this.deviceMode
+   const deviceNote = deviceLabel !== t('device_labels.desktop')
+       ? `<div style="font-size:0.8rem;color:var(--light-text);margin-top:6px;">
+              ${t('pages.results.radar_device_note', { device: deviceLabel })}
+          </div>`
+       : '';
+
+    // ✅ Bug 10 修正：標籤改用 t()（含備援預設值）
+    const dirs = [
+        { label: t('pages.results.radar_mem_label') || '記憶', angle: -90, score: memScore },
+        { label: t('pages.results.radar_rea_label') || '反應', angle:   0, score: reaScore },
+        { label: t('pages.results.radar_spa_label') || '空間', angle:  90, score: spaScore },
+        { label: t('pages.results.radar_att_label') || '專注', angle: 180, score: focScore },
+    ];
+
+    const cx = 150, cy = 150, R = 100;
+    const norm = (s) => Math.max(0.1, s / 100);
+
+    const toXY = (angle, r) => {
+        const rad = (angle - 90) * Math.PI / 180;
+        return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    };
+
+    // 基準線（70%處）
+    const baseR  = R * 0.7;
+    const basePts = dirs.map(d => toXY(d.angle, baseR));
+    const basePolyline = basePts.map(p => `${p.x},${p.y}`).join(' ');
+
+    // 用戶分數
+    const userPts = dirs.map(d => toXY(d.angle, R * norm(d.score)));
+    const userPolyline = userPts.map(p => `${p.x},${p.y}`).join(' ');
+
+    // 軸線 & 標籤
+    let axesSvg = '', labelSvg = '';
+    dirs.forEach(d => {
+        const end = toXY(d.angle, R + 10);
+        axesSvg += `<line x1="${cx}" y1="${cy}"
+                         x2="${end.x}" y2="${end.y}"
+                         stroke="#ddd" stroke-width="1"/>`;
+        const lp = toXY(d.angle, R + 28);
+        labelSvg += `<text x="${lp.x}" y="${lp.y}"
+                           text-anchor="middle"
+                           dominant-baseline="middle"
+                           font-size="13"
+                           font-weight="bold"
+                           fill="#444">${d.label}</text>`;
+    });
+
+    // 同心圓
+    let circlesSvg = '';
+    [0.25, 0.5, 0.75, 1.0].forEach(r => {
+        circlesSvg += `<circle cx="${cx}" cy="${cy}" r="${R * r}"
+                                fill="none" stroke="#eee" stroke-width="1"/>`;
+    });
+
+    const svgHtml = `
+        <svg viewBox="0 0 300 300" style="width:100%;max-width:320px;display:block;margin:0 auto;">
+            ${circlesSvg}
+            ${axesSvg}
+            <!-- 基準線 -->
+            <polygon points="${basePolyline}"
+                     fill="rgba(100,126,234,0.08)"
+                     stroke="#667eea"
+                     stroke-width="2"
+                     stroke-dasharray="6,4"/>
+            <!-- 用戶 -->
+            <polygon points="${userPolyline}"
+                     fill="rgba(244,67,54,0.2)"
+                     stroke="#f44336"
+                     stroke-width="2.5"/>
+            ${userPts.map(p =>
+                `<circle cx="${p.x}" cy="${p.y}" r="4"
+                         fill="#f44336" stroke="white" stroke-width="1.5"/>`
+            ).join('')}
+            ${labelSvg}
+        </svg>`;
+
+    // ✅ Bug 10 修正：圖例、標題、說明全部使用 t()
+    container.innerHTML = `
+        <h3 style="text-align:center;margin-bottom:12px;
+             font-size:1.1rem;color:var(--primary-color);">
+            ${t('pages.results.radar_title')}
+        </h3>
+        ${svgHtml}
+        <div style="display:flex;justify-content:center;gap:20px;
+             margin-top:10px;font-size:0.82rem;">
+            <span>
+                <span style="display:inline-block;width:20px;height:2px;
+                      background:#667eea;border-top:2px dashed #667eea;
+                      vertical-align:middle;margin-right:4px;"></span>
+                ${t('pages.results.radar_legend_base', { age })}
+            </span>
+            <span>
+                <span style="display:inline-block;width:20px;height:3px;
+                      background:#f44336;vertical-align:middle;margin-right:4px;"></span>
+                ${t('pages.results.radar_legend_user')}
+            </span>
+        </div>
+        <div style="text-align:center;font-size:0.78rem;
+             color:var(--light-text);margin-top:8px;line-height:1.6;">
+            ${t('pages.results.radar_subtitle', { age })}
+        </div>
+        ${deviceNote}
+    `;
+},
+
+// ==================== 【修改】建議區塊 — 只顯示最差能力的整合建議 ====================
+renderRecommendations(computed, adviceData) {
+    const container = document.getElementById('recommendations-container');
+    if (!container) return;
+    // ✅ Bug 7 修正：能力名稱改用 t()
+    const nameMap = {
+        mem: t('pages.results.ability_names.mem'),
+        rea: t('pages.results.ability_names.rea'),
+        spa: t('pages.results.ability_names.spa'),
+    };
+    const colorMap = {
+        '最佳表現': '#4CAF50', '良好': '#8BC34A',
+        '正常':     '#2196F3', '接近正常': '#03A9F4',
+        '待加強':   '#FF9800', '不太好':   '#FF5722',
+        '需要加強': '#F44336',
+    };
+    // 找出最需要改善的能力
+    const scoreOrder = ['mem', 'rea', 'spa']
+        .map(ab => ({ ab, score: computed[ab]?.score ?? 100 }))
+        .sort((a, b) => a.score - b.score);
+    const worst      = scoreOrder[0];
+    const worstAb    = worst.ab;
+    const worstName  = nameMap[worstAb];
+    const worstLevel = computed[worstAb]?.level || '正常';
+    const worstColor = colorMap[worstLevel] || '#888';
+    // 從 adviceData 取得對應建議
+    const adviceKey   = computed[worstAb]?.level || '正常';
+    const adviceList  = adviceData?.[worstAb]?.[adviceKey] || [];
+    const adviceHtml  = adviceList.length
+        ? adviceList.map(a => `<li style="margin-bottom:8px;">${a}</li>`).join('')
+        : `<li>${t('alerts.advice_fallback')}</li>`;
+    // ✅ Bug 8 修正：worstLevel 使用 tLevel()
+    container.innerHTML = `
+        <div style="margin-bottom:20px;">
+            <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:8px;">
+                ${t('pages.results.recommend_basis')}
+            </div>
+            <strong style="color:${worstColor};font-size:1rem;">
+                ${t('pages.results.recommend_focus')}：
+                ${worstName}（${tLevel(worstLevel)}）
+            </strong>
+        </div>
+        <ul style="line-height:1.9;padding-left:20px;margin-bottom:24px;">
+            ${adviceHtml}
+        </ul>
+        <div style="background:#f0f4ff;padding:16px;border-radius:10px;
+             font-size:0.9rem;color:#444;line-height:1.8;border-left:4px solid #667eea;">
+            <p>${t('pages.results.recommend_closing_1')}</p>
+            <p style="margin-top:10px;">${t('pages.results.recommend_closing_2')}</p>
+            <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3')}</p>
+        </div>
+    `;
+},
+
+    // ==================== 百分位 ====================
+renderPercentileInfo(computed, age, gender) {
+    const container = document.getElementById('percentile-container');
+    if (!container) return;
+
+    const ageRange = this.getAgeRange(age);
+
+    // 百分位計算（示例邏輯，實際依您原始公式保留）
+    const getPercentile = (ab) => {
+        const score = computed[ab]?.score ?? 0;
+        return Math.min(99, Math.max(1, Math.round(score)));
+    };
+
+    const abilities = ['mem', 'rea', 'spa', 'att'];
+    const abilityNames = {
+        mem: t('pages.results.ability_names.mem'),
+        rea: t('pages.results.ability_names.rea'),
+        spa: t('pages.results.ability_names.spa'),
+        att: t('pages.results.ability_names.att'),
+    };
+
+    const colorMap = {
+        '最佳表現': '#4CAF50', '良好': '#8BC34A',
+        '正常':     '#2196F3', '接近正常': '#03A9F4',
+        '待加強':   '#FF9800', '不太好':   '#FF5722',
+        '需要加強': '#F44336',
+    };
+
+    let html = `
+        <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:16px;">
+            ${t('pages.results.percentile_range', { range: ageRange })}
+        </div>
+        <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px;
+             margin-bottom:20px;font-size:0.88rem;">
+            <div>${t('pages.results.percentile_hint_1')}</div>
+            <div style="margin-top:6px;">${t('pages.results.percentile_hint_2')}</div>
+        </div>
+    `;
+
+    abilities.forEach(ab => {
+        const pct      = getPercentile(ab);
+        const leadPct  = 100 - pct;
+        const isGood   = pct >= 60;
+        const lv       = computed[ab]?.level || '正常';
+        const barColor = colorMap[lv] || '#888';
+
+        // ✅ Bug 9 修正：leadLabel 改用 t()
+        const leadLabel = leadPct <= 49
+            ? t('pages.results.percentile_barely')
+            : t('pages.results.percentile_lead');
+
+        // ✅ Bug 9 修正：attNote 改用 t()
+        const attNote = (ab === 'att')
+            ? `<div style="font-size:0.78rem;color:var(--light-text);margin-top:4px;">
+                   ${t('pages.results.percentile_att_note')}
+               </div>`
+            : '';
+
+        // ✅ Bug 9 修正：badge 改用 t()
+        const badge = isGood
+            ? `<span style="background:#e8f5e9;color:#2e7d32;
+                   padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
+                   ${t('pages.results.percentile_badge_good')}
+               </span>`
+            : `<span style="background:#fff3e0;color:#e65100;
+                   padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
+                   ${t('pages.results.percentile_badge_poor')}
+               </span>`;
+
+        html += `
+            <div style="margin-bottom:20px;padding:14px;
+                 background:white;border-radius:10px;
+                 box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+                <div style="display:flex;justify-content:space-between;
+                     align-items:center;margin-bottom:8px;">
+                    <span style="font-weight:bold;">${abilityNames[ab]}</span>
+                    ${badge}
+                </div>
+                <div style="background:#f0f0f0;border-radius:20px;
+                     height:10px;overflow:hidden;margin-bottom:6px;">
+                    <div style="width:${pct}%;height:100%;
+                         background:${barColor};border-radius:20px;
+                         transition:width 0.8s ease;"></div>
+                </div>
+                <div style="font-size:0.85rem;color:var(--light-text);">
+                    ${t('pages.results.percentile_lead')} ${leadLabel}
+                    ${t('pages.results.percentile_pct_people', { pct: leadPct })} の人
+                </div>
+                ${attNote}
+            </div>`;
+    });
+
+    container.innerHTML = html;
+},
+    // ==================== 歷史記錄 ====================
+    async loadAndDisplayHistory() {
+        const container = document.getElementById('history-records');
+        if (!container) { console.warn('⚠️ 找不到 history-records 容器'); return; }
+        container.innerHTML =
+            '<p style="text-align:center;color:var(--light-text);">⏳ 載入中...</p>';
+
+        try {
+            let records = [];
+
+            if (!this.isGuest && this.currentUser && fb) {
+                console.log('📡 從 Firebase 讀取歷史記錄, uid:', this.currentUser.uid);
+                const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+                const q = fb.query(
+                    recordsRef,
+                    fb.orderByChild('timestamp'),
+                    fb.limitToLast(100)
+                );
+                const snapshot = await fb.get(q);
+                if (snapshot.exists()) {
+                    records = Object.values(snapshot.val())
+                        .sort((a, b) => b.timestamp - a.timestamp);
+                    console.log(`✅ 讀取到 ${records.length} 筆記錄`);
+                } else {
+                    console.log('ℹ️ Firebase 無歷史記錄');
+                }
+            } else {
+                console.log('📦 從 localStorage 讀取歷史記錄');
+                const raw = localStorage.getItem('guest_records');
+                if (raw) records = JSON.parse(raw).reverse();
+            }
+
+            if (records.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:30px;color:var(--light-text);">
+                        <p style="font-size:1.1rem;"> ${t('pages.results.history_empty_title')}</p>
+                        <p style="font-size:0.9rem;margin-top:8px;">
+                            ${t('pages.results.history_empty_desc')}
+                        </p>
+                    </div>`;
+                return;
+            }
+
+            this.renderHistoryTable(records, container);
+
+        } catch (err) {
+            console.error('❌ 載入歷史記錄失敗:', err);
+            container.innerHTML = `
+                <div style="text-align:center;padding:20px;">
+                    <p style="color:var(--danger-color);margin-bottom:10px;">
+                        ${t('pages.results.history_load_fail')}
+                    </p>
+                    <p style="font-size:0.9rem;color:var(--light-text);">
+                        錯誤原因：${err.message || '未知錯誤'}
+                    </p>
+                    <button class="btn btn-primary" style="margin-top:15px;"
+                        onclick="app.loadAndDisplayHistory()">
+                        ${t('pages.results.history_reload')}
+                    </button>
+                </div>`;
+        }
+    },
+
+   // ==================== 渲染歷史表格 (修正目標 ID 錯誤) ====================
+   renderHistoryTable(records, targetContainer = null) {
+       // 修正：優先使用傳入的容器，否則尋找 results 頁面的 history-records
+       const container = targetContainer || document.getElementById('history-records');
+       if (!container) return;
+
+       if (!records || records.length === 0) {
+           container.innerHTML = `
+               <div style="text-align:center;padding:40px;color:var(--light-text);">
+                   <div style="font-size:2rem;">📭</div>
+                   <div style="font-size:1.1rem;margin-top:10px;">${t('pages.results.history_empty_title')}</div>
+                   <div style="font-size:0.9rem;margin-top:6px;">${t('pages.results.history_empty_desc')}</div>
+               </div>`;
+           return;
+       }
+
+       const levelColors = {
+           '最佳表現': '#4CAF50', '良好': '#8BC34A', '正常': '#2196F3',
+           '接近正常': '#03A9F4', '待加強': '#FF9800', '不太好': '#FF5722', '需要加強': '#F44336',
+       };
+
+       let html = `
+       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+           <span style="font-size:0.9rem;color:var(--light-text);">${t('pages.results.history_count', { n: records.length })}</span>
+           <span style="font-size:0.8rem;color:var(--light-text);">${t('pages.results.history_scroll')}</span>
+       </div>
+       <div style="max-height:320px;overflow-y:auto;overflow-x:auto;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);-webkit-overflow-scrolling:touch;">
+       <table class="history-table" style="margin-top:0;">
+           <thead>
+               <tr>
+                   <th>${t('pages.results.history_col_time')}</th>
+                   <th>${t('pages.results.history_col_mem')}</th>
+                   <th>${t('pages.results.history_col_rea')}</th>
+                   <th>${t('pages.results.history_col_spa')}</th>
+               </tr>
+           </thead>
+           <tbody>`;
+
+       records.forEach((rec, idx) => {
+           const isLatest = (idx === 0);
+           const computed = rec.computed || rec.results || rec; // 修正資料結構相容性
+
+           const cell = (ab) => {
+               const lv  = (computed[ab] && computed[ab].level) ? computed[ab].level : '—';
+               const bg  = levelColors[lv] || '#888';
+               const sec = (computed[ab] && computed[ab].totalTime) ? computed[ab].totalTime : '—';
+               return `
+                   <td style="text-align:center;">
+                       <span style="display:inline-block;padding:4px 10px;border-radius:12px;background:${bg};color:white;font-size:0.8rem;font-weight:bold;">
+                           ${tLevel(lv)}
+                       </span><br>
+                       <small style="color:#666;">${sec}s</small>
+                   </td>`;
+           };
+
+           const latestBadge = isLatest ? `<span style="background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:10px;font-size:0.75rem;font-weight:bold;margin-left:6px;">${t('pages.results.history_latest_badge')}</span>` : '';
+
+           html += `
+               <tr style="${isLatest ? 'background:#f8f9ff;font-weight:bold;' : ''}">
+                   <td style="font-size:0.82rem;white-space:nowrap;">${rec.date || '—'}${latestBadge}</td>
+                   ${cell('mem')} ${cell('rea')} ${cell('spa')}
+               </tr>`;
+       });
+
+       html += `</tbody></table></div>`;
+       container.innerHTML = html;
+   },
+
+
+   // ==================== 查看歷史 (修正 Firebase 讀取與顯示位置) ====================
+   async viewHistory() {
+       // 在 Profile 頁面動態建立一個容器來顯示歷史記錄
+       let container = document.getElementById('profile-history-container');
+       if (!container) {
+           container = document.createElement('div');
+           container.id = 'profile-history-container';
+           container.style.marginTop = '25px';
+           document.getElementById('page-profile').querySelector('.card').appendChild(container);
+       }
+
+       container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">⏳ ${t('pages.results.history_loading')}</div>`;
+
+       if (!this.currentUser) {
+           container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">📭 ${t('pages.results.history_empty_title')}</div>`;
+           return;
+       }
+
+       try {
+           // 修正：改用 Realtime Database 讀取，而非 firestore
+           const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+           const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(20));
+           const snapshot = await fb.get(q);
+
+           if (!snapshot.exists()) {
+               container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">📭 ${t('pages.results.history_empty_title')}</div>`;
+               return;
+           }
+
+           const records = Object.values(snapshot.val()).sort((a, b) => b.timestamp - a.timestamp);
+           this.historyRecords = records;
+           
+           // 呼叫渲染表格，並指定渲染到這個容器
+           this.renderHistoryTable(records, container);
+
+       } catch (err) {
+           console.error('❌ 讀取歷史失敗:', err);
+           container.innerHTML = `<div style="text-align:center;padding:20px;color:#e53935;">❌ ${t('pages.results.history_load_fail_desc', { msg: err.message })}</div>`;
+       }
+   },
+
+    // ==================== 重新開始 ====================
+    restart() {
+        if (!window.confirm(t('alerts.restart_confirm'))) return;
+
+        this.testState = {
+            ability: null, level: 0, isPractice: true,
+            startTime: null, timeRemaining: 0, timerInterval: null,
+            answers: [], results: { mem:[], rea:[], spa:[], seq:[] },
+            currentSequence: [], currentTargetKey: null,
+            currentTestKey: null, currentCorrectKey: null,
+            userAnswer: null, userSequence: [],
+            currentTimeLimit: 0
+        };
+        this.currentTest           = null;
+        this.isSubmitting          = false;
+        this.isLocked              = false;
+        this.selectedMemoryElement = null;
+        this.showPage('profile');
+    }
+
+}; // ← app 物件結束
+
+// ==================== 啟動 ====================
+window.app = app;
+// ✅ 最先執行：偵測語系並載入對應 JSON
+// ✅ 正確順序
+const detectedLang = detectLang();
+console.log(`🌐 偵測到語系：${detectedLang}`);
+await fetchLang(detectedLang);
+await fetchAdviceJSON();    // ← 補回這行！
+app.init();
+
+})();
+</script>
+
+<!-- 全域錯誤捕捉 -->
+<script>
+window.addEventListener('error', e => {
+    console.error('🔴 全域錯誤:', e.message, `${e.filename}:${e.lineno}`);
+});
+window.addEventListener('unhandledrejection', e => {
+    console.error('🔴 未處理 Promise 拒絕:', e.reason);
+    e.preventDefault();
+});
+</script>
+
+</body>
+</html>
+
