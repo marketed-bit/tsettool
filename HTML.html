@@ -2987,9 +2987,8 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
         }
     },
 
-   // ==================== 渲染歷史表格 (修正目標 ID 錯誤) ====================
+// ==================== 渲染歷史表格 (修正舊記錄相容性與翻譯問題) ====================
    renderHistoryTable(records, targetContainer = null) {
-       // 修正：優先使用傳入的容器，否則尋找 results 頁面的 history-records
        const container = targetContainer || document.getElementById('history-records');
        if (!container) return;
 
@@ -3027,16 +3026,22 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
 
        records.forEach((rec, idx) => {
            const isLatest = (idx === 0);
-           const computed = rec.computed || rec.results || rec; // 修正資料結構相容性
+           
+           // ✅ 關鍵修正：將所有新舊記錄都丟給 computeRkFromRecord 重新補齊缺失的 level 與 score
+           const computed = this.computeRkFromRecord(rec);
 
            const cell = (ab) => {
-               const lv  = (computed[ab] && computed[ab].level) ? computed[ab].level : '—';
+               const lv  = computed[ab]?.level || '—';
                const bg  = levelColors[lv] || '#888';
-               const sec = (computed[ab] && computed[ab].totalTime) ? computed[ab].totalTime : '—';
+               const sec = computed[ab]?.totalTime ?? '—';
+               
+               // ✅ 關鍵修正：如果是 '—' 就不要丟給 tLevel 翻譯，避免出現 pages.level_labels.—
+               const displayLevel = (lv === '—') ? '—' : tLevel(lv);
+
                return `
                    <td style="text-align:center;">
                        <span style="display:inline-block;padding:4px 10px;border-radius:12px;background:${bg};color:white;font-size:0.8rem;font-weight:bold;">
-                           ${tLevel(lv)}
+                           ${displayLevel}
                        </span><br>
                        <small style="color:#666;">${sec}s</small>
                    </td>`;
@@ -3054,7 +3059,6 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
        html += `</tbody></table></div>`;
        container.innerHTML = html;
    },
-
 
 // ==================== 查看歷史 ====================
    async viewHistory() {
@@ -3139,4 +3143,5 @@ window.addEventListener('unhandledrejection', e => {
 
 </body>
 </html>
+
 
