@@ -483,6 +483,7 @@
             </div>
             <section class="result-section" aria-label="能力評估結果">
                 <h3 id="results-ability-section">📊 能力評估結果</h3>
+                <div id="radar-chart-container" style="margin-bottom: 30px;"></div>
                 <div id="ability-results"></div>
             </section>
             <section class="result-section" aria-label="個人化建議">
@@ -578,17 +579,14 @@ function detectLang() {
 }
 
 // ── 從 GitHub 抓語系 JSON ────────────────────────────────
-async function fetchLang(langCode) {
-    const url = `${LANG_BASE_URL}${langCode}.json`;
-    try {
-        setStatus(langCode === 'ja'
-            ? '言語ファイルを読み込み中...'
-            : '載入語系資源...'
-        );
-        const res = await fetch(url, {
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json; charset=utf-8' }
-        });
+async function fetchLang(langCode) { 
+if (i18n && i18n.meta?.lang === langCode) return i18n; // 1. 已載入則跳過 
+const url = `${LANG_BASE_URL}${langCode}.json`; 
+try { 
+const res = await fetch(url, { 
+cache: 'default', // 2. 允許使用快取 
+headers: { 'Accept': 'application/json; charset=utf-8' } 
+});
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const buffer  = await res.arrayBuffer();
@@ -657,16 +655,13 @@ const ADVICE_JSON_URL =
 
 let ADVICE_JSON = null;
 
-async function fetchAdviceJSON() {
-    if (ADVICE_JSON) return ADVICE_JSON;
-    try {
-        // ✅ 載入提示文字：優先使用已載入的語系，否則用硬編碼備用
-        setStatus(t('loading.advice_json'));
-
-        const res = await fetch(ADVICE_JSON_URL, {
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json; charset=utf-8' }
-        });
+async function fetchAdviceJSON() { 
+if (ADVICE_JSON) return ADVICE_JSON; // 3. 已載入則不再請求 
+try { 
+const res = await fetch(ADVICE_JSON_URL, { 
+cache: 'default', // 4. 允許使用快取 
+headers: { 'Accept': 'application/json; charset=utf-8' } 
+});
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const buffer  = await res.arrayBuffer();
@@ -2575,36 +2570,27 @@ computeRkFromRecord(record) {
 
 // ==================== 顯示結果 (修正版) ====================
 displayResults(computed) {
-    // 1. 修正：對應正確的頁面 ID
     const page = document.getElementById('page-results');
     if (!page) return;
 
-    // 2. 更新使用者資訊與時間
+    // 更新個人資訊
     const userInfoEl = document.getElementById('result-user-info');
-    if (userInfoEl) {
-        userInfoEl.textContent = t('pages.results.user_info', {
-            nickname: this.userData.nickname,
-            age:      this.userData.age,
-        });
-    }
+    if (userInfoEl) userInfoEl.textContent = t('pages.results.user_info', { nickname: this.userData.nickname, age: this.userData.age });
 
     const testTimeEl = document.getElementById('result-datetime');
-    if (testTimeEl) {
-        testTimeEl.textContent = t('pages.results.test_time', {
-            datetime: new Date().toLocaleString(),
-        });
-    }
+    if (testTimeEl) testTimeEl.textContent = t('pages.results.test_time', { datetime: new Date().toLocaleString() });
 
-    // 3. 呼叫子模組渲染
+    // ── 子模組渲染 ──
     this.renderAbilityResults(computed);
     
-    // 修正：將 this.adviceData 改為 ADVICE_JSON
+    // 【補上這行】渲染雷達圖
+    this.renderRadarChart(computed, this.userData.age); 
+
     this.renderRecommendations(computed, ADVICE_JSON);
-    
     this.renderPercentileInfo(computed, this.userData.age, this.userData.gender);
     this.loadAndDisplayHistory();
 
-    // 4. 使用統一的切換頁面函式
+    // 切換到結果頁面
     this.showPage('results');
 },
 
@@ -3079,44 +3065,28 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })} の人
 
    // ==================== 查看歷史 (修正 Firebase 讀取與顯示位置) ====================
    async viewHistory() {
-       // 在 Profile 頁面動態建立一個容器來顯示歷史記錄
-       let container = document.getElementById('profile-history-container');
-       if (!container) {
-           container = document.createElement('div');
-           container.id = 'profile-history-container';
-           container.style.marginTop = '25px';
-           document.getElementById('page-profile').querySelector('.card').appendChild(container);
-       }
+    if (!this.currentUser) return;
+    try {
+        const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+        const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(1)); // 只取最新一筆
+        const snapshot = await fb.get(q);
 
-       container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">⏳ ${t('pages.results.history_loading')}</div>`;
-
-       if (!this.currentUser) {
-           container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">📭 ${t('pages.results.history_empty_title')}</div>`;
-           return;
-       }
-
-       try {
-           // 修正：改用 Realtime Database 讀取，而非 firestore
-           const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
-           const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(20));
-           const snapshot = await fb.get(q);
-
-           if (!snapshot.exists()) {
-               container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--light-text);">📭 ${t('pages.results.history_empty_title')}</div>`;
-               return;
-           }
-
-           const records = Object.values(snapshot.val()).sort((a, b) => b.timestamp - a.timestamp);
-           this.historyRecords = records;
-           
-           // 呼叫渲染表格，並指定渲染到這個容器
-           this.renderHistoryTable(records, container);
-
-       } catch (err) {
-           console.error('❌ 讀取歷史失敗:', err);
-           container.innerHTML = `<div style="text-align:center;padding:20px;color:#e53935;">❌ ${t('pages.results.history_load_fail_desc', { msg: err.message })}</div>`;
-       }
-   },
+        if (snapshot.exists()) {
+            const records = Object.values(snapshot.val());
+            const latestRecord = records[0];
+            
+            // 1. 利用現有的工具重算 Rk 與等級
+            const computed = this.computeRkFromRecord(latestRecord);
+            
+            // 2. 呼叫 displayResults，這會自動切換到結果頁並顯示雷達圖與建議
+            this.displayResults(computed); 
+        } else {
+            alert(t('pages.results.history_empty_title'));
+        }
+    } catch (err) {
+        console.error('❌ 讀取歷史失敗:', err);
+    }
+},
 
     // ==================== 重新開始 ====================
     restart() {
