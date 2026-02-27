@@ -1,0 +1,61 @@
+{
+  "module_a_performance": {
+    "stage_1_foundation": {
+      "L1_best": "Your cognitive ability shows an excellent foundation. Your information processing is fast and your learning efficiency is high. Keep up this advantage and continue to challenge yourself with more difficult tasks.",
+      "L2_good": "Overall good results, showing great mental flexibility. You can easily handle daily learning and problem-solving. Maintain this momentum.",
+      "L3_normal": "Your cognitive function is at the standard level for your age. Your current foundation is stable. Try adding slightly more complex tasks to further improve your abilities.",
+      "L4_near_normal": "Basic cognitive functions are maintained, but your performance might drop when faced with heavy information loads or fatigue. Proper rest and regular brain training are recommended.",
+      "L5_needs_improvement": "There is a slight delay in information processing in some cognitive areas. You might feel easily fatigued during tasks requiring long focus. Start by concentrating on one task at a time without rushing.",
+      "L6_poor": "You seem to be feeling somewhat burdened by cognitive tasks right now. Avoid multitasking, break information down into smaller pieces, and ensure you get adequate sleep and brain nutrition.",
+      "L7_needs_much_improvement": "Your cognitive response has decreased significantly. This could be due to stress, fatigue, or lack of sleep. Ensure you get plenty of rest first, and consider a professional evaluation if needed."
+    },
+    "stage_2_transition": {
+      "L1_best": "You are maintaining fantastic cognitive vitality! Your information processing and logical thinking are outstanding, making them strong assets in your work and life.",
+      "L2_good": "You are maintaining high levels of cognitive flexibility and efficiency. You handle daily work and multitasking well. Continue to keep a balanced lifestyle.",
+      "L3_normal": "Your cognitive function is healthy and stable, well within the normal range of natural age-related changes. Continuously learning new skills will help keep your brain youthful.",
+      "L4_near_normal": "You might occasionally feel like you 'forget things easily' or 'react a bit slowly' at work. This is a sign of an overloaded brain. Pay attention to stress management and relaxation.",
+      "L5_needs_improvement": "Have you noticed a drop in concentration or mental blocks recently? Your cognitive functions are signaling fatigue. Adjust your work pace and make time for effective brain rest.",
+      "L6_poor": "Cognitive decline may be starting to affect your daily life and work efficiency. It is highly recommended to review your brain training habits and incorporate a regular lifestyle and exercise.",
+      "L7_needs_much_improvement": "There is a noticeable decline in cognitive function. This may be influenced by health conditions or excessive stress. Improve your lifestyle habits early and consult a medical professional if necessary."
+    },
+    "stage_3_senior": {
+      "L1_best": "Your brain health is top-tier among your peers! You maintain very clear thinking and memory. Keep enjoying an active lifestyle.",
+      "L2_good": "Your brain function is in good condition, helping you maintain independence and vitality in your daily life. Continue to value social connections and provide good stimulation for your brain.",
+      "L3_normal": "Your cognitive function is natural for your age. There are no issues with your daily life. Maintain your current abilities through brain training games and hobbies.",
+      "L4_near_normal": "You might recently feel that you misplace items or can't recall words quickly. This is a common change with aging, but conscious brain training can bring improvements.",
+      "L5_needs_improvement": "A slight decline in cognitive function is becoming noticeable. Try using memos in your daily life and consciously increase activities that use your brain (like reading or puzzles).",
+      "L6_poor": "You might be facing increasing difficulties with memory or spatial awareness. We recommend communicating more with family and doing regular cognitive training in a safe environment.",
+      "L7_needs_much_improvement": "There is a significant decline in cognitive function, and its impact on daily life is a concern. We strongly recommend early consultation with a specialist and creating a proper care plan."
+    }
+  },
+  "module_b_weakness": {
+    "mem": {
+      "stage_1_foundation": "[Memory Enhancement Needed]\nHave you recently found yourself forgetting what you were just about to do? Short-term memory is the gateway to information processing. Practice repeating information out loud or linking it with visual images.",
+      "stage_2_transition": "[Memory Enhancement Needed]\nAre you experiencing more 'Where did I put that?' or 'What was their name?' moments? This is a sign of declining working memory. Make a habit of taking notes and promote memory consolidation with high-quality sleep.",
+      "stage_3_senior": "[Memory Enhancement Needed]\nDo you feel it takes longer to learn new things lately? Memory weakens if not used. Try keeping a journal or making a habit of recalling yesterday's events to stimulate your brain's memory network."
+    },
+    "rea": {
+      "stage_1_foundation": "[Reaction Enhancement Needed]\nDo you ever hesitate in your decisions or have delayed reactions? Reaction time is crucial not just for sports or driving, but for quick problem-solving. Train your hand-eye coordination with sports or action games.",
+      "stage_2_transition": "[Reaction Enhancement Needed]\nDo you feel your processing speed at work has slowed down? This might be due to information overload or brain fatigue. Try 'single-tasking'—handling one thing at a time—to help restore your brain's processing speed.",
+      "stage_3_senior": "[Reaction Enhancement Needed]\nHave you noticed your split-second decisions or movements have become slower? Slower reaction times increase the risk of falls. Incorporate brisk walking into your strolls or do simple exercises to maintain nerve-muscle coordination."
+    },
+    "spa": {
+      "stage_1_foundation": "[Spatial Ability Enhancement Needed]\nDo you have a poor sense of direction or struggle with geometry? Spatial ability is the foundation of logical thinking and creativity. Practice rotating objects in your mind using puzzles, building blocks, or 3D games.",
+      "stage_2_transition": "[Spatial Ability Enhancement Needed]\nDo you get lost easily in new places or struggle with parking your car? Don't rely solely on navigation apps. Consciously use your spatial awareness by picturing the map in your head to reach your destination.",
+      "stage_3_senior": "[Spatial Ability Enhancement Needed]\nAre you getting lost more often or having trouble judging distances? This is an important skill for safe living. Try changing your usual walking route or rearranging your room to give your brain new spatial stimulation."
+    }
+  },
+  "module_c_call_to_action": {
+    "toddler": "The brain is in its golden age of development! Stimulate the five senses through daily play and exercise to happily nurture cognitive abilities.",
+    "child": "This is a period of rapid learning growth. Actively try things that interest you and learn the joy of thinking without fear of failure.",
+    "teen": "A crucial time for developing logical thinking and planning. Diverse experiences in sports, arts, and studies will enrich your brain's network.",
+    "young_adult": "Your brain functions are peaking. Continue learning new skills and challenging difficult tasks to maximize your potential.",
+    "pre_middle": "Work-life balance is key. Managing stress properly and ensuring high-quality sleep will help you maintain top performance.",
+    "middle": "Your brain is full of experience and wisdom, but fatigue accumulates easily. Make regular exercise and brain training a habit to keep your brain young.",
+    "senior_1": "A new stage of life. Staying connected with society through hobbies or volunteering is the best brain training.",
+    "senior_2": "Small daily habits build brain health. Introduce variety into your life by trying new recipes or growing plants.",
+    "senior_3": "Keep moving your mind and body within a comfortable range. Joyful conversations with family and friends are the best nourishment for your brain.",
+    "senior_4": "It's important to spend your days peacefully with a smile. Refresh your mind and brain by sharing old memories and enjoying music.",
+    "oldest": "Value every day and stay relaxed. Warm communication with those around you provides gentle stimulation for your brain."
+  }
+}
