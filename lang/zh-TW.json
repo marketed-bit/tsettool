@@ -295,10 +295,122 @@
     "seq_done": "✅ 數字順序測驗完成！\n接下來進行空間能力測驗",
     "spa_done": "🎉 所有測驗完成！\n正在計算結果..."
   },
+{
+  "alerts": {
+    "save_fail": "⚠️ 結果儲存失敗，但您仍可查看本次成績",
+    "advice_fallback": "繼續保持練習，定期測驗追蹤進步！"
+  },
+  "pages": {
+    "level_labels": {
+      "最佳表現": "最佳表現",
+      "良好":     "良好",
+      "正常":     "正常",
+      "接近正常": "接近正常",
+      "待加強":   "待加強",
+      "不太好":   "不太好",
+      "需要加強": "需要加強"
+    },
+    "results": {
+      "ability_names": {
+        "mem": "🧠 記憶力",
+        "rea": "⚡ 反應力",
+        "spa": "🔄 空間能力",
+        "att": "🎯 專注力"
+      },
+      "total_time":    "總用時",
+      "correct":       "正確數",
+      "history_count":         "共 {n} 筆記錄",
+      "history_scroll":        "← 左右滑動查看 →",
+      "history_col_time":      "測驗時間",
+      "history_col_mem":       "記憶力",
+      "history_col_rea":       "反應力",
+      "history_col_spa":       "空間能力",
+      "history_latest_badge":  "最新",
+      "history_empty_title":   "📭 尚無測驗記錄",
+      "history_empty_desc":    "完成測驗後記錄將會顯示在這裡",
+      "history_loading":       "⏳ 載入歷史記錄中...",
+      "history_latest_summary": "最新測驗：{date}（共 {count} 筆記錄）",
+      "history_load_fail_title": "歷史成績查詢（讀取失敗）",
+      "history_load_fail_desc":  "❌ 讀取最新記錄失敗：{msg}",
+      "recommend_basis":     "根據您本次最低分能力提供個人化建議",
+      "recommend_focus":     "重點改善項目",
+      "recommend_closing_1": "大腦是可塑的！透過規律練習，各項認知能力都能持續進步。",
+      "recommend_closing_2": "建議每天花 10–15 分鐘進行針對性練習，持續 4 週後再次測驗，觀察自己的成長。",
+      "recommend_closing_3": "💪 加油！您的進步從今天開始。",
+      "percentile_range":       "{range} 歲常模比較",
+      "percentile_hint_1":      "百分位越高，代表您的表現優於越多同齡人。",
+      "percentile_hint_2":      "例：第 80 百分位 = 贏過 80% 的同齡受測者。",
+      "percentile_barely":      "僅領先",
+      "percentile_lead":        "領先",
+      "percentile_pct_people":  "{pct}%",
+      "percentile_att_note":    "專注力由記憶力、反應力、空間能力綜合計算",
+      "percentile_badge_good":  "✓ 達標",
+      "percentile_badge_poor":  "需加強",
+      "radar_title":            "📡 能力雷達圖",
+      "radar_subtitle":         "虛線基準 = {age} 歲常模（70% 處）｜紅色 = 本次表現｜超過基準線表示優於同齡",
+      "radar_legend_base":      "{age} 歲常模基準",
+      "radar_legend_user":      "本次表現",
+      "radar_mem_label":        "記憶",
+      "radar_rea_label":        "反應",
+      "radar_spa_label":        "空間",
+      "radar_att_label":        "專注",
+      "radar_device_note":      "本次使用裝置：{device}",
+      "user_info":              "{nickname}（{age} 歲）",
+      "test_time":              "測驗時間：{datetime}"
+    },
+    "instructions": {
+      "practice_hint": "💡 正式測驗前可先熟悉操作流程，練習不計入記錄。",
+      "btn_practice":  "開始練習",
+      "mem": {
+        "title":     "🧠 記憶力測驗說明",
+        "how_label": "📋 測驗方式",
+        "steps": [
+          "畫面會依序顯示 {min}～{max} 個數字",
+          "請在數字消失後，按照順序點選對應的數字方塊",
+          "全部答對即進入下一輪，答錯則測驗結束",
+          "共進行 5 輪，系統記錄您的反應速度與準確率"
+        ],
+        "tip": "專注觀看每個數字出現的位置，用心記住順序，不要慌張。"
+      },
+      "rea": {
+        "title":     "⚡ 反應力測驗說明",
+        "how_label": "📋 測驗方式",
+        "steps": [
+          "畫面會隨機出現刺激信號（顏色、形狀或數字）",
+          "看到目標信號時，請盡快點擊畫面",
+          "系統記錄您每次的反應時間（毫秒）",
+          "共進行 10 次，計算平均反應速度"
+        ],
+        "tip": "保持注意力集中，手指懸停在畫面上方可縮短反應時間。"
+      },
+      "seq": {
+        "title":     "🔢 序列記憶說明",
+        "how_label": "📋 測驗方式",
+        "steps": [
+          "畫面依序亮起格子，請記住亮起的順序",
+          "結束後按照相同順序點選格子",
+          "每輪成功後序列長度增加",
+          "答錯即結束，記錄最長序列長度"
+        ],
+        "tip": "嘗試將序列拆成 2–3 個一組來記憶，效果更佳。"
+      },
+      "spa": {
+        "title":     "🔄 空間能力測驗說明",
+        "how_label": "📋 測驗方式",
+        "steps": [
+          "畫面顯示一組空間圖形或矩陣題目",
+          "請判斷旋轉後的圖形是否與原圖相同",
+          "點選「相同」或「不同」回答",
+          "共 8 題，計算正確率與平均用時"
+        ],
+        "tip": "在腦中想像圖形旋轉的過程，不要只看表面特徵。"
+      }
+    }
+  },
   "device_labels": {
-    "tablet": "平板",
-    "mobile": "手機",
-    "tablet_mobile": "平板/手機",
+    "mobile":  "手機",
+    "tablet":  "平板",
     "desktop": "電腦"
   }
 }
+
