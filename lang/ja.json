@@ -295,10 +295,122 @@
     "seq_done": "✅ 数字順序テスト完了！\n次は空間能力テストです",
     "spa_done": "🎉 すべてのテスト完了！\n結果を計算中..."
   },
+{
+  "alerts": {
+    "save_fail": "⚠️ 結果の保存に失敗しましたが、今回のスコアは確認できます",
+    "advice_fallback": "練習を続けて、定期的にテストで成長を確認しましょう！"
+  },
+  "pages": {
+    "level_labels": {
+      "最佳表現": "最高の結果",
+      "良好":     "良好",
+      "正常":     "普通",
+      "接近正常": "やや普通",
+      "待加強":   "要改善",
+      "不太好":   "あまり良くない",
+      "需要加強": "要強化"
+    },
+    "results": {
+      "ability_names": {
+        "mem": "🧠 記憶力",
+        "rea": "⚡ 反応力",
+        "spa": "🔄 空間認識",
+        "att": "🎯 集中力"
+      },
+      "total_time":    "合計時間",
+      "correct":       "正解数",
+      "history_count":         "{n} 件の記録",
+      "history_scroll":        "← 左右にスクロール →",
+      "history_col_time":      "テスト日時",
+      "history_col_mem":       "記憶力",
+      "history_col_rea":       "反応力",
+      "history_col_spa":       "空間認識",
+      "history_latest_badge":  "最新",
+      "history_empty_title":   "📭 テスト記録がありません",
+      "history_empty_desc":    "テスト完了後、記録がここに表示されます",
+      "history_loading":       "⏳ 履歴を読み込んでいます...",
+      "history_latest_summary": "最新テスト：{date}（全 {count} 件）",
+      "history_load_fail_title": "履歴照会（読み込み失敗）",
+      "history_load_fail_desc":  "❌ 最新記録の読み込みに失敗しました：{msg}",
+      "recommend_basis":     "最も低いスコアの能力に基づき個別アドバイスを提供",
+      "recommend_focus":     "重点改善項目",
+      "recommend_closing_1": "脳は変化できます！定期的な練習で認知能力は向上します。",
+      "recommend_closing_2": "毎日10〜15分の集中練習を4週間続けた後、再テストで成長を確認しましょう。",
+      "recommend_closing_3": "💪 今日から始めましょう！",
+      "percentile_range":       "{range} 歳の基準との比較",
+      "percentile_hint_1":      "パーセンタイルが高いほど、同年代より優れていることを示します。",
+      "percentile_hint_2":      "例：80パーセンタイル = 同年代の80%より優れています。",
+      "percentile_barely":      "わずかに上回る",
+      "percentile_lead":        "上回る",
+      "percentile_pct_people":  "{pct}%",
+      "percentile_att_note":    "集中力は記憶力・反応力・空間認識の総合評価です",
+      "percentile_badge_good":  "✓ 達成",
+      "percentile_badge_poor":  "要強化",
+      "radar_title":            "📡 能力レーダーチャート",
+      "radar_subtitle":         "破線 = {age} 歳の基準（70%位置）｜赤 = 今回の結果｜基準超えは同年代より優秀",
+      "radar_legend_base":      "{age} 歳の基準",
+      "radar_legend_user":      "今回の結果",
+      "radar_mem_label":        "記憶",
+      "radar_rea_label":        "反応",
+      "radar_spa_label":        "空間",
+      "radar_att_label":        "集中",
+      "radar_device_note":      "使用デバイス：{device}",
+      "user_info":              "{nickname}（{age} 歳）",
+      "test_time":              "テスト日時：{datetime}"
+    },
+    "instructions": {
+      "practice_hint": "💡 本番前に操作に慣れるため練習できます。練習は記録されません。",
+      "btn_practice":  "練習を始める",
+      "mem": {
+        "title":     "🧠 記憶力テストの説明",
+        "how_label": "📋 テスト方法",
+        "steps": [
+          "{min}〜{max} 個の数字が順番に表示されます",
+          "数字が消えた後、順番通りに数字ブロックをタップしてください",
+          "全正解で次のラウンドへ、間違えるとテスト終了です",
+          "全5ラウンド、反応速度と正解率を記録します"
+        ],
+        "tip": "各数字の位置に集中し、順番をしっかり覚えましょう。焦らないことが大切です。"
+      },
+      "rea": {
+        "title":     "⚡ 反応力テストの説明",
+        "how_label": "📋 テスト方法",
+        "steps": [
+          "画面にランダムで刺激信号（色・形・数字）が表示されます",
+          "目標信号が表示されたら、できるだけ素早くタップしてください",
+          "毎回の反応時間（ミリ秒）を記録します",
+          "全10回の平均反応速度を計算します"
+        ],
+        "tip": "集中力を保ち、画面の上に指をかざしておくと反応時間を短縮できます。"
+      },
+      "seq": {
+        "title":     "🔢 シーケンス記憶の説明",
+        "how_label": "📋 テスト方法",
+        "steps": [
+          "マスが順番に光ります。光った順番を記憶してください",
+          "終了後、同じ順番でマスをタップしてください",
+          "成功するとシーケンスの長さが増えます",
+          "間違えるとテスト終了。最長シーケンス長を記録します"
+        ],
+        "tip": "シーケンスを2〜3個のグループに分けて記憶すると効果的です。"
+      },
+      "spa": {
+        "title":     "🔄 空間認識テストの説明",
+        "how_label": "📋 テスト方法",
+        "steps": [
+          "空間図形やマトリクス問題が表示されます",
+          "回転後の図形が元の図形と同じかどうかを判断してください",
+          "「同じ」または「違う」をタップして回答",
+          "全8問、正解率と平均時間を記録します"
+        ],
+        "tip": "図形が回転する様子を頭の中でイメージしましょう。表面的な特徴だけで判断しないようにしましょう。"
+      }
+    }
+  },
   "device_labels": {
-    "tablet": "タブレット",
-    "mobile": "スマートフォン",
-    "tablet_mobile": "タブレット/スマートフォン",
+    "mobile":  "スマートフォン",
+    "tablet":  "タブレット",
     "desktop": "パソコン"
   }
 }
+
