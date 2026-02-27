@@ -556,6 +556,9 @@ const LANG_MAP = {
     'zh':    'zh-TW',
     'ja':    'ja',
     'ja-JP': 'ja',
+    'en':    'en',       // ✅ 新增英文支援
+    'en-US': 'en',
+    'en-GB': 'en'
 };
 
 const FALLBACK_LANG = 'zh-TW';
@@ -650,14 +653,19 @@ function ta(path) {
 
 // ==================== Advice JSON（建議文字）====================
 
+// ==================== Advice JSON（建議文字）====================
+
 let ADVICE_JSON = null;
 
 async function fetchAdviceJSON() { 
     if (ADVICE_JSON) return ADVICE_JSON; // 已載入則不再請求 
     
-    // ✅ 動態判斷要抓取哪一個檔案：如果是日文就抓 advice_ja.json，否則抓 advice.json
+    // ✅ 動態判斷要抓取哪一個檔案：日文抓 ja，英文抓 en，否則預設中文
     const currentLang = (i18n && i18n.meta && i18n.meta.lang) ? i18n.meta.lang : 'zh-TW';
-    const fileName = (currentLang === 'ja') ? 'advice_ja.json' : 'advice.json';
+    let fileName = 'advice.json'; // 預設繁體中文
+    if (currentLang === 'ja') fileName = 'advice_ja.json';
+    if (currentLang === 'en') fileName = 'advice_en.json'; // ✅ 支援英文
+    
     const adviceUrl = `https://raw.githubusercontent.com/marketed-bit/tsettool/main/${fileName}`;
 
     try { 
@@ -1011,7 +1019,7 @@ try {
 
     setStatus('連線 Firebase...');
     const firebaseConfig = {
-        apiKey:            "QQ",
+        apiKey:            "AIzaSyCGVl6iHyWJXGMqCqq8DR2EHCoI5G2CTto",
         authDomain:        "login.wusbrain.com",
         databaseURL:       "https://testtool-cc280-default-rtdb.firebaseio.com",
         projectId:         "testtool-cc280",
@@ -2422,80 +2430,85 @@ _rkToLevel(Rk) {
 },
 
 // ==================== 儲存測驗記錄 ====================
-async saveTestRecord(computed) {
-    if (!this.currentUser && this.isGuest == false) return; 
-    
-    // 組裝要儲存的完整 record 物件
-    const record = {
-        uid:        this.currentUser ? this.currentUser.uid : 'guest',
-        nickname:  this.userData.nickname,
-        age:        this.userData.age,
-        gender:     this.userData.gender,
-        date:       new Date().toLocaleString(),
-        timestamp:  Date.now(), 
-        deviceMult: this.userData.deviceMult || 1.0,
-        results: {
-            mem: computed.mem,
-            att: computed.att,
-            rea: {
-                totalTime:    computed.rea.totalTime,
-                correctCount: computed.rea.correctCount,
-                totalCount:   computed.rea.totalCount,
-                seqTime:      computed.rea._seqTime ?? 0,
-                reaRk:        computed.rea._reaRk ?? null,
-                seqRk:        computed.rea._seqRk ?? null,
-                combinedRk:   computed.rea.Rk ?? null,
-                level:        computed.rea.level,
-                score:        computed.rea.score
-            },
-            spa: {
-                totalTime:    computed.spa.totalTime,
-                correctCount: computed.spa.correctCount,
-                totalCount:   computed.spa.totalCount,
-                level:        computed.spa.level,
-                score:        computed.spa.score
+// ==================== 儲存測驗記錄 ====================
+    async saveTestRecord(computed) {
+        if (!this.currentUser && this.isGuest == false) return; 
+        
+        const record = {
+            uid:        this.currentUser ? this.currentUser.uid : 'guest',
+            nickname:  this.userData.nickname,
+            age:        this.userData.age,
+            gender:     this.userData.gender,
+            date:       new Date().toLocaleString(),
+            timestamp:  Date.now(), 
+            deviceMult: this.userData.deviceMult || 1.0,
+            results: {
+                mem: computed.mem,
+                att: computed.att,
+                rea: {
+                    totalTime:    computed.rea.totalTime,
+                    correctCount: computed.rea.correctCount,
+                    totalCount:   computed.rea.totalCount,
+                    seqTime:      computed.rea._seqTime ?? 0,
+                    reaRk:        computed.rea._reaRk ?? null,
+                    seqRk:        computed.rea._seqRk ?? null,
+                    combinedRk:   computed.rea.Rk ?? null,
+                    level:        computed.rea.level,
+                    score:        computed.rea.score
+                },
+                spa: {
+                    totalTime:    computed.spa.totalTime,
+                    correctCount: computed.spa.correctCount,
+                    totalCount:   computed.spa.totalCount,
+                    level:        computed.spa.level,
+                    score:        computed.spa.score
+                }
+            }
+        };
+
+        const publicRecord = {
+            age:        record.age,
+            gender:     record.gender,
+            timestamp:  record.timestamp,
+            deviceMult: record.deviceMult,
+            results:    record.results
+        };
+
+        const cleanRecord = JSON.parse(JSON.stringify(record));
+        const cleanPublicRecord = JSON.parse(JSON.stringify(publicRecord));
+
+        if (!this.isGuest && this.currentUser && fb) {
+            // ── 登入狀態：存入 Firebase ──
+            try {
+                const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+                await fb.push(recordsRef, cleanRecord);
+
+                const publicRef = fb.ref(fb.database, 'public_records');
+                await fb.push(publicRef, cleanPublicRecord);
+
+                const userRef = fb.ref(fb.database, `users/${this.currentUser.uid}`);
+                await fb.update(userRef, { lastTestDate: cleanRecord.date });
+
+                console.log('✅ Firebase 儲存完成（個人記錄 + 公共統計）');
+            } catch (err) {
+                console.error('❌ Firebase 儲存失敗:', err);
+                alert(t('alerts.save_fail'));
+            }
+        } else {
+            // ── 訪客狀態：存入 LocalStorage ──
+            try {
+                const arr = JSON.parse(localStorage.getItem('guest_records') || '[]');
+                arr.push(cleanRecord);
+                if (arr.length > 10) arr.shift();
+                localStorage.setItem('guest_records', JSON.stringify(arr));
+                console.log('✅ localStorage 儲存完成（訪客記錄）');
+            } catch (err) {
+                // 📱 解決手機版 LINE/FB 內建瀏覽器阻擋 LocalStorage 的問題
+                console.warn('⚠️ 瀏覽器阻擋了本地儲存 (可能是無痕模式或內建瀏覽器)。成績不會保存，但可繼續查看畫面。', err);
+                // 不再跳出討厭的警告視窗，讓流程直接順利進入結果頁
             }
         }
-    };
-
-    const publicRecord = {
-        age:        record.age,
-        gender:     record.gender,
-        timestamp:  record.timestamp,
-        deviceMult: record.deviceMult,
-        results:    record.results
-    };
-
-    // 🌟 終極防呆：利用 JSON 轉換特性，自動剔除所有 undefined 的屬性，確保 Firebase 絕對不報錯
-    const cleanRecord = JSON.parse(JSON.stringify(record));
-    const cleanPublicRecord = JSON.parse(JSON.stringify(publicRecord));
-
-    try {
-        if (!this.isGuest && this.currentUser && fb) {
-            // 存入 Firebase Realtime Database
-            const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
-            await fb.push(recordsRef, cleanRecord);
-
-            const publicRef = fb.ref(fb.database, 'public_records');
-            await fb.push(publicRef, cleanPublicRecord);
-
-            const userRef = fb.ref(fb.database, `users/${this.currentUser.uid}`);
-            await fb.update(userRef, { lastTestDate: cleanRecord.date });
-
-            console.log('✅ Firebase 儲存完成（個人記錄 + 公共統計）');
-        } else {
-            // 訪客存入 LocalStorage
-            const arr = JSON.parse(localStorage.getItem('guest_records') || '[]');
-            arr.push(cleanRecord);
-            if (arr.length > 10) arr.shift();
-            localStorage.setItem('guest_records', JSON.stringify(arr));
-            console.log('✅ localStorage 儲存完成（訪客記錄）');
-        }
-    } catch (err) {
-        console.error('❌ 儲存失敗:', err);
-        alert(t('alerts.save_fail'));
-    }
-},
+    },
 
     // ==================== 即時重算 Rk ====================
 // ==================== 即時重算 Rk ====================
