@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="認知能力測驗系統 - 評估記憶力、反應力和空間能力">
     <meta name="theme-color" content="#4a90e2">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+    
     <title>認知能力測驗系統</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2496,77 +2494,75 @@ async saveTestRecord(computed) {
 },
 
     // ==================== 即時重算 Rk ====================
-computeRkFromRecord(record) {
-    const age        = record.age;
-    const deviceMult = record.deviceMult || 1.0;
+// ==================== 即時重算 Rk ====================
+    computeRkFromRecord(record) {
+        const age        = record.age;
+        const deviceMult = record.deviceMult || 1.0;
+        const computed   = {};
+        const calcScore  = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 45)));
 
-    const computed = {};
-
-    // ── mem ───────────────────────────────────────────────────
-    {
-        const totalTime = record.results.mem?.totalTime ?? 0;
-        const norm      = CONFIG.BASE_RK.mem * deviceMult;
-        const Rk        = parseFloat((totalTime / norm).toFixed(3));
+        // ── mem ──
+        const memTotalTime = record.results?.mem?.totalTime ?? 0;
+        const memNorm      = CONFIG.BASE_RK.mem * deviceMult;
+        const memRk        = record.results?.mem?.Rk ?? parseFloat((memTotalTime / memNorm).toFixed(3));
         computed.mem = {
-            totalTime,
-            correctCount: record.results.mem?.correctCount ?? '—',
-            totalCount:   record.results.mem?.totalCount   ?? '—',
-            norm:         parseFloat(norm.toFixed(2)),
-            Rk,
-            level: this._rkToLevel(Rk),
+            totalTime:    memTotalTime,
+            correctCount: record.results?.mem?.correctCount ?? '—',
+            totalCount:   record.results?.mem?.totalCount   ?? '—',
+            norm:         parseFloat(memNorm.toFixed(2)),
+            Rk:           memRk,
+            level:        this._rkToLevel(memRk),
+            score:        record.results?.mem?.score ?? calcScore(memRk)
         };
-    }
 
-    // ── spa ───────────────────────────────────────────────────
-    {
-        const totalTime = record.results.spa?.totalTime ?? 0;
-        const norm      = getReaSpaBaseRk(age, 'spa') * deviceMult;
-        const Rk        = parseFloat((totalTime / norm).toFixed(3));
+        // ── spa ──
+        const spaTotalTime = record.results?.spa?.totalTime ?? 0;
+        const spaNorm      = getReaSpaBaseRk(age, 'spa') * deviceMult;
+        const spaRk        = record.results?.spa?.Rk ?? parseFloat((spaTotalTime / spaNorm).toFixed(3));
         computed.spa = {
-            totalTime,
-            correctCount: record.results.spa?.correctCount ?? '—',
-            totalCount:   record.results.spa?.totalCount   ?? '—',
-            norm:         parseFloat(norm.toFixed(2)),
-            Rk,
-            level: this._rkToLevel(Rk),
+            totalTime:    spaTotalTime,
+            correctCount: record.results?.spa?.correctCount ?? '—',
+            totalCount:   record.results?.spa?.totalCount   ?? '—',
+            norm:         parseFloat(spaNorm.toFixed(2)),
+            Rk:           spaRk,
+            level:        this._rkToLevel(spaRk),
+            score:        record.results?.spa?.score ?? calcScore(spaRk)
         };
-    }
 
-    // ── rea（優先使用已儲存的 Rk，其次重算）────────────────
-    {
-        const reaData = record.results.rea ?? {};
-
-        let finalRk;
-
-        if (reaData.combinedRk != null) {
-            // ✅ 新格式：直接使用 Firebase 儲存的合併 Rk
-            finalRk = reaData.combinedRk;
-            console.log(`📦 rea 使用 Firebase combinedRk: ${finalRk}`);
-
-        } else if (reaData.reaRk != null && reaData.seqRk != null) {
-            // ✅ 有分開的 Rk：直接平均
-            finalRk = parseFloat(((reaData.reaRk + reaData.seqRk) / 2).toFixed(3));
-            console.log(`📦 rea 用 reaRk(${reaData.reaRk}) + seqRk(${reaData.seqRk}) 平均: ${finalRk}`);
-
-        } else {
-            // ⚠️ 舊格式相容：只有 totalTime，用舊方式計算（僅反應力，無 seq）
-            const totalTime = reaData.totalTime ?? 0;
-            const norm      = getReaSpaBaseRk(age, 'rea') * deviceMult;
-            finalRk         = parseFloat((totalTime / norm).toFixed(3));
-            console.log(`⚠️ rea 舊格式相容計算 totalTime=${totalTime}, norm=${norm}, Rk=${finalRk}`);
+        // ── rea ──
+        const reaData = record.results?.rea ?? {};
+        let finalRk = reaData.combinedRk;
+        if (finalRk == null) {
+            if (reaData.reaRk != null && reaData.seqRk != null) finalRk = parseFloat(((reaData.reaRk + reaData.seqRk) / 2).toFixed(3));
+            else {
+                const totalTime = reaData.totalTime ?? 0;
+                const norm      = getReaSpaBaseRk(age, 'rea') * deviceMult;
+                finalRk         = parseFloat((totalTime / norm).toFixed(3));
+            }
         }
-
         computed.rea = {
             totalTime:    reaData.totalTime    ?? 0,
             correctCount: reaData.correctCount ?? '—',
             totalCount:   reaData.totalCount   ?? '—',
             Rk:           finalRk,
             level:        this._rkToLevel(finalRk),
+            score:        reaData.score ?? calcScore(finalRk)
         };
-    }
 
-    return computed;
-},
+        // ── att (補齊專注力) ──
+        const attData = record.results?.att ?? {};
+        if (attData.Rk != null) {
+            computed.att = { ...attData, score: attData.score ?? calcScore(attData.Rk) };
+        } else {
+            const attRk = parseFloat(((computed.mem.Rk + computed.rea.Rk + computed.spa.Rk) / 3).toFixed(3));
+            computed.att = {
+                totalTime: parseFloat(((computed.mem.totalTime + computed.rea.totalTime + computed.spa.totalTime) / 3).toFixed(2)),
+                correctCount: '—', totalCount: '—', Rk: attRk,
+                level: this._rkToLevel(attRk), score: calcScore(attRk)
+            };
+        }
+        return computed;
+    },
 
 // ==================== 顯示結果 (修正版) ====================
 displayResults(computed) {
@@ -2783,60 +2779,58 @@ renderRadarChart(computed, age) {
     `;
 },
 
-// ==================== 【修改】建議區塊 — 只顯示最差能力的整合建議 ====================
-renderRecommendations(computed, adviceData) {
-    const container = document.getElementById('recommendations');
-    if (!container) return;
-    // ✅ Bug 7 修正：能力名稱改用 t()
-    const nameMap = {
-        mem: t('pages.results.ability_names.mem'),
-        rea: t('pages.results.ability_names.rea'),
-        spa: t('pages.results.ability_names.spa'),
-    };
-    const colorMap = {
-        '最佳表現': '#4CAF50', '良好': '#8BC34A',
-        '正常':     '#2196F3', '接近正常': '#03A9F4',
-        '待加強':   '#FF9800', '不太好':   '#FF5722',
-        '需要加強': '#F44336',
-    };
-    // 找出最需要改善的能力
-    const scoreOrder = ['mem', 'rea', 'spa']
-        .map(ab => ({ ab, score: computed[ab]?.score ?? 100 }))
-        .sort((a, b) => a.score - b.score);
-    const worst      = scoreOrder[0];
-    const worstAb    = worst.ab;
-    const worstName  = nameMap[worstAb];
-    const worstLevel = computed[worstAb]?.level || '正常';
-    const worstColor = colorMap[worstLevel] || '#888';
-    // 從 adviceData 取得對應建議
-    const adviceKey   = computed[worstAb]?.level || '正常';
-    const adviceList  = adviceData?.[worstAb]?.[adviceKey] || [];
-    const adviceHtml  = adviceList.length
-        ? adviceList.map(a => `<li style="margin-bottom:8px;">${a}</li>`).join('')
-        : `<li>${t('alerts.advice_fallback')}</li>`;
-    // ✅ Bug 8 修正：worstLevel 使用 tLevel()
-    container.innerHTML = `
-        <div style="margin-bottom:20px;">
-            <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:8px;">
-                ${t('pages.results.recommend_basis')}
-            </div>
-            <strong style="color:${worstColor};font-size:1rem;">
-                ${t('pages.results.recommend_focus')}：
-                ${worstName}（${tLevel(worstLevel)}）
-            </strong>
-        </div>
-        <ul style="line-height:1.9;padding-left:20px;margin-bottom:24px;">
-            ${adviceHtml}
-        </ul>
-        <div style="background:#f0f4ff;padding:16px;border-radius:10px;
-             font-size:0.9rem;color:#444;line-height:1.8;border-left:4px solid #667eea;">
-            <p>${t('pages.results.recommend_closing_1')}</p>
-            <p style="margin-top:10px;">${t('pages.results.recommend_closing_2')}</p>
-            <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3')}</p>
-        </div>
-    `;
-},
+// ==================== 【修改】建議區塊 — 使用新版 JSON 結構 ====================
+    renderRecommendations(computed, adviceData) {
+        const container = document.getElementById('recommendations');
+        if (!container) return;
+        
+        const nameMap = {
+            mem: t('pages.results.ability_names.mem'),
+            rea: t('pages.results.ability_names.rea'),
+            spa: t('pages.results.ability_names.spa'),
+        };
+        const colorMap = {
+            '最佳表現': '#4CAF50', '良好': '#8BC34A', '正常': '#2196F3',
+            '接近正常': '#03A9F4', '待加強': '#FF9800', '不太好': '#FF5722', '需要加強': '#F44336',
+        };
 
+        // 找出最需要改善的能力
+        const scoreOrder = ['mem', 'rea', 'spa']
+            .map(ab => ({ ab, score: computed[ab]?.score ?? 100 }))
+            .sort((a, b) => a.score - b.score);
+        const worst      = scoreOrder[0];
+        const worstAb    = worst.ab;
+        const worstName  = nameMap[worstAb];
+        const worstLevel = computed[worstAb]?.level || '正常';
+        const worstColor = colorMap[worstLevel] || '#888';
+
+        // ✅ 修正：使用全域的 getAdvice 函式去讀取新版 JSON
+        const age = this.userData?.age || 40;
+        const adviceText = getAdvice(age, worstAb, worstLevel);
+
+        container.innerHTML = `
+            <div style="margin-bottom:20px;">
+                <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:8px;">
+                    ${t('pages.results.recommend_basis')}
+                </div>
+                <strong style="color:${worstColor};font-size:1rem;">
+                    ${t('pages.results.recommend_focus')}：
+                    ${worstName}（${tLevel(worstLevel)}）
+                </strong>
+            </div>
+
+            <div style="line-height:1.9; padding:0 10px 20px; white-space:pre-line;">
+                ${adviceText}
+            </div>
+
+            <div style="background:#f0f4ff;padding:16px;border-radius:10px;
+                 font-size:0.9rem;color:#444;line-height:1.8;border-left:4px solid #667eea;">
+                <p>${t('pages.results.recommend_closing_1')}</p>
+                <p style="margin-top:10px;">${t('pages.results.recommend_closing_2')}</p>
+                <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3')}</p>
+            </div>
+        `;
+    },
     // ==================== 百分位 ====================
 renderPercentileInfo(computed, age, gender) {
     const container = document.getElementById('percentile-info');
@@ -3063,7 +3057,7 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })} の人
    },
 
 
-   // ==================== 查看歷史 (修正 Firebase 讀取與顯示位置) ====================
+// ==================== 查看歷史 ====================
    async viewHistory() {
     if (!this.currentUser) return;
     try {
@@ -3075,6 +3069,17 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })} の人
             const records = Object.values(snapshot.val());
             const latestRecord = records[0];
             
+            // ✅ 新增防呆：確保 userData 存在，避免 displayResults 渲染資訊時崩潰
+            if (!this.userData) {
+                this.userData = {
+                    nickname: latestRecord.nickname || '使用者',
+                    age: latestRecord.age || 40,
+                    gender: latestRecord.gender || 'male',
+                    deviceLabel: latestRecord.deviceLabel || DeviceDetector.getLabel(),
+                    deviceMult: latestRecord.deviceMult || 1.0
+                };
+            }
+
             // 1. 利用現有的工具重算 Rk 與等級
             const computed = this.computeRkFromRecord(latestRecord);
             
@@ -3087,7 +3092,6 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })} の人
         console.error('❌ 讀取歷史失敗:', err);
     }
 },
-
     // ==================== 重新開始 ====================
     restart() {
         if (!window.confirm(t('alerts.restart_confirm'))) return;
