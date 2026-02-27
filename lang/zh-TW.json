@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "lang": "zh-TW",
+    "title": "認知能力測驗系統"
+  },
+  "loading": {
+    "default": "載入中...",
+    "firebase_sdk": "載入 Firebase SDK...",
+    "firebase_connect": "連線 Firebase...",
+    "advice_json": "載入建議文字資源...",
+    "advice_retry": "重新載入建議文字資源..."
+  },
+  "pages": {
+    "home": {
+      "title": "🧠 認知能力測驗",
+      "subtitle": "歡迎使用此認知能力評估\n由認知專家巫奉約設計\n本測驗將全面評估您的：",
+      "ability_cards": {
+        "mem_title": "🧠 記憶力",
+        "mem_desc": "記住順序，評估短期記憶能力",
+        "rea_title": "⚡ 反應力",
+        "rea_desc": "是/否測試，評估反應與抑制力",
+        "spa_title": "🔄 空間力",
+        "spa_desc": "思維翻轉，評估空間想像能力",
+        "att_title": "🎯 專注力",
+        "att_desc": "三力平均，評估專注力穩定度"
+      },
+      "info_table": {
+        "heading": "🧠 認知能力測驗",
+        "col_item": "測驗項目",
+        "col_count": "題數／關卡",
+        "col_time": "時間",
+        "mem_label": "🔵 記憶力",
+        "mem_count": "5 題",
+        "mem_time": "每題 10 秒",
+        "rea_label": "🟡 反應力",
+        "rea_count": "10 題",
+        "rea_time": "每題 5 秒",
+        "seq_label": "🔢 數字順序",
+        "seq_count": "2 關",
+        "seq_count_sub": "3×3 & 4×4",
+        "seq_time": "速度計時",
+        "seq_time_sub": "無時限",
+        "spa_label": "🟢 空間力",
+        "spa_count": "10 題",
+        "spa_time": "每題 5 秒",
+        "att_label": "🔴 專注力",
+        "att_desc": "各項綜合自動計算"
+      },
+      "badges": {
+        "age_range": "✅ 適合 5～120 歲",
+        "duration": "⏱ 約 3～5 分鐘"
+      },
+      "guest_warning": "⚠️ <strong>訪客模式</strong>無法儲存成績，也無法追蹤認知能力的進退步。<br>建議 <strong>登入後使用</strong>，來完整記錄您的認知變化趨勢。",
+      "btn_guest": "👤 訪客開始測驗",
+      "btn_google": "🔐 Google 快速登入",
+      "btn_login": "📧 電子郵件登入",
+      "btn_register": "📝 註冊新帳號",
+      "footer": "此技術由巫奉約提供"
+    },
+    "login": {
+      "title": "🔐 使用者登入",
+      "info": "登入後可查看您的歷史測驗記錄與進步趨勢",
+      "email_label": "📧 電子郵件",
+      "email_placeholder": "請輸入您的電子郵件",
+      "password_label": "🔒 密碼",
+      "password_placeholder": "請輸入密碼",
+      "btn_submit": "登入",
+      "btn_cancel": "取消"
+    },
+    "register": {
+      "title": "📝 註冊新帳號",
+      "info": "註冊帳號後可保存測驗記錄並追蹤您的進步",
+      "email_label": "📧 電子郵件",
+      "email_placeholder": "your@email.com",
+      "password_label": "🔒 密碼（至少 6 位）",
+      "password_placeholder": "請設定密碼",
+      "confirm_label": "🔒 確認密碼",
+      "confirm_placeholder": "再次輸入密碼",
+      "btn_submit": "註冊",
+      "btn_cancel": "取消"
+    },
+    "profile": {
+      "title": "📝 基本資料",
+      "warning": "⚠️ 請務必填寫真實資料，以便獲得準確的年齡常模比較",
+      "nickname_label": "✏️ 暱稱 *",
+      "nickname_placeholder": "請輸入您的暱稱",
+      "birth_year_label": "📅 出生年份 *",
+      "birth_year_placeholder": "請選擇年份",
+      "birth_year_suffix": "年",
+      "birth_month_label": "📅 出生月份 *",
+      "birth_month_placeholder": "請選擇月份",
+      "months": ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+      "gender_label": "⚧ 性別 *",
+      "gender_placeholder": "請選擇性別",
+      "gender_male": "男",
+      "gender_female": "女",
+      "btn_start": "開始測驗 →",
+      "btn_history": "📊 查看歷史成績"
+    },
+    "instructions": {
+      "title": "📖 測驗說明",
+      "practice_hint": "💡 <strong>提示：</strong>練習題可以重複作答直到熟悉，不會計入正式成績",
+      "btn_practice": "開始練習題 →",
+      "mem": {
+        "title": "🧠 記憶力測驗說明",
+        "how_label": "測驗方式",
+        "steps": [
+          "螢幕上會依序顯示 <strong>{min}～{max} 個圖形</strong>",
+          "每個圖形顯示 <strong>2 秒</strong>，請記住順序",
+          "觀看完畢後，從選項中 <strong>依序點選</strong> 剛才看到的圖形",
+          "若選擇錯誤 <strong>可再點一次</strong> 即可取消重選",
+          "每題限時 <strong>10 秒遞增</strong>，共 <strong>5 題</strong>"
+        ],
+        "tip": "圖形包含不同的顏色和形狀組合，請注意區分"
+      },
+      "rea": {
+        "title": "⚡ 反應力測驗說明",
+        "how_label": "測驗方式",
+        "steps": [
+          "首先顯示一個 <strong>目標圖形</strong>",
+          "接著出現測試圖形，判斷與目標的<strong>形狀與顏色是否完全相同</strong>",
+          "完全相同請點 <span style=\"color:#5cb85c;font-weight:bold;\">「相同」</span>，否則請點 <span style=\"color:#d9534f;font-weight:bold;\">「不同」</span>",
+          "每題限時 <strong>5 秒</strong>，共 <strong>10 題</strong>"
+        ],
+        "tip": "形狀與顏色<strong>都必須相同</strong>才算「相同」"
+      },
+      "seq": {
+        "title": "⚡ 數字順序測驗說明",
+        "how_label": "測驗方式",
+        "steps": [
+          "畫面上會出現打亂順序的數字格",
+          "請以<strong>最快速度</strong>依序點選 <strong>1 → 2 → 3 → …</strong>",
+          "共分兩關：<strong>3×3（9格）→ 4×4（16格）</strong>",
+          "按錯數字不扣命，但會<strong>增加罰時 +2 秒</strong>",
+          "全程無時間上限，請盡力以最快速度完成"
+        ],
+        "tip": "不要慌，先掃視整個格子再動手，找到規律比亂點更快！"
+      },
+      "spa": {
+        "title": "🔄 空間能力測驗說明",
+        "how_label": "測驗方式",
+        "steps": [
+          "螢幕同時顯示<strong>兩個圖形</strong>",
+          "其中一個圖形已被旋轉，請判斷兩者是否為<strong>同一個圖形</strong>",
+          "前 5 題：形狀與顏色都相同才算相同；後 5 題：僅判斷形狀",
+          "每題限時 <strong>5 秒</strong>，共 <strong>10 題</strong>"
+        ],
+        "tip": "在腦海中將圖形「轉回去」，忽略旋轉角度的差異"
+      }
+    },
+    "test": {
+      "type_labels": {
+        "mem": "記憶測試",
+        "rea": "反應測試",
+        "seq": "數字順序",
+        "spa": "空間測試"
+      },
+      "practice_label": "練習題",
+      "question_label": "第 {n} 題",
+      "mem_watch": "請專心觀看並記住圖形出現的順序",
+      "mem_answer": "請依序點選剛才看到的圖形",
+      "mem_skip": "⏭ 放棄本題，跳過作答",
+      "rea_instruction": "圖形的形狀與顏色都相同才算「相同」",
+      "rea_target_label": "目標圖形",
+      "rea_test_label": "測試圖形",
+      "rea_btn_same": "✅ 相同",
+      "rea_btn_different": "❌ 不同",
+      "seq_title": "數字順序 {size}×{size}｜依序點選 1 → {total}",
+      "seq_next": "下一個：{n}",
+      "seq_done": "✅ 完成！",
+      "seq_penalty": "⚠️ 按錯！累計罰時 +{sec} 秒",
+      "spa_strict_question": "兩圖<strong>形狀與顏色都相同</strong>嗎？（忽略旋轉）",
+      "spa_loose_question": "兩圖<strong>形狀相同</strong>嗎？（顏色不計）",
+      "spa_strict_instruction": "兩個圖形的形狀和顏色都相同嗎？（旋轉不算差異）",
+      "spa_loose_instruction": "兩個圖形的形狀相同嗎？（顏色不計）",
+      "spa_btn_yes": "✅ 是",
+      "spa_btn_no": "❌ 否",
+      "submit_btn": "提交答案"
+    },
+    "spa_break": {
+      "title": "空間能力測驗 — 後半段",
+      "subtitle": "前五題已完成，接下來難度將會提升。<br>請再次確認以下規則後繼續。",
+      "rules_title": "📋 規則提醒",
+      "rules": [
+        "螢幕同時顯示<strong>兩個圖形</strong>",
+        "後 5 題：只需判斷<strong>形狀是否相同</strong>（顏色不計）",
+        "在腦中將圖形「轉回去」，忽略旋轉角度差異",
+        "每題限時 <strong>5 秒</strong>，請快速作答",
+        "答錯不會即時告知，但會影響最終分數"
+      ],
+      "tip": "後五題<strong>只看形狀，忽略顏色</strong>",
+      "btn_continue": "✅ 我了解規則，繼續後五題"
+    },
+    "results": {
+      "title": "🎉 測驗結果",
+      "user_info": "{nickname}（{age} 歲）",
+      "test_time": "測驗時間：{datetime}",
+      "ability_section": "📊 能力評估結果",
+      "recommend_section": "💡 給您的建議",
+      "percentile_section": "🌍 百分位參考",
+      "history_section": "📈 您的歷史記錄",
+      "btn_restart": "🔄 再測一次",
+      "btn_learn_more": "💡 想了解更多提升認知的方法",
+      "btn_logout": "🚪 登出",
+      "btn_home": "🏠 返回首頁",
+      "footer": "此技術由巫奉約提供",
+      "ability_names": {
+        "mem": "🧠 記憶力",
+        "rea": "⚡ 反應力",
+        "spa": "🔄 空間能力",
+        "att": "🎯 專注力"
+      },
+      "att_calc_note": "由記憶、反應、空間 速度平均計算",
+      "total_time": "總用時：",
+      "correct": "答對：",
+      "radar_title": "📡 能力雷達圖",
+      "radar_legend_base": "{age}歲常模基準",
+      "radar_legend_user": "本次表現",
+      "radar_subtitle": "虛線基準 = {age}歲常模（70%處）｜紅色 = 本次表現｜超過基準線表示優於同齡",
+      "radar_device_note": "📱 {device}模式：常模已自動修正",
+      "recommend_basis": "本次建議依據：",
+      "recommend_focus": "最需關注",
+      "recommend_closing_1": "你願意完成本測評，代表你已經比多數人更有自覺。但自覺只是起點，正確的方法與訓練，才是真正讓大腦變好的路徑。",
+      "recommend_closing_2": "記憶、反應、空間、專注——每一項都是可以被訓練、被提升的能力。如果你希望在真實生活中穩定、可靠地發揮，歡迎尋找具備認知提升訓練專業的單位，讓自己能愈活愈健康。",
+      "recommend_closing_3": "你的大腦，值得好好對待。",
+      "percentile_range": "百分位比較基準：<strong>{range}</strong> 年齡區段常模",
+      "percentile_hint_1": "📊 領先比例<strong>愈高</strong>，表示整體表現<strong>愈好</strong>",
+      "percentile_hint_2": "🎯 建議需達<strong>領先 60% 的人</strong>以上，才代表認知能力有良好維持",
+      "percentile_att_note": "由記憶力、反應力、空間能力綜合計算",
+      "percentile_lead": "領先",
+      "percentile_barely": "僅領先",
+      "percentile_pct_people": "{pct}% 的人",
+      "percentile_badge_good": "✓ 達標",
+      "percentile_badge_poor": "需加強",
+      "history_count": "共 <strong>{n}</strong> 筆記錄",
+      "history_scroll": "↕ 可捲動查看全部",
+      "history_col_time": "測驗時間",
+      "history_col_mem": "記憶力",
+      "history_col_rea": "反應力",
+      "history_col_spa": "空間能力",
+      "history_latest_badge": "最新",
+      "history_empty_title": "📭 尚無歷史記錄",
+      "history_empty_desc": "完成測驗後記錄將會顯示在這裡",
+      "history_loading": "⏳ 載入中...",
+      "history_load_fail": "❌ 載入歷史記錄失敗",
+      "history_reload": "🔄 重新載入"
+    },
+    "level_labels": {
+      "最佳表現": "最佳表現",
+      "良好": "良好",
+      "正常": "正常",
+      "接近正常": "接近正常",
+      "待加強": "待加強",
+      "不太好": "不太好",
+      "需要加強": "需要加強"
+    }
+  },
+  "alerts": {
+    "login_success": "✅ 登入成功！",
+    "login_offline": "⚠️ 離線模式，無法登入",
+    "login_empty": "⚠️ 請填寫所有欄位",
+    "login_not_found": "找不到此帳號",
+    "login_wrong_password": "密碼錯誤",
+    "login_invalid_email": "電子郵件格式不正確",
+    "login_invalid_credential": "帳號或密碼錯誤",
+    "login_fail": "登入失敗：",
+    "register_success": "✅ 註冊成功！請填寫基本資料",
+    "register_offline": "⚠️ 離線模式，無法註冊",
+    "register_empty": "⚠️ 請填寫所有欄位",
+    "register_mismatch": "❌ 兩次密碼不一致",
+    "register_short_pw": "❌ 密碼長度至少 6 位",
+    "register_email_used": "此電子郵件已被註冊",
+    "register_weak_pw": "密碼強度不足",
+    "register_fail": "註冊失敗：",
+    "google_success": "✅ Google 登入成功！",
+    "google_offline": "⚠️ 離線模式，無法登入",
+    "google_fail": "❌ Google 登入失敗: ",
+    "logout_confirm": "確定要登出嗎？",
+    "logout_success": "✅ 已登出",
+    "logout_fail": "❌ 登出失敗：",
+    "profile_empty": "⚠️ 請填寫所有必填欄位",
+    "profile_age_range": "⚠️ 本測驗適用於 5-120 歲族群",
+    "save_fail": "⚠️ 結果儲存失敗，但您仍可查看本次成績",
+    "restart_confirm": "確定要重新測驗嗎？",
+    "advice_fail": "⚠️ 建議文字資源載入失敗，請重新整理頁面後再試。",
+    "advice_fallback": "目前無對應建議，請尋求專業單位協助評估。"
+  },
+  "toast": {
+    "practice_correct": "✅ 答對了！準備開始正式測驗",
+    "practice_wrong": "❌ 答錯了，再試一次練習題",
+    "seq_practice_done": "✅ 練習完成！用時 {time} 秒\n準備開始正式測驗",
+    "seq_round_done": "✅ {size}×{size} 完成！\n用時 {time} 秒，罰時 +{penalty} 秒",
+    "mem_done": "✅ 記憶力測驗完成！\n接下來進行反應力測驗",
+    "rea_done": "✅ 反應力測驗完成！\n接下來進行數字順序測驗",
+    "seq_done": "✅ 數字順序測驗完成！\n接下來進行空間能力測驗",
+    "spa_done": "🎉 所有測驗完成！\n正在計算結果..."
+  },
+  "device_labels": {
+    "tablet": "平板",
+    "mobile": "手機",
+    "tablet_mobile": "平板/手機",
+    "desktop": "電腦"
+  }
+}
