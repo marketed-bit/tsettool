@@ -320,7 +320,7 @@
                 <button class="btn btn-success btn-large" id="btn-show-login" disabled>📧 電子郵件登入</button>
                 <button class="btn btn-success btn-large" id="btn-show-register" disabled>📝 註冊新帳號</button>
             </div>
-            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0356</p>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0443</p>
         </article>
     </section>
 
@@ -1001,12 +1001,10 @@ const StimuliGenerator = {
 setStatus('載入 Firebase SDK...');
 let fb;
 try {
-    const [
-        { initializeApp },
-        { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged },
-        { getDatabase, ref, set, get, push, query, orderByChild, limitToLast, update },
-        { getAnalytics }
+    const [ { initializeApp }, 
+{ getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, signOut, onAuthStateChanged }, 
+{ getDatabase, ref, set, get, push, query, orderByChild, limitToLast, update },        
+{ getAnalytics }
     ] = await Promise.all([
         import('firebase/app'),
         import('firebase/auth'),
@@ -1036,7 +1034,7 @@ try {
         auth, database, googleProvider,
         ref, set, get, push, query, orderByChild, limitToLast, update,
         createUserWithEmailAndPassword, signInWithEmailAndPassword,
-        signInWithPopup, signOut, onAuthStateChanged
+        signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged
     };
     console.log('✅ Firebase 初始化完成');
 
