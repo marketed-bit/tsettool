@@ -53,6 +53,7 @@
   "device_labels": {
     "mobile": "スマートフォン",
     "tablet": "タブレット",
+    "tablet_mobile": "スマホ/タブレット",
     "desktop": "パソコン"
   },
   "pages": {
@@ -276,9 +277,9 @@
       "percentile_hint_1": "📊 パーセンタイルが高いほど、同年代より優れていることを示します。",
       "percentile_hint_2": "🎯 例：80パーセンタイル = 同年代の80%より優れています。",
       "percentile_att_note": "集中力は記憶力・反応力・空間認識の総合計算です",
-      "percentile_lead": "上回る",
+      "percentile_lead": "評価：",
       "percentile_barely": "わずかに上回る",
-      "percentile_pct_people": "{pct}%",
+      "percentile_pct_people": "同年代の {pct}% を上回る",
       "percentile_badge_good": "✓ 達成",
       "percentile_badge_poor": "要強化",
       "history_count": "全 {n} 件の記録",
@@ -291,6 +292,7 @@
       "history_empty_title": "📭 テスト記録がありません",
       "history_empty_desc": "テスト完了後、記録がここに表示されます",
       "history_loading": "⏳ 履歴を読み込んでいます...",
+      "history_load_fail": "❌ 履歴の読み込みに失敗しました",
       "history_latest_summary": "最新テスト：{date}（全 {count} 件）",
       "history_load_fail_title": "履歴照会（読み込み失敗）",
       "history_load_fail_desc": "❌ 履歴の読み込みに失敗しました：{msg}",
