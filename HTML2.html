@@ -1,0 +1,3252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>腦力測試遊戲</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        
+        * {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .card-flip {
+            transition: all 0.3s ease;
+        }
+        
+        .card-flip:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card-4 {
+            width: 80px;
+            height: 80px;
+        }
+
+        .memory-card-9 {
+            width: 70px;
+            height: 70px;
+        }
+
+        @media (max-width: 768px) {
+            .memory-card-4 {
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .memory-card-9 {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 m-0 p-0">
+    <div id="app" class="w-full px-2 py-2 md:px-4 md:py-8 max-w-4xl mx-auto">
+        <!-- 輸入名稱畫面 -->
+        <div id="nameScreen" class="fade-in">
+            <div class="bg-gray-50 rounded-lg md:rounded-2xl p-3 md:p-10 mb-3 md:mb-6 text-center">
+                <h1 class="text-xl md:text-6xl font-bold text-indigo-600 mb-3 md:mb-6">🧠 認知能力測試</h1>
+                <p class="text-sm md:text-2xl text-gray-700 mb-3 md:mb-8 leading-relaxed">歡迎參加腦力測試！</p>
+                <h4 class="text-base md:text-xl font-bold text-indigo-700 mb-3 md:mb-8">巫奉約身腦齡活</h4>
+                
+                <div class="bg-indigo-50 rounded-lg md:rounded-2xl p-3 md:p-6 mb-3 md:mb-8">
+                    <label class="text-lg md:text-2xl font-bold text-gray-700 block mb-2 md:mb-4">請輸入您的稱呼</label>
+                    <input type="text" id="playerName" placeholder="請輸入您的名字或暱稱" class="w-full text-base md:text-2xl px-3 md:px-6 py-2 md:py-4 rounded-lg md:rounded-xl border-2 border-indigo-300 focus:border-indigo-600 focus:outline-none mb-3 md:mb-6" maxlength="20">
+
+<button id="startGameBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-lg md:text-3xl font-bold py-2 md:py-4 px-6 md:px-12 rounded-full shadow-lg transform transition hover:scale-105 w-full cursor-pointer">
+    開始測試 🚀
+</button>
+                </div>
+                
+                <div class="bg-indigo-50 rounded-lg md:rounded-2xl p-3 md:p-6 text-left text-sm md:text-base">
+                    <h3 class="text-base md:text-2xl font-bold text-indigo-700 mb-2 md:mb-4">📋 遊戲說明</h3>
+                    <ul class="text-xs md:text-lg text-gray-700 space-y-1 md:space-y-3">
+                        <li>✅ 共有 20 關挑戰</li>
+                        <li>✅ 前10關測試您的反應速度</li>
+                        <li>✅ 後10關測試您的記憶能力</li>
+                        <li>✅ 請保持專注！</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開始畫面 -->
+        <div id="startScreen" class="hidden fade-in">
+            <div class="bg-gray-50 rounded-lg md:rounded-2xl p-3 md:p-10 mb-3 md:mb-6 text-center">
+                <h1 class="text-xl md:text-6xl font-bold text-indigo-600 mb-3 md:mb-6">🧠 認知能力測試</h1>
+                <p class="text-sm md:text-2xl text-gray-700 mb-3 md:mb-8 leading-relaxed">歡迎參加腦力測試！</p>
+                <h4 class="text-base md:text-xl font-bold text-indigo-700 mb-3 md:mb-4">巫奉約身腦齡活</h4>
+                
+                <div class="bg-indigo-50 rounded-lg md:rounded-2xl p-3 md:p-6 mb-3 md:mb-8 text-left text-sm md:text-base">
+                    <h3 class="text-base md:text-2xl font-bold text-indigo-700 mb-2 md:mb-4">📋 遊戲說明</h3>
+                    <ul class="text-xs md:text-lg text-gray-700 space-y-1 md:space-y-3">
+                        <li>✅ 第一關看字不看色喔！</li>
+                        <li>✅ 請點擊「文字內容」對應的顏色</li>
+                    </ul>
+                </div>
+                <button onclick="startGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-lg md:text-3xl font-bold py-2 md:py-4 px-6 md:px-12 rounded-full shadow-lg transform transition hover:scale-105 w-full cursor-pointer">
+                    開始測試 🚀
+                </button>
+            </div>
+        </div>
+        <!-- 倒數畫面 -->
+        <div id="countdownScreen" class="hidden">
+            <div class="bg-gray-50 rounded-lg md:rounded-2xl p-3 md:p-10 mb-3 md:mb-6 text-center flex flex-col justify-center" style="height: 60vh;">
+                <h2 class="text-xl md:text-4xl font-bold text-gray-700 mb-2 md:mb-8">第 <span id="currentLevel">1</span> 關</h2>
+                <div id="countdownNumber" class="text-6xl md:text-[12rem] font-black text-indigo-600 pulse">2</div>
+                <p class="text-base md:text-2xl text-gray-600 mt-2 md:mt-8">準備好了嗎？</p>
+            </div>
+        </div>
+
+        <!-- 中場提示畫面 -->
+        <div id="midwayScreen" class="hidden">
+            <div class="bg-gray-50 rounded-lg md:rounded-2xl p-3 md:p-10 mb-3 md:mb-6 text-center flex flex-col justify-center" style="height: 70vh;">
+                <h2 class="text-xl md:text-5xl font-bold text-indigo-600 mb-2 md:mb-6">🎯 規則變更提示</h2>
+                <div class="bg-yellow-50 border-2 md:border-4 border-yellow-400 rounded-lg md:rounded-2xl p-3 md:p-6 mb-3 md:mb-8">
+                    <p class="text-base md:text-3xl font-bold text-yellow-700 mb-2 md:mb-4" id="midwayTitle">第二階段開始！</p>
+                    <p class="text-sm md:text-2xl text-gray-700 leading-relaxed" id="midwayContent">
+                        接下來將測試您的視覺空間記憶能力。<br>請記住顏色方塊的位置，然後找出指定的顏色！
+                    </p>
+                </div>
+                <button onclick="continueMidway()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-lg md:text-3xl font-bold py-2 md:py-4 px-6 md:px-12 rounded-full shadow-lg transform transition hover:scale-105 cursor-pointer w-full">
+                    繼續挑戰 💪
+                </button>
+            </div>
+        </div>
+
+        <!-- 叫色測驗畫面 -->
+        <div id="stroopScreen" class="hidden">
+            <div class="bg-white rounded-lg md:rounded-3xl shadow-2xl p-3 md:p-12 flex flex-col justify-between" style="min-height: 95vh;">
+                <div>
+                    <div class="flex justify-between items-center mb-2 md:mb-8 text-xs md:text-xl">
+                        <div class="font-bold text-gray-700">關卡 <span id="stroopLevel">1</span>/20</div>
+                        <div class="font-bold text-indigo-600">剩餘時間: <span id="stroopTimer">2</span>秒</div>
+                    </div>
+                    
+                    <div id="stroopInstruction" class="text-sm md:text-2xl text-center mb-2 md:mb-6 font-bold text-indigo-700 bg-indigo-50 p-2 md:p-4 rounded-lg md:rounded-xl">
+                        請點擊「文字內容」對應的顏色
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg md:rounded-2xl p-2 md:p-10 mb-2 md:mb-6 text-center">
+                        <div id="stroopWord" class="text-3xl md:text-7xl font-black">紅</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="grid grid-cols-2 gap-2 md:gap-6">
+                        <button onclick="selectColor('red')" class="bg-red-500 hover:bg-red-600 text-white text-sm md:text-3xl font-bold py-3 md:py-12 rounded-lg md:rounded-2xl shadow-lg transform transition hover:scale-105 cursor-pointer">
+                            紅色
+                        </button>
+                        <button onclick="selectColor('yellow')" class="bg-yellow-400 hover:bg-yellow-500 text-white text-sm md:text-3xl font-bold py-3 md:py-12 rounded-lg md:rounded-2xl shadow-lg transform transition hover:scale-105 cursor-pointer">
+                            黃色
+                        </button>
+                        <button onclick="selectColor('blue')" class="bg-blue-500 hover:bg-blue-600 text-white text-sm md:text-3xl font-bold py-3 md:py-12 rounded-lg md:rounded-2xl shadow-lg transform transition hover:scale-105 cursor-pointer">
+                            藍色
+                        </button>
+                        <button onclick="selectColor('green')" class="bg-green-500 hover:bg-green-600 text-white text-sm md:text-3xl font-bold py-3 md:py-12 rounded-lg md:rounded-2xl shadow-lg transform transition hover:scale-105 cursor-pointer">
+                            綠色
+                        </button>
+                    </div>
+                    <div id="stroopFeedback" class="text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold hidden"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 記憶測試畫面 -->
+        <div id="memoryScreen" class="hidden">
+            <div class="bg-white rounded-lg md:rounded-3xl shadow-2xl p-3 md:p-12 flex flex-col justify-between" style="min-height: 95vh;">
+                <div>
+                    <div class="flex justify-between items-center mb-2 md:mb-8 text-xs md:text-xl">
+                        <div class="font-bold text-gray-700">關卡 <span id="memoryLevel">11</span>/20</div>
+                        <div class="font-bold text-indigo-600">
+                            <span id="memoryTimerLabel" class="hidden">剩餘時間: </span>
+                            <span id="memoryTimer" class="hidden">2</span>
+                            <span id="memoryTimerUnit" class="hidden">秒</span>
+                            <span id="memoryStatus">記住這些顏色...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="memoryInstruction" class="text-sm md:text-2xl text-center mb-2 md:mb-6 font-bold text-indigo-700 bg-indigo-50 p-2 md:p-4 rounded-lg md:rounded-xl">
+                        請記住顏色的位置
+                    </div>
+                    
+                    <div id="memoryGrid4" class="flex justify-center items-center mb-2 md:mb-8">
+                        <div class="grid grid-cols-2 gap-2 md:gap-6"></div>
+                    </div>
+                    
+                    <div id="memoryGrid9" class="hidden flex justify-center items-center mb-2 md:mb-8">
+                        <div class="grid grid-cols-3 gap-2 md:gap-6"></div>
+                    </div>
+                </div>
+                <div id="memoryFeedback" class="text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold hidden"></div>
+            </div>
+        </div>
+<!-- 結果畫面 -->
+<div id="resultScreen" class="hidden overflow-y-auto">
+    <div class="bg-gray-50 rounded-lg md:rounded-2xl p-3 md:p-10 mb-3 md:mb-6 text-center">
+        
+        <!-- ✅ 1. 全球排名（最上方） -->
+        <div id="globalTierRankDisplay" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg md:rounded-2xl p-3 md:p-6 mb-4 md:mb-6 shadow-xl">
+            <div class="text-center mb-2">
+                <h3 class="text-sm md:text-xl font-bold" id="globalRankingTitle">🌐 全球排名</h3>
+            </div>
+            <div id="globalTierRankContent" class="text-center text-xs md:text-base">
+                <!-- 這裡會動態填入等級排名資訊 -->
+            </div>
+        </div>
+
+        <!-- ✅ 2. 玩家名稱 -->
+        <div class="text-2xl md:text-5xl font-bold text-indigo-600 mb-2 md:mb-4">
+            👤 <span id="resultName">玩家</span>
+        </div>
+        
+        <!-- ✅ 3. 日期時間 -->
+        <div class="text-xs md:text-lg text-gray-600 mb-3 md:mb-6">
+            📅 <span id="resultDateTime">2024-01-01 12:00:00</span>
+        </div>
+        
+        <!-- 其他內容... -->
+                
+                <div id="resultIcon" class="text-6xl md:text-9xl mb-2 md:mb-6">🎉</div>
+                <h2 id="resultTitle" class="text-lg md:text-5xl font-bold text-indigo-600 mb-2 md:mb-6">太棒了！</h2>
+                <div class="bg-indigo-50 rounded-lg md:rounded-2xl p-2 md:p-8 mb-3 md:mb-8">
+                    <div class="text-4xl md:text-7xl font-black text-indigo-600 mb-2 md:mb-4">
+                        <span id="finalScore">20</span>/20
+                    </div>
+                    <p class="text-xs md:text-2xl text-gray-700 leading-relaxed" id="resultContent">恭喜您！</p>
+                </div>
+                <!-- ✅ 添加：等級顯示區塊 -->
+<div class="bg-indigo-50 rounded-lg md:rounded-2xl p-2 md:p-6 mb-2 md:mb-8">
+    <h3 class="text-sm md:text-2xl font-bold text-indigo-700 mb-2 md:mb-4">🏆 你的等級</h3>
+    <div class="grid grid-cols-2 gap-2 md:gap-4">
+        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div class="text-gray-600 text-xs md:text-sm mb-2">前10關等級</div>
+            <div id="resultFirstTier"></div>
+        </div>
+        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div class="text-gray-600 text-xs md:text-sm mb-2">後10關等級</div>
+            <div id="resultSecondTier"></div>
+        </div>
+    </div>
+</div>
+                <div class="bg-gray-50 rounded-lg md:rounded-2xl p-2 md:p-6 mb-2 md:mb-8">
+                    <h3 id="detailedScoreTitle" class="text-sm md:text-2xl font-bold text-gray-700 mb-2 md:mb-4">📊 詳細成績</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 text-xs md:text-lg">
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div id="labelType1" class="text-gray-600 text-xs md:text-sm">看字不看色</div>
+                            <div class="text-lg md:text-2xl font-bold text-indigo-600"><span id="type1Score">5</span>/5</div>
+                        </div>
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div id="labelType2" class="text-gray-600 text-xs md:text-sm">看色不看字</div>
+                            <div class="text-lg md:text-2xl font-bold text-indigo-600"><span id="type2Score">5</span>/5</div>
+                        </div>
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div id="labelType3" class="text-gray-600 text-xs md:text-sm">四格記憶</div>
+                            <div class="text-lg md:text-2xl font-bold text-indigo-600"><span id="type3Score">5</span>/5</div>
+                        </div>
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div id="labelType4" class="text-gray-600 text-xs md:text-sm">九格記憶</div>
+                            <div class="text-lg md:text-2xl font-bold text-indigo-600"><span id="type4Score">5</span>/5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-lg md:rounded-2xl p-2 md:p-6 mb-2 md:mb-8">
+                    <h3 class="text-sm md:text-2xl font-bold text-blue-700 mb-2 md:mb-4">⏱️ 時間統計</h3>
+                    <div class="grid grid-cols-2 gap-2 md:gap-4">
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div class="text-gray-600 text-xs md:text-sm">前10關耗時</div>
+                            <div class="text-lg md:text-2xl font-bold text-blue-600"><span id="firstHalfTime">0</span>秒</div>
+                        </div>
+                        <div class="bg-white p-2 md:p-4 rounded-lg md:rounded-xl">
+                            <div class="text-gray-600 text-xs md:text-sm">後10關耗時</div>
+                            <div class="text-lg md:text-2xl font-bold text-blue-600"><span id="secondHalfTime">0</span>秒</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-3 md:mb-8">
+                    <button onclick="showLeaderboard('local')" id="localTabBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm md:text-lg font-bold py-2 md:py-3 rounded-lg cursor-pointer">
+                        📱 本地排行
+                    </button>
+                    <button onclick="showLeaderboard('online')" id="onlineTabBtn" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white text-sm md:text-lg font-bold py-2 md:py-3 rounded-lg cursor-pointer">
+                        🌐 線上排行
+                    </button>
+                </div>
+
+                <div id="localLeaderboardSection" class="bg-purple-50 rounded-lg md:rounded-2xl p-2 md:p-6 mb-3 md:mb-8">
+                    <h3 class="text-sm md:text-2xl font-bold text-purple-700 mb-2 md:mb-4">📱 本地排行榜</h3>
+                    <div class="mb-2 md:mb-4">
+                        <h4 class="text-xs md:text-lg font-bold text-purple-600 mb-2">前10關排行（速度排名）</h4>
+                        <div id="leaderboardFirst" class="space-y-1 md:space-y-2 max-h-40 md:max-h-64 overflow-y-auto"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs md:text-lg font-bold text-purple-600 mb-2">後10關排行（速度排名）</h4>
+                        <div id="leaderboardSecond" class="space-y-1 md:space-y-2 max-h-40 md:max-h-64 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <div id="onlineLeaderboardSection" class="hidden bg-green-50 rounded-lg md:rounded-2xl p-2 md:p-6 mb-3 md:mb-8">
+                    <h3 class="text-sm md:text-2xl font-bold text-green-700 mb-2 md:mb-4" id="myTierLeaderboardTitle">🌐 我的等級排行榜</h3>
+                    <div class="bg-white p-2 md:p-4 rounded-lg mb-2 md:mb-4">
+                        <div id="onlineLoadingText" class="text-xs md:text-lg text-center text-gray-600">⏳ 加載中...</div>
+                    </div>
+                    <div class="mb-2 md:mb-4">
+                        <h4 class="text-xs md:text-lg font-bold text-green-600 mb-2">前10關排行</h4>
+                        <div id="onlineLeaderboardFirst" class="space-y-1 md:space-y-2 max-h-64 md:max-h-96 overflow-y-auto"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs md:text-lg font-bold text-green-600 mb-2">後10關排行</h4>
+                        <div id="onlineLeaderboardSecond" class="space-y-1 md:space-y-2 max-h-64 md:max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>                
+                <div class="flex flex-col gap-2">
+                    <button onclick="restartGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-lg md:text-3xl font-bold py-2 md:py-4 px-6 md:px-12 rounded-full shadow-lg transform transition hover:scale-105 cursor-pointer w-full">
+                        再玩一次 🔄
+                    </button>
+                    <a href="https://portaly.cc/zcwtw" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white text-lg md:text-3xl font-bold py-2 md:py-4 px-6 md:px-12 rounded-full shadow-lg transform transition hover:scale-105 text-center cursor-pointer w-full">
+                        了解更多 📚
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+        // ========== 13種語言翻譯對象 ==========
+        const translations = {
+            // 繁體中文
+            'zh-TW': {
+                pageTitle: '大腦活力測試 - Stroop效應與記憶力挑戰',
+                gameTitle: '🧠 大腦活力測試',
+                welcomeMessage: '歡迎來到大腦訓練中心！準備好挑戰您的專注力與記憶力了嗎？',
+                companyName: '巫奉約身腦齡活',
+                enterNameLabel: '請輸入您的姓名：',
+                namePlaceholder: '輸入姓名',
+                startButton: '開始遊戲',
+                gameRulesTitle: '📋 遊戲規則',
+                rule1: '遊戲共20關，分為四個階段',
+                rule2: '前10關測試反應速度與專注力',
+                rule3: '後10關測試記憶力與空間感知',
+                rule4: '每關限時3秒，請快速作答',
+                firstRuleInfo: '第1-5關：點擊與「文字內容」相符的按鈕',
+                clickTextInstruction: '📝 提示：看文字內容，不看顏色',
+                readyMessage: '準備好了嗎？',
+                ruleChangeTitle: '⚠️ 注意！規則改變了！⚠️',
+                continueButton: '繼續挑戰',
+                instructionText: '請點擊與文字內容相符的顏色',
+                instructionColor: '請點擊與字體顏色相符的顏色',
+                colorRed: '紅色',
+                colorYellow: '黃色',
+                colorBlue: '藍色',
+                colorGreen: '綠色',
+                colorRedShort: '紅',
+                colorYellowShort: '黃',
+                colorBlueShort: '藍',
+                colorGreenShort: '綠',
+                rememberPosition: '請記住顏色方塊的位置',
+                rememberColors: '記住各個顏色的位置...',
+                timeRemaining: '剩餘時間：',
+                seconds: '秒',
+                levelLabel: '關卡',
+                levelSuffix: '關',
+                level: '第',
+                detailedScore: '📊 詳細得分',
+                type1Name: '類型一（看文字）',
+                type2Name: '類型二（看顏色）',
+                type3Name: '類型三（4格記憶）',
+                type4Name: '類型四（9格記憶）',
+                timeStats: '⏱️ 時間統計',
+                first10Levels: '前10關用時',
+                last10Levels: '後10關用時',
+                localRanking: '本地排行',
+                onlineRanking: '全球排行',
+                localLeaderboard: '🏆 本地排行榜',
+                first10Ranking: '前10關排行（滿分且時間最短）',
+                last10Ranking: '後10關排行（滿分且時間最短）',
+                myTierLeaderboard: '我的等級排行榜',
+                loading: '加載中...',
+                playAgain: '再玩一次',
+                learnMore: '了解更多關於大腦訓練',
+                correct: '✓ 正確！',
+                incorrect: '✗ 錯誤！',
+                timeUp: '⏰ 時間到！',
+                perfectTitle: '太棒了！您的大腦處於巔峰狀態！',
+                perfectContent: '恭喜您！在反應速度與專注力測試中，您展現了驚人的能力。您的大腦反應迅速，專注力極佳，記憶力也非常優秀。繼續保持這樣的狀態，定期進行腦力訓練，您的認知能力會更上一層樓！巫奉約身腦齡活關心您',
+                goodTitle: '表現不錯！您的大腦還可以更好！',
+                goodContent: '您的測試結果顯示大腦功能運作良好，雖然有少許誤判，但整體表現優異。建議您持續進行腦力訓練，保持良好的生活習慣，如充足睡眠、均衡飲食和適度運動，這些都能幫助提升認知功能。巫奉約身腦齡活關心您',
+                needImprovementTitle: '大腦需要一點伸展操囉！',
+                needImprovementContent: '今天的測試對您來說可能稍具挑戰性，建議多做腦力訓練來提升專注力與記憶力。不用擔心，認知能力是可以透過練習來增強的！建議每天花10-15分鐘進行類似的腦力遊戲，配合規律作息，您一定會看到進步！巫奉約身腦齡活關心您',
+                noData: '暫無數據',
+                enterNameAlert: '請輸入您的姓名',
+                phase2Title: '第二階段開始！',
+                phase2Content: '接下來將測試您的視覺空間記憶能力。<br>請記住顏色方塊的位置，然後找出指定的顏色！',
+                phase3Title: '⚠️ 注意！規則改變了！⚠️',
+                phase3Content: '從現在開始，看色不看字喔！請點擊「字體顏色」對應的按鈕，<br>而不是文字內容！請集中注意力！',
+                phase4Title: '🎯 第三階段：進階記憶測試',
+                phase4Content: '難度升級！接下來將增加記憶方格數，<br>請更加集中注意力！',
+                globalRanking: '全球排名',
+                globalFirstHalfRankLabel: '前10關全球排名',
+                globalSecondHalfRankLabel: '後10關全球排名',
+                topRankPrefix: '第',
+                players: '位玩家',
+                findColor: '請找出 {color} 色的方塊',
+        // ✅ 新增：等級名稱
+        mythicTier: '神話',
+        challengerTier: '菁英',
+        grandmasterTier: '宗師',
+        masterTier: '大師',
+        diamondTier: '鑽石',
+        emeraldTier: '翡翠',
+        platinumTier: '白金',
+        goldTier: '黃金',
+        silverTier: '白銀',
+        bronzeTier: '青銅',
+        
+        // ✅ 新增：下一等級相關
+        nextTier: '下一等級',
+        requirement: '條件',
+        maxTierReached: '已達最高等級！',
+        noNextTier: '不存在',
+        
+        // ✅ 新增：升級條件（前10關）
+        silverReq: '6/10（錯4題）',
+        goldReq: '7/10（錯3題）',
+        platinumReq: '8/10（錯2題）',
+        emeraldReq: '9/10（錯1題）',
+        diamondReq: '10/10 且 ≤60秒',
+        masterReq: '10/10 且 ≤55秒',
+        grandmasterReq: '10/10 且 ≤48秒',
+        challengerReq: '10/10 且 ≤46秒',
+        mythicReq: '10/10 且 ≤43秒'
+            },
+            
+            // English
+            'en': {
+                pageTitle: 'Brain Vitality Test - Stroop Effect & Memory Challenge',
+                gameTitle: '🧠 Brain Vitality Test',
+                welcomeMessage: 'Welcome to the Brain Training Center! Ready to challenge your focus and memory?',
+                companyName: 'Brain Age Vitality',
+                enterNameLabel: 'Please enter your name:',
+                namePlaceholder: 'Enter name',
+                startButton: 'Start Game',
+                gameRulesTitle: '📋 Game Rules',
+                rule1: '20 levels in total, divided into four stages',
+                rule2: 'First 10 levels test reaction speed and focus',
+                rule3: 'Last 10 levels test memory and spatial awareness',
+                rule4: '3 seconds per level, answer quickly',
+                firstRuleInfo: 'Levels 1-5: Click the button matching the text content',
+                clickTextInstruction: '📝 Tip: Read the text, ignore the color',
+                readyMessage: 'Are you ready?',
+                ruleChangeTitle: '⚠️ Attention! Rules Changed! ⚠️',
+                continueButton: 'Continue Challenge',
+                instructionText: 'Click the color matching the text content',
+                instructionColor: 'Click the color matching the font color',
+                colorRed: 'Red',
+                colorYellow: 'Yellow',
+                colorBlue: 'Blue',
+                colorGreen: 'Green',
+                colorRedShort: 'Red',
+                colorYellowShort: 'Yellow',
+                colorBlueShort: 'Blue',
+                colorGreenShort: 'Green',
+                rememberPosition: 'Remember the position of color blocks',
+                rememberColors: 'Memorize the color positions...',
+                timeRemaining: 'Time Left: ',
+                seconds: 's',
+                levelLabel: 'Level',
+                levelSuffix: '',
+                level: 'Level',
+                detailedScore: '📊 Detailed Score',
+                type1Name: 'Type 1 (Read Text)',
+                type2Name: 'Type 2 (See Color)',
+                type3Name: 'Type 3 (4-Grid Memory)',
+                type4Name: 'Type 4 (9-Grid Memory)',
+                timeStats: '⏱️ Time Statistics',
+                first10Levels: 'First 10 Levels',
+                last10Levels: 'Last 10 Levels',
+                localRanking: 'Local Ranking',
+                onlineRanking: 'Global Ranking',
+                localLeaderboard: '🏆 Local Leaderboard',
+                first10Ranking: 'First 10 Levels (Perfect & Fastest)',
+                last10Ranking: 'Last 10 Levels (Perfect & Fastest)',
+                myTierLeaderboard: 'My Tier Leaderboard',
+                loading: 'Loading...',
+                playAgain: 'Play Again',
+                learnMore: 'Learn More About Brain Training',
+                correct: '✓ Correct!',
+                incorrect: '✗ Wrong!',
+                timeUp: '⏰ Time\'s Up!',
+                perfectTitle: 'Amazing! Your brain is at peak condition!',
+                perfectContent: 'Congratulations! You demonstrated incredible abilities in reaction speed and focus tests. Your brain responds quickly, focus is excellent, and memory is superb. Keep up this state with regular brain training to enhance your cognitive abilities even further! Brain Age Vitality cares about you',
+                goodTitle: 'Good job! Your brain can be even better!',
+                goodContent: 'Your test results show good brain function, though with minor errors, overall performance is excellent. Continue brain training and maintain good lifestyle habits like adequate sleep, balanced diet, and moderate exercise to improve cognitive function. Brain Age Vitality cares about you',
+                needImprovementTitle: 'Your brain needs a little stretch!',
+                needImprovementContent: 'Today\'s test might be slightly challenging for you. Practice more brain training to improve focus and memory. Don\'t worry, cognitive abilities can be enhanced through practice! Spend 10-15 minutes daily on similar brain games with regular routines, and you\'ll see progress! Brain Age Vitality cares about you',
+                noData: 'No data available',
+                enterNameAlert: 'Please enter your name',
+                phase2Title: 'Stage 2 Begins!',
+                phase2Content: 'Now testing your visual-spatial memory.<br>Remember the color block positions, then find the specified color!',
+                phase3Title: '⚠️ Attention! Rules Changed! ⚠️',
+                phase3Content: 'From now on, see colors not words! Click the button matching the font color,<br>not the text content! Focus!',
+                phase4Title: '🎯 Stage 3: Advanced Memory Test',
+                phase4Content: 'Difficulty increased! More memory grids ahead,<br>concentrate harder!',
+                goldTier: 'Gold',
+                silverTier: 'Silver',
+                bronzeTier: 'Bronze',
+                globalRanking: 'Global Ranking',
+                globalFirstHalfRankLabel: 'First 10 Global Rank',
+                globalSecondHalfRankLabel: 'Last 10 Global Rank',
+                topRankPrefix: '#',
+                players: 'players',
+                findColor: 'Find the {color} block',
+        // ✅ New: Tier Names
+        mythicTier: 'Mythic',
+        challengerTier: 'Challenger',
+        grandmasterTier: 'Grandmaster',
+        masterTier: 'Master',
+        diamondTier: 'Diamond',
+        emeraldTier: 'Emerald',
+        platinumTier: 'Platinum',
+        goldTier: 'Gold',
+        silverTier: 'Silver',
+        bronzeTier: 'Bronze',
+        
+        // ✅ New: Next Tier Related
+        nextTier: 'Next Tier',
+        requirement: 'Requirement',
+        maxTierReached: 'Max Tier Reached!',
+        noNextTier: 'None',
+        
+        // ✅ New: Upgrade Requirements (First 10)
+        silverReq: '6/10 (4 wrong)',
+        goldReq: '7/10 (3 wrong)',
+        platinumReq: '8/10 (2 wrong)',
+        emeraldReq: '9/10 (1 wrong)',
+        diamondReq: '10/10 & ≤60s',
+        masterReq: '10/10 & ≤55s',
+        grandmasterReq: '10/10 & ≤48s',
+        challengerReq: '10/10 & ≤46s',
+        mythicReq: '10/10 & ≤43s'
+    },
+            
+            // 日本語 (Japanese)
+            'ja': {
+                pageTitle: '脳活性テスト - ストループ効果とメモリチャレンジ',
+                gameTitle: '🧠 脳活性テスト',
+                welcomeMessage: '脳トレーニングセンターへようこそ！集中力と記憶力のチャレンジの準備はできましたか？',
+                companyName: 'ブレインエイジバイタリティ',
+                enterNameLabel: 'お名前を入力してください：',
+                namePlaceholder: '名前を入力',
+                startButton: 'ゲーム開始',
+                gameRulesTitle: '📋 ゲームルール',
+                rule1: '全20ステージ、4つのフェーズに分かれています',
+                rule2: '最初の10ステージは反応速度と集中力をテスト',
+                rule3: '後半の10ステージは記憶力と空間認識をテスト',
+                rule4: '各ステージ制限時間3秒、素早く回答してください',
+                firstRuleInfo: 'ステージ1-5：テキスト内容に一致するボタンをクリック',
+                clickTextInstruction: '📝 ヒント：テキストを読み、色を無視',
+                readyMessage: '準備はいいですか？',
+                ruleChangeTitle: '⚠️ 注意！ルールが変わりました！⚠️',
+                continueButton: 'チャレンジ続行',
+                instructionText: 'テキスト内容に一致する色をクリック',
+                instructionColor: 'フォント色に一致する色をクリック',
+                colorRed: '赤',
+                colorYellow: '黄',
+                colorBlue: '青',
+                colorGreen: '緑',
+                colorRedShort: '赤',
+                colorYellowShort: '黄',
+                colorBlueShort: '青',
+                colorGreenShort: '緑',
+                rememberPosition: 'カラーブロックの位置を覚えてください',
+                rememberColors: '各色の位置を記憶中...',
+                timeRemaining: '残り時間：',
+                seconds: '秒',
+                levelLabel: 'ステージ',
+                levelSuffix: '',
+                level: 'ステージ',
+                detailedScore: '📊 詳細スコア',
+                type1Name: 'タイプ1（テキスト読み）',
+                type2Name: 'タイプ2（色認識）',
+                type3Name: 'タイプ3（4マス記憶）',
+                type4Name: 'タイプ4（9マス記憶）',
+                timeStats: '⏱️ タイム統計',
+                first10Levels: '前半10ステージ',
+                last10Levels: '後半10ステージ',
+                localRanking: 'ローカルランキング',
+                onlineRanking: 'グローバルランキング',
+                localLeaderboard: '🏆 ローカルリーダーボード',
+                first10Ranking: '前半10ステージ（満点＆最速）',
+                last10Ranking: '後半10ステージ（満点＆最速）',
+                myTierLeaderboard: 'マイティアリーダーボード',
+                loading: '読み込み中...',
+                playAgain: 'もう一度プレイ',
+                learnMore: '脳トレーニングについて詳しく',
+                correct: '✓ 正解！',
+                incorrect: '✗ 不正解！',
+                timeUp: '⏰ 時間切れ！',
+                perfectTitle: '素晴らしい！脳が最高の状態です！',
+                perfectContent: 'おめでとうございます！反応速度と集中力テストで驚くべき能力を発揮しました。脳の反応が速く、集中力も抜群、記憶力も優れています。この状態を維持し、定期的な脳トレーニングで認知能力をさらに向上させましょう！ブレインエイジバイタリティがあなたをサポートします',
+                goodTitle: '良い結果です！脳はもっと良くなれます！',
+                goodContent: 'テスト結果は良好な脳機能を示していますが、わずかなミスがありました。全体的なパフォーマンスは優れています。脳トレーニングを続け、十分な睡眠、バランスの取れた食事、適度な運動などの良い生活習慣を維持することで、認知機能を向上させましょう。ブレインエイジバイタリティがあなたをサポートします',
+                needImprovementTitle: '脳は少しストレッチが必要です！',
+                needImprovementContent: '今日のテストは少し難しかったかもしれません。集中力と記憶力を向上させるため、もっと脳トレーニングを行うことをお勧めします。心配しないでください、認知能力は練習で向上できます！毎日10〜15分間、同様の脳ゲームを行い、規則正しい生活を送れば、必ず進歩が見られます！ブレインエイジバイタリティがあなたをサポートします',
+                noData: 'データなし',
+                enterNameAlert: 'お名前を入力してください',
+                phase2Title: 'フェーズ2開始！',
+                phase2Content: '視覚空間記憶をテストします。<br>カラーブロックの位置を覚え、指定された色を見つけてください！',
+                phase3Title: '⚠️ 注意！ルールが変わりました！⚠️',
+                phase3Content: 'これからは色を見て、文字を見ません！フォント色に一致するボタンをクリックしてください、<br>テキスト内容ではありません！集中してください！',
+                phase4Title: '🎯 フェーズ3：上級記憶テスト',
+                phase4Content: '難易度アップ！記憶マスが増えます、<br>さらに集中してください！',
+                goldTier: 'ゴールド',
+                silverTier: 'シルバー',
+                bronzeTier: 'ブロンズ',
+                globalRanking: 'グローバルランキング',
+                globalFirstHalfRankLabel: '前半10グローバル順位',
+                globalSecondHalfRankLabel: '後半10グローバル順位',
+                topRankPrefix: '第',
+                players: 'プレイヤー',
+                findColor: '{color}色のブロックを見つけてください',
+        // ✅ 新規：ランク名
+        mythicTier: 'ミシック',
+        challengerTier: 'チャレンジャー',
+        grandmasterTier: 'グランドマスター',
+        masterTier: 'マスター',
+        diamondTier: 'ダイヤモンド',
+        emeraldTier: 'エメラルド',
+        platinumTier: 'プラチナ',
+        goldTier: 'ゴールド',
+        silverTier: 'シルバー',
+        bronzeTier: 'ブロンズ',
+        
+        // ✅ 新規：次のランク関連
+        nextTier: '次のランク',
+        requirement: '条件',
+        maxTierReached: '最高ランク到達！',
+        noNextTier: '存在しません',
+        
+        // ✅ 新規：昇格条件（前10ステージ）
+        silverReq: '6/10（4問誤答）',
+        goldReq: '7/10（3問誤答）',
+        platinumReq: '8/10（2問誤答）',
+        emeraldReq: '9/10（1問誤答）',
+        diamondReq: '10/10 かつ ≤60秒',
+        masterReq: '10/10 かつ ≤55秒',
+        grandmasterReq: '10/10 かつ ≤48秒',
+        challengerReq: '10/10 かつ ≤46秒',
+        mythicReq: '10/10 かつ ≤43秒'
+    },
+            
+            // Español (Spanish)
+            'es': {
+                pageTitle: 'Test de Vitalidad Cerebral - Efecto Stroop y Desafío de Memoria',
+                gameTitle: '🧠 Test de Vitalidad Cerebral',
+                welcomeMessage: '¡Bienvenido al Centro de Entrenamiento Cerebral! ¿Listo para desafiar tu enfoque y memoria?',
+                companyName: 'Vitalidad de Edad Cerebral',
+                enterNameLabel: 'Por favor ingrese su nombre:',
+                namePlaceholder: 'Ingrese nombre',
+                startButton: 'Iniciar Juego',
+                gameRulesTitle: '📋 Reglas del Juego',
+                rule1: '20 niveles en total, divididos en cuatro etapas',
+                rule2: 'Los primeros 10 niveles prueban velocidad de reacción y enfoque',
+                rule3: 'Los últimos 10 niveles prueban memoria y conciencia espacial',
+                rule4: '3 segundos por nivel, responda rápidamente',
+                firstRuleInfo: 'Niveles 1-5: Haga clic en el botón que coincida con el contenido del texto',
+                clickTextInstruction: '📝 Consejo: Lea el texto, ignore el color',
+                readyMessage: '¿Está listo?',
+                ruleChangeTitle: '⚠️ ¡Atención! ¡Las reglas cambiaron! ⚠️',
+                continueButton: 'Continuar Desafío',
+                instructionText: 'Haga clic en el color que coincida con el contenido del texto',
+                instructionColor: 'Haga clic en el color que coincida con el color de la fuente',
+                colorRed: 'Rojo',
+                colorYellow: 'Amarillo',
+                colorBlue: 'Azul',
+                colorGreen: 'Verde',
+                colorRedShort: 'Rojo',
+                colorYellowShort: 'Amarillo',
+                colorBlueShort: 'Azul',
+                colorGreenShort: 'Verde',
+                rememberPosition: 'Recuerde la posición de los bloques de color',
+                rememberColors: 'Memorizando las posiciones de colores...',
+                timeRemaining: 'Tiempo Restante: ',
+                seconds: 's',
+                levelLabel: 'Nivel',
+                levelSuffix: '',
+                level: 'Nivel',
+                detailedScore: '📊 Puntuación Detallada',
+                type1Name: 'Tipo 1 (Leer Texto)',
+                type2Name: 'Tipo 2 (Ver Color)',
+                type3Name: 'Tipo 3 (Memoria 4 Cuadrículas)',
+                type4Name: 'Tipo 4 (Memoria 9 Cuadrículas)',
+                timeStats: '⏱️ Estadísticas de Tiempo',
+                first10Levels: 'Primeros 10 Niveles',
+                last10Levels: 'Últimos 10 Niveles',
+                localRanking: 'Clasificación Local',
+                onlineRanking: 'Clasificación Global',
+                localLeaderboard: '🏆 Tabla de Clasificación Local',
+                first10Ranking: 'Primeros 10 Niveles (Perfecto y Más Rápido)',
+                last10Ranking: 'Últimos 10 Niveles (Perfecto y Más Rápido)',
+                myTierLeaderboard: 'Mi Clasificación de Nivel',
+                loading: 'Cargando...',
+                playAgain: 'Jugar de Nuevo',
+                learnMore: 'Aprenda Más Sobre Entrenamiento Cerebral',
+                correct: '✓ ¡Correcto!',
+                incorrect: '✗ ¡Incorrecto!',
+                timeUp: '⏰ ¡Se Acabó el Tiempo!',
+                perfectTitle: '¡Increíble! ¡Su cerebro está en condiciones óptimas!',
+                perfectContent: '¡Felicidades! Demostró habilidades increíbles en las pruebas de velocidad de reacción y enfoque. Su cerebro responde rápidamente, el enfoque es excelente y la memoria es magnífica. Mantenga este estado con entrenamiento cerebral regular para mejorar aún más sus habilidades cognitivas. Vitalidad de Edad Cerebral se preocupa por usted',
+                goodTitle: '¡Buen trabajo! ¡Su cerebro puede ser aún mejor!',
+                goodContent: 'Sus resultados muestran una buena función cerebral, aunque con errores menores, el rendimiento general es excelente. Continue el entrenamiento cerebral y mantenga buenos hábitos de vida como sueño adecuado, dieta equilibrada y ejercicio moderado para mejorar la función cognitiva. Vitalidad de Edad Cerebral se preocupa por usted',
+                needImprovementTitle: '¡Su cerebro necesita un poco de estiramiento!',
+                needImprovementContent: 'La prueba de hoy podría ser un poco desafiante para usted. Practique más entrenamiento cerebral para mejorar el enfoque y la memoria. No se preocupe, las habilidades cognitivas se pueden mejorar con la práctica. Dedique de 10 a 15 minutos diarios a juegos cerebrales similares con rutinas regulares, ¡y verá progreso! Vitalidad de Edad Cerebral se preocupa por usted',
+                noData: 'No hay datos disponibles',
+                enterNameAlert: 'Por favor ingrese su nombre',
+                phase2Title: '¡Comienza la Etapa 2!',
+                phase2Content: 'Ahora probando su memoria visual-espacial.<br>¡Recuerde las posiciones de los bloques de color, luego encuentre el color especificado!',
+                phase3Title: '⚠️ ¡Atención! ¡Las reglas cambiaron! ⚠️',
+                phase3Content: '¡Desde ahora, vea colores no palabras! Haga clic en el botón que coincida con el color de la fuente,<br>¡no el contenido del texto! ¡Concéntrese!',
+                phase4Title: '🎯 Etapa 3: Prueba de Memoria Avanzada',
+                phase4Content: '¡Dificultad aumentada! Más cuadrículas de memoria por delante,<br>¡concéntrese más!',
+                goldTier: 'Oro',
+                silverTier: 'Plata',
+                bronzeTier: 'Bronce',
+                globalRanking: 'Clasificación Global',
+                globalFirstHalfRankLabel: 'Clasificación Global Primeros 10',
+                globalSecondHalfRankLabel: 'Clasificación Global Últimos 10',
+                topRankPrefix: '#',
+                players: 'jugadores',
+                findColor: 'Encuentre el bloque {color}',
+        // ✅ Nuevo: Nombres de Rangos
+        mythicTier: 'Mítico',
+        challengerTier: 'Desafiante',
+        grandmasterTier: 'Gran Maestro',
+        masterTier: 'Maestro',
+        diamondTier: 'Diamante',
+        emeraldTier: 'Esmeralda',
+        platinumTier: 'Platino',
+        goldTier: 'Oro',
+        silverTier: 'Plata',
+        bronzeTier: 'Bronce',
+        
+        // ✅ Nuevo: Siguiente Rango
+        nextTier: 'Siguiente Rango',
+        requirement: 'Requisito',
+        maxTierReached: '¡Rango Máximo Alcanzado!',
+        noNextTier: 'Ninguno',
+        
+        // ✅ Nuevo: Requisitos de Ascenso
+        silverReq: '6/10 (4 errores)',
+        goldReq: '7/10 (3 errores)',
+        platinumReq: '8/10 (2 errores)',
+        emeraldReq: '9/10 (1 error)',
+        diamondReq: '10/10 y ≤60s',
+        masterReq: '10/10 y ≤55s',
+        grandmasterReq: '10/10 y ≤48s',
+        challengerReq: '10/10 y ≤46s',
+        mythicReq: '10/10 y ≤43s'
+            },
+            
+            // Français (French)
+            'fr': {
+                pageTitle: 'Test de Vitalité Cérébrale - Effet Stroop et Défi Mémoire',
+                gameTitle: '🧠 Test de Vitalité Cérébrale',
+                welcomeMessage: 'Bienvenue au Centre d\'Entraînement Cérébral ! Prêt à défier votre concentration et votre mémoire ?',
+                companyName: 'Vitalité de l\'Âge Cérébral',
+                enterNameLabel: 'Veuillez entrer votre nom :',
+                namePlaceholder: 'Entrez le nom',
+                startButton: 'Commencer le Jeu',
+                gameRulesTitle: '📋 Règles du Jeu',
+                rule1: '20 niveaux au total, divisés en quatre étapes',
+                rule2: 'Les 10 premiers niveaux testent la vitesse de réaction et la concentration',
+                rule3: 'Les 10 derniers niveaux testent la mémoire et la conscience spatiale',
+                rule4: '3 secondes par niveau, répondez rapidement',
+                firstRuleInfo: 'Niveaux 1-5 : Cliquez sur le bouton correspondant au contenu du texte',
+                clickTextInstruction: '📝 Astuce : Lisez le texte, ignorez la couleur',
+                readyMessage: 'Êtes-vous prêt ?',
+                ruleChangeTitle: '⚠️ Attention ! Les règles ont changé ! ⚠️',
+                continueButton: 'Continuer le Défi',
+                instructionText: 'Cliquez sur la couleur correspondant au contenu du texte',
+                instructionColor: 'Cliquez sur la couleur correspondant à la couleur de la police',
+                colorRed: 'Rouge',
+                colorYellow: 'Jaune',
+                colorBlue: 'Bleu',
+                colorGreen: 'Vert',
+                colorRedShort: 'Rouge',
+                colorYellowShort: 'Jaune',
+                colorBlueShort: 'Bleu',
+                colorGreenShort: 'Vert',
+                rememberPosition: 'Mémorisez la position des blocs de couleur',
+                rememberColors: 'Mémorisation des positions des couleurs...',
+                timeRemaining: 'Temps Restant : ',
+                seconds: 's',
+                levelLabel: 'Niveau',
+                levelSuffix: '',
+                level: 'Niveau',
+                detailedScore: '📊 Score Détaillé',
+                type1Name: 'Type 1 (Lire le Texte)',
+                type2Name: 'Type 2 (Voir la Couleur)',
+                type3Name: 'Type 3 (Mémoire 4 Grilles)',
+                type4Name: 'Type 4 (Mémoire 9 Grilles)',
+                timeStats: '⏱️ Statistiques de Temps',
+                first10Levels: '10 Premiers Niveaux',
+                last10Levels: '10 Derniers Niveaux',
+                localRanking: 'Classement Local',
+                onlineRanking: 'Classement Mondial',
+                localLeaderboard: '🏆 Classement Local',
+                first10Ranking: '10 Premiers Niveaux (Parfait et Plus Rapide)',
+                last10Ranking: '10 Derniers Niveaux (Parfait et Plus Rapide)',
+                myTierLeaderboard: 'Mon Classement de Niveau',
+                loading: 'Chargement...',
+                playAgain: 'Rejouer',
+                learnMore: 'En Savoir Plus Sur l\'Entraînement Cérébral',
+                correct: '✓ Correct !',
+                incorrect: '✗ Incorrect !',
+                timeUp: '⏰ Temps Écoulé !',
+                perfectTitle: 'Incroyable ! Votre cerveau est en pleine forme !',
+                perfectContent: 'Félicitations ! Vous avez démontré des capacités incroyables dans les tests de vitesse de réaction et de concentration. Votre cerveau réagit rapidement, la concentration est excellente et la mémoire est superbe. Maintenez cet état avec un entraînement cérébral régulier pour améliorer encore davantage vos capacités cognitives ! Vitalité de l\'Âge Cérébral prend soin de vous',
+                goodTitle: 'Bon travail ! Votre cerveau peut être encore meilleur !',
+                goodContent: 'Vos résultats montrent une bonne fonction cérébrale, bien qu\'avec des erreurs mineures, la performance globale est excellente. Continuez l\'entraînement cérébral et maintenez de bonnes habitudes de vie comme un sommeil suffisant, une alimentation équilibrée et un exercice modéré pour améliorer la fonction cognitive. Vitalité de l\'Âge Cérébral prend soin de vous',
+                needImprovementTitle: 'Votre cerveau a besoin d\'un peu d\'étirement !',
+                needImprovementContent: 'Le test d\'aujourd\'hui pourrait être légèrement difficile pour vous. Pratiquez davantage l\'entraînement cérébral pour améliorer la concentration et la mémoire. Ne vous inquiétez pas, les capacités cognitives peuvent être améliorées par la pratique ! Consacrez 10 à 15 minutes par jour à des jeux cérébraux similaires avec des routines régulières, et vous verrez des progrès ! Vitalité de l\'Âge Cérébral prend soin de vous',
+                noData: 'Aucune donnée disponible',
+                enterNameAlert: 'Veuillez entrer votre nom',
+                phase2Title: 'L\'Étape 2 Commence !',
+                phase2Content: 'Test de votre mémoire visuo-spatiale maintenant.<br>Mémorisez les positions des blocs de couleur, puis trouvez la couleur spécifiée !',
+                phase3Title: '⚠️ Attention ! Les règles ont changé ! ⚠️',
+                phase3Content: 'Désormais, voyez les couleurs pas les mots ! Cliquez sur le bouton correspondant à la couleur de la police,<br>pas au contenu du texte ! Concentrez-vous !',
+                phase4Title: '🎯 Étape 3 : Test de Mémoire Avancé',
+                phase4Content: 'Difficulté accrue ! Plus de grilles de mémoire à venir,<br>concentrez-vous davantage !',
+                goldTier: 'Or',
+                silverTier: 'Argent',
+                bronzeTier: 'Bronze',
+                globalRanking: 'Classement Mondial',
+                globalFirstHalfRankLabel: 'Classement Mondial 10 Premiers',
+                globalSecondHalfRankLabel: 'Classement Mondial 10 Derniers',
+                topRankPrefix: '#',
+                players: 'joueurs',
+                findColor: 'Trouvez le bloc {color}',
+        // ✅ Nouveau: Noms de Rangs
+        mythicTier: 'Mythique',
+        challengerTier: 'Challenger',
+        grandmasterTier: 'Grand Maître',
+        masterTier: 'Maître',
+        diamondTier: 'Diamant',
+        emeraldTier: 'Émeraude',
+        platinumTier: 'Platine',
+        goldTier: 'Or',
+        silverTier: 'Argent',
+        bronzeTier: 'Bronze',
+        
+        // ✅ Nouveau: Rang Suivant
+        nextTier: 'Rang Suivant',
+        requirement: 'Exigence',
+        maxTierReached: 'Rang Maximum Atteint !',
+        noNextTier: 'Aucun',
+        
+        // ✅ Nouveau: Exigences de Montée
+        silverReq: '6/10 (4 erreurs)',
+        goldReq: '7/10 (3 erreurs)',
+        platinumReq: '8/10 (2 erreurs)',
+        emeraldReq: '9/10 (1 erreur)',
+        diamondReq: '10/10 et ≤60s',
+        masterReq: '10/10 et ≤55s',
+        grandmasterReq: '10/10 et ≤48s',
+        challengerReq: '10/10 et ≤46s',
+        mythicReq: '10/10 et ≤43s'
+    },
+            
+            // हिन्दी (Hindi)
+            'hi': {
+                pageTitle: 'मस्तिष्क जीवन शक्ति परीक्षण - स्ट्रूप प्रभाव और स्मृति चुनौती',
+                gameTitle: '🧠 मस्तिष्क जीवन शक्ति परीक्षण',
+                welcomeMessage: 'मस्तिष्क प्रशिक्षण केंद्र में आपका स्वागत है! अपने ध्यान और स्मृति को चुनौती देने के लिए तैयार हैं?',
+                companyName: 'ब्रेन एज वाइटैलिटी',
+                enterNameLabel: 'कृपया अपना नाम दर्ज करें:',
+                namePlaceholder: 'नाम दर्ज करें',
+                startButton: 'खेल शुरू करें',
+                gameRulesTitle: '📋 खेल के नियम',
+                rule1: 'कुल 20 स्तर, चार चरणों में विभाजित',
+                rule2: 'पहले 10 स्तर प्रतिक्रिया गति और फोकस का परीक्षण करते हैं',
+                rule3: 'अंतिम 10 स्तर स्मृति और स्थानिक जागरूकता का परीक्षण करते हैं',
+                rule4: 'प्रति स्तर 3 सेकंड, जल्दी उत्तर दें',
+                firstRuleInfo: 'स्तर 1-5: पाठ सामग्री से मेल खाने वाले बटन पर क्लिक करें',
+                clickTextInstruction: '📝 संकेत: पाठ पढ़ें, रंग को अनदेखा करें',
+                readyMessage: 'क्या आप तैयार हैं?',
+                ruleChangeTitle: '⚠️ ध्यान दें! नियम बदल गए! ⚠️',
+                continueButton: 'चुनौती जारी रखें',
+                instructionText: 'पाठ सामग्री से मेल खाने वाले रंग पर क्लिक करें',
+                instructionColor: 'फ़ॉन्ट रंग से मेल खाने वाले रंग पर क्लिक करें',
+                colorRed: 'लाल',
+                colorYellow: 'पीला',
+                colorBlue: 'नीला',
+                colorGreen: 'हरा',
+                colorRedShort: 'लाल',
+                colorYellowShort: 'पीला',
+                colorBlueShort: 'नीला',
+                colorGreenShort: 'हरा',
+                rememberPosition: 'रंग ब्लॉकों की स्थिति याद रखें',
+                rememberColors: 'रंग स्थितियों को याद कर रहे हैं...',
+                timeRemaining: 'शेष समय: ',
+                seconds: 'सेकंड',
+                levelLabel: 'स्तर',
+                levelSuffix: '',
+                level: 'स्तर',
+                detailedScore: '📊 विस्तृत स्कोर',
+                type1Name: 'प्रकार 1 (पाठ पढ़ें)',
+                type2Name: 'प्रकार 2 (रंग देखें)',
+                type3Name: 'प्रकार 3 (4-ग्रिड स्मृति)',
+                type4Name: 'प्रकार 4 (9-ग्रिड स्मृति)',
+                timeStats: '⏱️ समय सांख्यिकी',
+                first10Levels: 'पहले 10 स्तर',
+                last10Levels: 'अंतिम 10 स्तर',
+                localRanking: 'स्थानीय रैंकिंग',
+                onlineRanking: 'वैश्विक रैंकिंग',
+                localLeaderboard: '🏆 स्थानीय लीडरबोर्ड',
+                first10Ranking: 'पहले 10 स्तर (परफेक्ट और सबसे तेज़)',
+                last10Ranking: 'अंतिम 10 स्तर (परफेक्ट और सबसे तेज़)',
+                myTierLeaderboard: 'मेरा टियर लीडरबोर्ड',
+                loading: 'लोड हो रहा है...',
+                playAgain: 'फिर से खेलें',
+                learnMore: 'मस्तिष्क प्रशिक्षण के बारे में और जानें',
+                correct: '✓ सही!',
+                incorrect: '✗ गलत!',
+                timeUp: '⏰ समय समाप्त!',
+                perfectTitle: 'अद्भुत! आपका मस्तिष्क शिखर स्थिति में है!',
+                perfectContent: 'बधाई हो! आपने प्रतिक्रिया गति और फोकस परीक्षणों में अविश्वसनीय क्षमताओं का प्रदर्शन किया। आपका मस्तिष्क तेजी से प्रतिक्रिया करता है, फोकस उत्कृष्ट है, और स्मृति शानदार है। नियमित मस्तिष्क प्रशिक्षण के साथ इस स्थिति को बनाए रखें और अपनी संज्ञानात्मक क्षमताओं को और बढ़ाएं! ब्रेन एज वाइटैलिटी आपकी परवाह करती है',
+                goodTitle: 'अच्छा काम! आपका मस्तिष्क और भी बेहतर हो सकता है!',
+                goodContent: 'आपके परीक्षण परिणाम अच्छे मस्तिष्क कार्य को दर्शाते हैं, हालांकि मामूली त्रुटियों के साथ, समग्र प्रदर्शन उत्कृष्ट है। मस्तिष्क प्रशिक्षण जारी रखें और पर्याप्त नींद, संतुलित आहार और मध्यम व्यायाम जैसी अच्छी जीवन शैली की आदतों को बनाए रखें ताकि संज्ञानात्मक कार्य में सुधार हो सके। ब्रेन एज वाइटैलिटी आपकी परवाह करती है',
+                needImprovementTitle: 'आपके मस्तिष्क को थोड़ा खिंचाव चाहिए!',
+                needImprovementContent: 'आज का परीक्षण आपके लिए थोड़ा चुनौतीपूर्ण हो सकता है। फोकस और स्मृति में सुधार के लिए अधिक मस्तिष्क प्रशिक्षण का अभ्यास करें। चिंता न करें, संज्ञानात्मक क्षमताओं को अभ्यास के माध्यम से बढ़ाया जा सकता है! नियमित दिनचर्या के साथ समान मस्तिष्क खेलों पर प्रतिदिन 10-15 मिनट बिताएं, और आप प्रगति देखेंगे! ब्रेन एज वाइटैलिटी आपकी परवाह करती है',
+                noData: 'कोई डेटा उपलब्ध नहीं',
+                enterNameAlert: 'कृपया अपना नाम दर्ज करें',
+                phase2Title: 'चरण 2 शुरू होता है!',
+                phase2Content: 'अब आपकी दृश्य-स्थानिक स्मृति का परीक्षण कर रहे हैं।<br>रंग ब्लॉक स्थितियों को याद रखें, फिर निर्दिष्ट रंग खोजें!',
+                phase3Title: '⚠️ ध्यान दें! नियम बदल गए! ⚠️',
+                phase3Content: 'अब से, रंग देखें शब्द नहीं! फ़ॉन्ट रंग से मेल खाने वाले बटन पर क्लिक करें,<br>पाठ सामग्री नहीं! ध्यान केंद्रित करें!',
+                phase4Title: '🎯 चरण 3: उन्नत स्मृति परीक्षण',
+                phase4Content: 'कठिनाई बढ़ी! अधिक स्मृति ग्रिड आगे हैं,<br>अधिक ध्यान केंद्रित करें!',
+                goldTier: 'स्वर्ण',
+                silverTier: 'रजत',
+                bronzeTier: 'कांस्य',
+                globalRanking: 'वैश्विक रैंकिंग',
+                globalFirstHalfRankLabel: 'पहले 10 वैश्विक रैंक',
+                globalSecondHalfRankLabel: 'अंतिम 10 वैश्विक रैंक',
+                topRankPrefix: '#',
+                players: 'खिलाड़ी',
+                findColor: '{color} ब्लॉक खोजें',
+        // ✅ नया: रैंक नाम
+        mythicTier: 'मिथिक',
+        challengerTier: 'चैलेंजर',
+        grandmasterTier: 'ग्रैंडमास्टर',
+        masterTier: 'मास्टर',
+        diamondTier: 'डायमंड',
+        emeraldTier: 'एमरल्ड',
+        platinumTier: 'प्लैटिनम',
+        goldTier: 'गोल्ड',
+        silverTier: 'सिल्वर',
+        bronzeTier: 'ब्रॉन्ज',
+        
+        // ✅ नया: अगली रैंक
+        nextTier: 'अगली रैंक',
+        requirement: 'आवश्यकता',
+        maxTierReached: 'अधिकतम रैंक पहुंच गई!',
+        noNextTier: 'कोई नहीं',
+        
+        // ✅ नया: पदोन्नति आवश्यकताएं
+        silverReq: '6/10 (4 गलत)',
+        goldReq: '7/10 (3 गलत)',
+        platinumReq: '8/10 (2 गलत)',
+        emeraldReq: '9/10 (1 गलत)',
+        diamondReq: '10/10 और ≤60 सेकंड',
+        masterReq: '10/10 और ≤55 सेकंड',
+        grandmasterReq: '10/10 और ≤48 सेकंड',
+        challengerReq: '10/10 और ≤46 सेकंड',
+        mythicReq: '10/10 और ≤43 सेकंड'
+    },
+            
+            // עברית (Hebrew)
+            'he': {
+                pageTitle: 'מבחן חיוניות מוח - אפקט סטרופ ואתגר זיכרון',
+                gameTitle: '🧠 מבחן חיוניות מוח',
+                welcomeMessage: 'ברוכים הבאים למרכז האימון המוחי! מוכן לאתגר את הריכוז והזיכרון שלך?',
+                companyName: 'חיוניות גיל המוח',
+                enterNameLabel: 'אנא הזן את שמך:',
+                namePlaceholder: 'הזן שם',
+                startButton: 'התחל משחק',
+                gameRulesTitle: '📋 חוקי המשחק',
+                rule1: '20 שלבים בסך הכל, מחולקים לארבעה שלבים',
+                rule2: '10 השלבים הראשונים בודקים מהירות תגובה וריכוז',
+                rule3: '10 השלבים האחרונים בודקים זיכרון ומודעות מרחבית',
+                rule4: '3 שניות לכל שלב, ענה במהירות',
+                firstRuleInfo: 'שלבים 1-5: לחץ על הכפתור התואם לתוכן הטקסט',
+                clickTextInstruction: '📝 טיפ: קרא את הטקסט, התעלם מהצבע',
+                readyMessage: 'האם אתה מוכן?',
+                ruleChangeTitle: '⚠️ שים לב! החוקים השתנו! ⚠️',
+                continueButton: 'המשך אתגר',
+                instructionText: 'לחץ על הצבע התואם לתוכן הטקסט',
+                instructionColor: 'לחץ על הצבע התואם לצבע הגופן',
+                colorRed: 'אדום',
+                colorYellow: 'צהוב',
+                colorBlue: 'כחול',
+                colorGreen: 'ירוק',
+                colorRedShort: 'אדום',
+                colorYellowShort: 'צהוב',
+                colorBlueShort: 'כחול',
+                colorGreenShort: 'ירוק',
+                rememberPosition: 'זכור את מיקום בלוקי הצבע',
+                rememberColors: 'שינון מיקומי הצבעים...',
+                timeRemaining: 'זמן נותר: ',
+                seconds: 'שניות',
+                levelLabel: 'שלב',
+                levelSuffix: '',
+                level: 'שלב',
+                detailedScore: '📊 ציון מפורט',
+                type1Name: 'סוג 1 (קריאת טקסט)',
+                type2Name: 'סוג 2 (ראיית צבע)',
+                type3Name: 'סוג 3 (זיכרון 4 רשתות)',
+                type4Name: 'סוג 4 (זיכרון 9 רשתות)',
+                timeStats: '⏱️ סטטיסטיקת זמן',
+                first10Levels: '10 שלבים ראשונים',
+                last10Levels: '10 שלבים אחרונים',
+                localRanking: 'דירוג מקומי',
+                onlineRanking: 'דירוג עולמי',
+                localLeaderboard: '🏆 לוח מובילים מקומי',
+                first10Ranking: '10 שלבים ראשונים (מושלם ומהיר ביותר)',
+                last10Ranking: '10 שלבים אחרונים (מושלם ומהיר ביותר)',
+                myTierLeaderboard: 'לוח המובילים של הדרגה שלי',
+                loading: 'טוען...',
+                playAgain: 'שחק שוב',
+                learnMore: 'למד עוד על אימון מוחי',
+                correct: '✓ נכון!',
+                incorrect: '✗ שגוי!',
+                timeUp: '⏰ נגמר הזמן!',
+                perfectTitle: 'מדהים! המוח שלך במצב שיא!',
+                perfectContent: 'מזל טוב! הפגנת יכולות מדהימות במבחני מהירות תגובה וריכוז. המוח שלך מגיב במהירות, הריכוז מצוין, והזיכרון נפלא. שמור על מצב זה עם אימון מוחי קבוע כדי לשפר עוד יותר את היכולות הקוגניטיביות שלך! חיוניות גיל המוח דואג לך',
+                goodTitle: 'עבודה טובה! המוח שלך יכול להיות אפילו טוב יותר!',
+                goodContent: 'תוצאות המבחן שלך מראות תפקוד מוחי טוב, אם כי עם טעויות קלות, הביצועים הכוללים מצוינים. המשך באימון מוחי ושמור על הרגלי חיים טובים כמו שינה מספקת, תזונה מאוזנת ופעילות גופנית מתונה כדי לשפר את התפקוד הקוגניטיבי. חיוניות גיל המוח דואג לך',
+                needImprovementTitle: 'המוח שלך זקוק למתיחה קטנה!',
+                needImprovementContent: 'המבחן של היום עשוי להיות מעט מאתגר עבורך. תרגל יותר אימון מוחי כדי לשפר את הריכוז והזיכרון. אל תדאג, היכולות הקוגניטיביות ניתנות לשיפור באמצעות תרגול! הקדש 10-15 דקות ביום למשחקי מוח דומים עם שגרה קבועה, ותראה התקדמות! חיוניות גיל המוח דואג לך',
+                noData: 'אין נתונים זמינים',
+                enterNameAlert: 'אנא הזן את שמך',
+                phase2Title: 'שלב 2 מתחיל!',
+                phase2Content: 'עכשיו בודקים את הזיכרון החזותי-מרחבי שלך.<br>זכור את מיקומי בלוקי הצבע, ואז מצא את הצבע המצוין!',
+                phase3Title: '⚠️ שים לב! החוקים השתנו! ⚠️',
+                phase3Content: 'מעכשיו, ראה צבעים לא מילים! לחץ על הכפתור התואם לצבע הגופן,<br>לא לתוכן הטקסט! התרכז!',
+                phase4Title: '🎯 שלב 3: מבחן זיכרון מתקדם',
+                phase4Content: 'הקושי גדל! יותר רשתות זיכרון לפנים,<br>התרכז יותר!',
+                goldTier: 'זהב',
+                silverTier: 'כסף',
+                bronzeTier: 'ארד',
+                globalRanking: 'דירוג עולמי',
+                globalFirstHalfRankLabel: 'דירוג עולמי 10 ראשונים',
+                globalSecondHalfRankLabel: 'דירוג עולמי 10 אחרונים',
+                topRankPrefix: '#',
+                players: 'שחקנים',
+                findColor: 'מצא את בלוק {color}',
+        // ✅ חדש: שמות דרגות
+        mythicTier: 'מיתי',
+        challengerTier: 'מאתגר',
+        grandmasterTier: 'גראנדמאסטר',
+        masterTier: 'מאסטר',
+        diamondTier: 'יהלום',
+        emeraldTier: 'אמרלד',
+        platinumTier: 'פלטינה',
+        goldTier: 'זהב',
+        silverTier: 'כסף',
+        bronzeTier: 'ארד',
+        
+        // ✅ חדש: דרגה הבאה
+        nextTier: 'דרגה הבאה',
+        requirement: 'דרישה',
+        maxTierReached: 'הדרגה המקסימלית הושגה!',
+        noNextTier: 'אין',
+        
+        // ✅ חדש: דרישות קידום
+        silverReq: '6/10 (4 שגויות)',
+        goldReq: '7/10 (3 שגויות)',
+        platinumReq: '8/10 (2 שגויות)',
+        emeraldReq: '9/10 (1 שגויה)',
+        diamondReq: '10/10 ו-≤60 שניות',
+        masterReq: '10/10 ו-≤55 שניות',
+        grandmasterReq: '10/10 ו-≤48 שניות',
+        challengerReq: '10/10 ו-≤46 שניות',
+        mythicReq: '10/10 ו-≤43 שניות'
+    },
+            
+            // العربية (Arabic)
+            'ar': {
+                pageTitle: 'اختبار حيوية الدماغ - تأثير ستروب وتحدي الذاكرة',
+                gameTitle: '🧠 اختبار حيوية الدماغ',
+                welcomeMessage: 'مرحبًا بك في مركز تدريب الدماغ! هل أنت مستعد لتحدي تركيزك وذاكرتك؟',
+                companyName: 'حيوية عمر الدماغ',
+                enterNameLabel: 'الرجاء إدخال اسمك:',
+                namePlaceholder: 'أدخل الاسم',
+                startButton: 'ابدأ اللعبة',
+                gameRulesTitle: '📋 قواعد اللعبة',
+                rule1: '20 مستوى في المجموع، مقسمة إلى أربع مراحل',
+                rule2: 'أول 10 مستويات تختبر سرعة رد الفعل والتركيز',
+                rule3: 'آخر 10 مستويات تختبر الذاكرة والوعي المكاني',
+                rule4: '3 ثوانٍ لكل مستوى، أجب بسرعة',
+                firstRuleInfo: 'المستويات 1-5: انقر على الزر المطابق لمحتوى النص',
+                clickTextInstruction: '📝 نصيحة: اقرأ النص، تجاهل اللون',
+                readyMessage: 'هل أنت مستعد؟',
+                ruleChangeTitle: '⚠️ انتباه! تغيرت القواعد! ⚠️',
+                continueButton: 'متابعة التحدي',
+                instructionText: 'انقر على اللون المطابق لمحتوى النص',
+                instructionColor: 'انقر على اللون المطابق للون الخط',
+                colorRed: 'أحمر',
+                colorYellow: 'أصفر',
+                colorBlue: 'أزرق',
+                colorGreen: 'أخضر',
+                colorRedShort: 'أحمر',
+                colorYellowShort: 'أصفر',
+                colorBlueShort: 'أزرق',
+                colorGreenShort: 'أخضر',
+                rememberPosition: 'تذكر موضع الكتل الملونة',
+                rememberColors: 'حفظ مواضع الألوان...',
+                timeRemaining: 'الوقت المتبقي: ',
+                seconds: 'ث',
+                levelLabel: 'مستوى',
+                levelSuffix: '',
+                level: 'مستوى',
+                detailedScore: '📊 النتيجة التفصيلية',
+                type1Name: 'النوع 1 (قراءة النص)',
+                type2Name: 'النوع 2 (رؤية اللون)',
+                type3Name: 'النوع 3 (ذاكرة 4 شبكات)',
+                type4Name: 'النوع 4 (ذاكرة 9 شبكات)',
+                timeStats: '⏱️ إحصائيات الوقت',
+                first10Levels: 'أول 10 مستويات',
+                last10Levels: 'آخر 10 مستويات',
+                localRanking: 'الترتيب المحلي',
+                onlineRanking: 'الترتيب العالمي',
+                localLeaderboard: '🏆 لوحة المتصدرين المحلية',
+                first10Ranking: 'أول 10 مستويات (مثالي وأسرع)',
+                last10Ranking: 'آخر 10 مستويات (مثالي وأسرع)',
+                myTierLeaderboard: 'لوحة متصدري فئتي',
+                loading: 'جاري التحميل...',
+                playAgain: 'العب مرة أخرى',
+                learnMore: 'تعلم المزيد عن تدريب الدماغ',
+                correct: '✓ صحيح!',
+                incorrect: '✗ خطأ!',
+                timeUp: '⏰ انتهى الوقت!',
+                perfectTitle: 'رائع! عقلك في حالة مثالية!',
+                perfectContent: 'تهانينا! أظهرت قدرات مذهلة في اختبارات سرعة رد الفعل والتركيز. عقلك يستجيب بسرعة، التركيز ممتاز، والذاكرة رائعة. حافظ على هذه الحالة مع التدريب الدماغي المنتظم لتعزيز قدراتك المعرفية أكثر! حيوية عمر الدماغ يهتم بك',
+                goodTitle: 'عمل جيد! عقلك يمكن أن يكون أفضل!',
+                goodContent: 'نتائج اختبارك تظهر وظيفة دماغية جيدة، على الرغم من الأخطاء الطفيفة، الأداء العام ممتاز. استمر في التدريب الدماغي وحافظ على عادات حياة جيدة مثل النوم الكافي والنظام الغذائي المتوازن والتمارين المعتدلة لتحسين الوظيفة المعرفية. حيوية عمر الدماغ يهتم بك',
+                needImprovementTitle: 'عقلك يحتاج إلى بعض التمدد!',
+                needImprovementContent: 'اختبار اليوم قد يكون صعبًا بعض الشيء بالنسبة لك. تدرب أكثر على التدريب الدماغي لتحسين التركيز والذاكرة. لا تقلق، القدرات المعرفية يمكن تحسينها من خلال الممارسة! اقضِ 10-15 دقيقة يوميًا في ألعاب دماغية مماثلة مع روتين منتظم، وسترى التقدم! حيوية عمر الدماغ يهتم بك',
+                noData: 'لا توجد بيانات متاحة',
+                enterNameAlert: 'الرجاء إدخال اسمك',
+                phase2Title: 'تبدأ المرحلة 2!',
+                phase2Content: 'الآن اختبار ذاكرتك البصرية-المكانية.<br>تذكر مواضع الكتل الملونة، ثم ابحث عن اللون المحدد!',
+                phase3Title: '⚠️ انتباه! تغيرت القواعد! ⚠️',
+                phase3Content: 'من الآن فصاعدًا، انظر إلى الألوان وليس الكلمات! انقر على الزر المطابق للون الخط،<br>وليس محتوى النص! ركز!',
+                phase4Title: '🎯 المرحلة 3: اختبار الذاكرة المتقدم',
+                phase4Content: 'زادت الصعوبة! المزيد من شبكات الذاكرة قادمة،<br>ركز أكثر!',
+                goldTier: 'ذهبي',
+                silverTier: 'فضي',
+                bronzeTier: 'برونزي',
+                globalRanking: 'الترتيب العالمي',
+                globalFirstHalfRankLabel: 'الترتيب العالمي لأول 10',
+                globalSecondHalfRankLabel: 'الترتيب العالمي لآخر 10',
+                topRankPrefix: '#',
+                players: 'لاعبين',
+                findColor: 'ابحث عن كتلة {color}',
+        // ✅ جديد: أسماء الرتب
+        mythicTier: 'أسطوري',
+        challengerTier: 'متحدي',
+        grandmasterTier: 'جراند ماستر',
+        masterTier: 'ماستر',
+        diamondTier: 'ماسي',
+        emeraldTier: 'زمردي',
+        platinumTier: 'بلاتيني',
+        goldTier: 'ذهبي',
+        silverTier: 'فضي',
+        bronzeTier: 'برونزي',
+        
+        // ✅ جديد: الرتبة التالية
+        nextTier: 'الرتبة التالية',
+        requirement: 'المتطلب',
+        maxTierReached: 'تم الوصول للرتبة القصوى!',
+        noNextTier: 'لا يوجد',
+        
+        // ✅ جديد: متطلبات الترقية
+        silverReq: '6/10 (4 أخطاء)',
+        goldReq: '7/10 (3 أخطاء)',
+        platinumReq: '8/10 (خطأان)',
+        emeraldReq: '9/10 (خطأ واحد)',
+        diamondReq: '10/10 و ≤60 ثانية',
+        masterReq: '10/10 و ≤55 ثانية',
+        grandmasterReq: '10/10 و ≤48 ثانية',
+        challengerReq: '10/10 و ≤46 ثانية',
+        mythicReq: '10/10 و ≤43 ثانية'
+            },
+            
+            // Português (Portuguese)
+            'pt': {
+                pageTitle: 'Teste de Vitalidade Cerebral - Efeito Stroop e Desafio de Memória',
+                gameTitle: '🧠 Teste de Vitalidade Cerebral',
+                welcomeMessage: 'Bem-vindo ao Centro de Treinamento Cerebral! Pronto para desafiar seu foco e memória?',
+                companyName: 'Vitalidade da Idade Cerebral',
+                enterNameLabel: 'Por favor, insira seu nome:',
+                namePlaceholder: 'Digite o nome',
+                startButton: 'Iniciar Jogo',
+                gameRulesTitle: '📋 Regras do Jogo',
+                rule1: '20 níveis no total, divididos em quatro etapas',
+                rule2: 'Os primeiros 10 níveis testam velocidade de reação e foco',
+                rule3: 'Os últimos 10 níveis testam memória e consciência espacial',
+                rule4: '3 segundos por nível, responda rapidamente',
+                firstRuleInfo: 'Níveis 1-5: Clique no botão que corresponde ao conteúdo do texto',
+                clickTextInstruction: '📝 Dica: Leia o texto, ignore a cor',
+                readyMessage: 'Você está pronto?',
+                ruleChangeTitle: '⚠️ Atenção! As regras mudaram! ⚠️',
+                continueButton: 'Continuar Desafio',
+                instructionText: 'Clique na cor que corresponde ao conteúdo do texto',
+                instructionColor: 'Clique na cor que corresponde à cor da fonte',
+                colorRed: 'Vermelho',
+                colorYellow: 'Amarelo',
+                colorBlue: 'Azul',
+                colorGreen: 'Verde',
+                colorRedShort: 'Vermelho',
+                colorYellowShort: 'Amarelo',
+                colorBlueShort: 'Azul',
+                colorGreenShort: 'Verde',
+                rememberPosition: 'Lembre-se da posição dos blocos de cores',
+                rememberColors: 'Memorizando as posições das cores...',
+                timeRemaining: 'Tempo Restante: ',
+                seconds: 's',
+                levelLabel: 'Nível',
+                levelSuffix: '',
+                level: 'Nível',
+                detailedScore: '📊 Pontuação Detalhada',
+                type1Name: 'Tipo 1 (Ler Texto)',
+                type2Name: 'Tipo 2 (Ver Cor)',
+                type3Name: 'Tipo 3 (Memória 4 Grades)',
+                type4Name: 'Tipo 4 (Memória 9 Grades)',
+                timeStats: '⏱️ Estatísticas de Tempo',
+                first10Levels: 'Primeiros 10 Níveis',
+                last10Levels: 'Últimos 10 Níveis',
+                localRanking: 'Classificação Local',
+                onlineRanking: 'Classificação Global',
+                localLeaderboard: '🏆 Tabela de Classificação Local',
+                first10Ranking: 'Primeiros 10 Níveis (Perfeito e Mais Rápido)',
+                last10Ranking: 'Últimos 10 Níveis (Perfeito e Mais Rápido)',
+                myTierLeaderboard: 'Minha Classificação de Nível',
+                loading: 'Carregando...',
+                playAgain: 'Jogar Novamente',
+                learnMore: 'Saiba Mais Sobre Treinamento Cerebral',
+                correct: '✓ Correto!',
+                incorrect: '✗ Incorreto!',
+                timeUp: '⏰ Tempo Esgotado!',
+                perfectTitle: 'Incrível! Seu cérebro está em ótima forma!',
+                perfectContent: 'Parabéns! Você demonstrou habilidades incríveis nos testes de velocidade de reação e foco. Seu cérebro responde rapidamente, o foco é excelente e a memória é magnífica. Mantenha esse estado com treinamento cerebral regular para melhorar ainda mais suas habilidades cognitivas! Vitalidade da Idade Cerebral cuida de você',
+                goodTitle: 'Bom trabalho! Seu cérebro pode ser ainda melhor!',
+                goodContent: 'Seus resultados mostram boa função cerebral, embora com erros menores, o desempenho geral é excelente. Continue o treinamento cerebral e mantenha bons hábitos de vida como sono adequado, dieta equilibrada e exercício moderado para melhorar a função cognitiva. Vitalidade da Idade Cerebral cuida de você',
+                needImprovementTitle: 'Seu cérebro precisa de um pouco de alongamento!',
+                needImprovementContent: 'O teste de hoje pode ser um pouco desafiador para você. Pratique mais treinamento cerebral para melhorar o foco e a memória. Não se preocupe, habilidades cognitivas podem ser melhoradas com a prática! Dedique 10-15 minutos diários a jogos cerebrais semelhantes com rotinas regulares, e você verá progresso! Vitalidade da Idade Cerebral cuida de você',
+                noData: 'Nenhum dado disponível',
+                enterNameAlert: 'Por favor, insira seu nome',
+                phase2Title: 'A Etapa 2 Começa!',
+                phase2Content: 'Agora testando sua memória visual-espacial.<br>Lembre-se das posições dos blocos de cores, depois encontre a cor especificada!',
+                phase3Title: '⚠️ Atenção! As regras mudaram! ⚠️',
+                phase3Content: 'De agora em diante, veja cores não palavras! Clique no botão que corresponde à cor da fonte,<br>não ao conteúdo do texto! Concentre-se!',
+                phase4Title: '🎯 Etapa 3: Teste de Memória Avançado',
+                phase4Content: 'Dificuldade aumentada! Mais grades de memória pela frente,<br>concentre-se mais!',
+                goldTier: 'Ouro',
+                silverTier: 'Prata',
+                bronzeTier: 'Bronze',
+                globalRanking: 'Classificação Global',
+                globalFirstHalfRankLabel: 'Classificação Global Primeiros 10',
+                globalSecondHalfRankLabel: 'Classificação Global Últimos 10',
+                topRankPrefix: '#',
+                players: 'jogadores',
+                findColor: 'Encontre o bloco {color}',
+        // ✅ Novo: Nomes de Ranques
+        mythicTier: 'Mítico',
+        challengerTier: 'Desafiante',
+        grandmasterTier: 'Grão-Mestre',
+        masterTier: 'Mestre',
+        diamondTier: 'Diamante',
+        emeraldTier: 'Esmeralda',
+        platinumTier: 'Platina',
+        goldTier: 'Ouro',
+        silverTier: 'Prata',
+        bronzeTier: 'Bronze',
+        
+        // ✅ Novo: Próximo Ranque
+        nextTier: 'Próximo Ranque',
+        requirement: 'Requisito',
+        maxTierReached: 'Ranque Máximo Alcançado!',
+        noNextTier: 'Nenhum',
+        
+        // ✅ Novo: Requisitos de Promoção
+        silverReq: '6/10 (4 erros)',
+        goldReq: '7/10 (3 erros)',
+        platinumReq: '8/10 (2 erros)',
+        emeraldReq: '9/10 (1 erro)',
+        diamondReq: '10/10 e ≤60s',
+        masterReq: '10/10 e ≤55s',
+        grandmasterReq: '10/10 e ≤48s',
+        challengerReq: '10/10 e ≤46s',
+        mythicReq: '10/10 e ≤43s'
+    },
+            
+            // Deutsch (German)
+            'de': {
+                pageTitle: 'Gehirnvitalitätstest - Stroop-Effekt und Gedächtnisherausforderung',
+                gameTitle: '🧠 Gehirnvitalitätstest',
+                welcomeMessage: 'Willkommen im Gehirntrainingszentrum! Bereit, Ihren Fokus und Ihr Gedächtnis herauszufordern?',
+                companyName: 'Gehirnalter-Vitalität',
+                enterNameLabel: 'Bitte geben Sie Ihren Namen ein:',
+                namePlaceholder: 'Namen eingeben',
+                startButton: 'Spiel Starten',
+                gameRulesTitle: '📋 Spielregeln',
+                rule1: 'Insgesamt 20 Level, aufgeteilt in vier Phasen',
+                rule2: 'Die ersten 10 Level testen Reaktionsgeschwindigkeit und Fokus',
+                rule3: 'Die letzten 10 Level testen Gedächtnis und räumliches Bewusstsein',
+                rule4: '3 Sekunden pro Level, antworten Sie schnell',
+                firstRuleInfo: 'Level 1-5: Klicken Sie auf die Schaltfläche, die dem Textinhalt entspricht',
+                clickTextInstruction: '📝 Tipp: Lesen Sie den Text, ignorieren Sie die Farbe',
+                readyMessage: 'Sind Sie bereit?',
+                ruleChangeTitle: '⚠️ Achtung! Die Regeln haben sich geändert! ⚠️',
+                continueButton: 'Herausforderung Fortsetzen',
+                instructionText: 'Klicken Sie auf die Farbe, die dem Textinhalt entspricht',
+                instructionColor: 'Klicken Sie auf die Farbe, die der Schriftfarbe entspricht',
+                colorRed: 'Rot',
+                colorYellow: 'Gelb',
+                colorBlue: 'Blau',
+                colorGreen: 'Grün',
+                colorRedShort: 'Rot',
+                colorYellowShort: 'Gelb',
+                colorBlueShort: 'Blau',
+                colorGreenShort: 'Grün',
+                rememberPosition: 'Merken Sie sich die Position der Farbblöcke',
+                rememberColors: 'Farbpositionen merken...',
+                timeRemaining: 'Verbleibende Zeit: ',
+                seconds: 's',
+                levelLabel: 'Level',
+                levelSuffix: '',
+                level: 'Level',
+                detailedScore: '📊 Detaillierte Punktzahl',
+                type1Name: 'Typ 1 (Text Lesen)',
+                type2Name: 'Typ 2 (Farbe Sehen)',
+                type3Name: 'Typ 3 (4-Raster-Gedächtnis)',
+                type4Name: 'Typ 4 (9-Raster-Gedächtnis)',
+                timeStats: '⏱️ Zeitstatistik',
+                first10Levels: 'Erste 10 Level',
+                last10Levels: 'Letzte 10 Level',
+                localRanking: 'Lokales Ranking',
+                onlineRanking: 'Globales Ranking',
+                localLeaderboard: '🏆 Lokale Bestenliste',
+                first10Ranking: 'Erste 10 Level (Perfekt & Schnellste)',
+                last10Ranking: 'Letzte 10 Level (Perfekt & Schnellste)',
+                myTierLeaderboard: 'Meine Stufen-Bestenliste',
+                loading: 'Laden...',
+                playAgain: 'Nochmal Spielen',
+                learnMore: 'Mehr über Gehirntraining Erfahren',
+                correct: '✓ Richtig!',
+                incorrect: '✗ Falsch!',
+                timeUp: '⏰ Zeit Abgelaufen!',
+                perfectTitle: 'Fantastisch! Ihr Gehirn ist in Bestform!',
+                perfectContent: 'Herzlichen Glückwunsch! Sie haben unglaubliche Fähigkeiten in den Reaktionsgeschwindigkeits- und Fokustests gezeigt. Ihr Gehirn reagiert schnell, der Fokus ist ausgezeichnet und das Gedächtnis ist großartig. Halten Sie diesen Zustand mit regelmäßigem Gehirntraining aufrecht, um Ihre kognitiven Fähigkeiten weiter zu verbessern! Gehirnalter-Vitalität kümmert sich um Sie',
+                goodTitle: 'Gute Arbeit! Ihr Gehirn kann noch besser werden!',
+                goodContent: 'Ihre Testergebnisse zeigen eine gute Gehirnfunktion, obwohl mit kleineren Fehlern ist die Gesamtleistung ausgezeichnet. Setzen Sie das Gehirntraining fort und pflegen Sie gute Lebensgewohnheiten wie ausreichenden Schlaf, ausgewogene Ernährung und moderate Bewegung, um die kognitive Funktion zu verbessern. Gehirnalter-Vitalität kümmert sich um Sie',
+                needImprovementTitle: 'Ihr Gehirn braucht etwas Dehnung!',
+                needImprovementContent: 'Der heutige Test könnte für Sie etwas herausfordernd sein. Üben Sie mehr Gehirntraining, um Fokus und Gedächtnis zu verbessern. Keine Sorge, kognitive Fähigkeiten können durch Übung verbessert werden! Verbringen Sie täglich 10-15 Minuten mit ähnlichen Gehirnspielen bei regelmäßigen Routinen, und Sie werden Fortschritte sehen! Gehirnalter-Vitalität kümmert sich um Sie',
+                noData: 'Keine Daten verfügbar',
+                enterNameAlert: 'Bitte geben Sie Ihren Namen ein',
+                phase2Title: 'Phase 2 Beginnt!',
+                phase2Content: 'Jetzt wird Ihr visuell-räumliches Gedächtnis getestet.<br>Merken Sie sich die Positionen der Farbblöcke und finden Sie dann die angegebene Farbe!',
+                phase3Title: '⚠️ Achtung! Die Regeln haben sich geändert! ⚠️',
+                phase3Content: 'Von nun an sehen Sie Farben, keine Wörter! Klicken Sie auf die Schaltfläche, die der Schriftfarbe entspricht,<br>nicht dem Textinhalt! Konzentrieren Sie sich!',
+                phase4Title: '🎯 Phase 3: Fortgeschrittener Gedächtnistest',
+                phase4Content: 'Schwierigkeit erhöht! Mehr Gedächtnisraster voraus,<br>konzentrieren Sie sich mehr!',
+                goldTier: 'Gold',
+                silverTier: 'Silber',
+                bronzeTier: 'Bronze',
+                globalRanking: 'Globales Ranking',
+                globalFirstHalfRankLabel: 'Globales Ranking Erste 10',
+                globalSecondHalfRankLabel: 'Globales Ranking Letzte 10',
+                topRankPrefix: '#',
+                players: 'Spieler',
+                findColor: 'Finden Sie den {color} Block',
+        // ✅ Neu: Rangnamen
+        mythicTier: 'Mythisch',
+        challengerTier: 'Herausforderer',
+        grandmasterTier: 'Großmeister',
+        masterTier: 'Meister',
+        diamondTier: 'Diamant',
+        emeraldTier: 'Smaragd',
+        platinumTier: 'Platin',
+        goldTier: 'Gold',
+        silverTier: 'Silber',
+        bronzeTier: 'Bronze',
+        
+        // ✅ Neu: Nächster Rang
+        nextTier: 'Nächster Rang',
+        requirement: 'Anforderung',
+        maxTierReached: 'Maximaler Rang Erreicht!',
+        noNextTier: 'Keiner',
+        
+        // ✅ Neu: Aufstiegsanforderungen
+        silverReq: '6/10 (4 Fehler)',
+        goldReq: '7/10 (3 Fehler)',
+        platinumReq: '8/10 (2 Fehler)',
+        emeraldReq: '9/10 (1 Fehler)',
+        diamondReq: '10/10 und ≤60s',
+        masterReq: '10/10 und ≤55s',
+        grandmasterReq: '10/10 und ≤48s',
+        challengerReq: '10/10 und ≤46s',
+        mythicReq: '10/10 und ≤43s'
+    },
+            
+            // Русский (Russian)
+            'ru': {
+                pageTitle: 'Тест жизнеспособности мозга - Эффект Струпа и вызов памяти',
+                gameTitle: '🧠 Тест жизнеспособности мозга',
+                welcomeMessage: 'Добро пожаловать в центр тренировки мозга! Готовы испытать свою концентрацию и память?',
+                companyName: 'Жизнеспособность возраста мозга',
+                enterNameLabel: 'Пожалуйста, введите ваше имя:',
+                namePlaceholder: 'Введите имя',
+                startButton: 'Начать игру',
+                gameRulesTitle: '📋 Правила игры',
+                rule1: 'Всего 20 уровней, разделенных на четыре этапа',
+                rule2: 'Первые 10 уровней проверяют скорость реакции и концентрацию',
+                rule3: 'Последние 10 уровней проверяют память и пространственное восприятие',
+                rule4: '3 секунды на каждый уровень, отвечайте быстро',
+                firstRuleInfo: 'Уровни 1-5: Нажмите кнопку, соответствующую содержанию текста',
+                clickTextInstruction: '📝 Совет: Читайте текст, игнорируйте цвет',
+                readyMessage: 'Вы готовы?',
+                ruleChangeTitle: '⚠️ Внимание! Правила изменились! ⚠️',
+                continueButton: 'Продолжить вызов',
+                instructionText: 'Нажмите цвет, соответствующий содержанию текста',
+                instructionColor: 'Нажмите цвет, соответствующий цвету шрифта',
+                colorRed: 'Красный',
+                colorYellow: 'Желтый',
+                colorBlue: 'Синий',
+                colorGreen: 'Зеленый',
+                colorRedShort: 'Красный',
+                colorYellowShort: 'Желтый',
+                colorBlueShort: 'Синий',
+                colorGreenShort: 'Зеленый',
+                rememberPosition: 'Запомните положение цветных блоков',
+                rememberColors: 'Запоминание позиций цветов...',
+                timeRemaining: 'Осталось времени: ',
+                seconds: 'с',
+                levelLabel: 'Уровень',
+                levelSuffix: '',
+                level: 'Уровень',
+                detailedScore: '📊 Подробный счет',
+                type1Name: 'Тип 1 (Чтение текста)',
+                type2Name: 'Тип 2 (Видение цвета)',
+                type3Name: 'Тип 3 (Память 4 сетки)',
+                type4Name: 'Тип 4 (Память 9 сеток)',
+                timeStats: '⏱️ Статистика времени',
+                first10Levels: 'Первые 10 уровней',
+                last10Levels: 'Последние 10 уровней',
+                localRanking: 'Локальный рейтинг',
+                onlineRanking: 'Глобальный рейтинг',
+                localLeaderboard: '🏆 Локальная таблица лидеров',
+                first10Ranking: 'Первые 10 уровней (Идеально и быстрее всех)',
+                last10Ranking: 'Последние 10 уровней (Идеально и быстрее всех)',
+                myTierLeaderboard: 'Моя таблица лидеров уровня',
+                loading: 'Загрузка...',
+                playAgain: 'Играть снова',
+                learnMore: 'Узнать больше о тренировке мозга',
+                correct: '✓ Правильно!',
+                incorrect: '✗ Неправильно!',
+                timeUp: '⏰ Время вышло!',
+                perfectTitle: 'Потрясающе! Ваш мозг в отличной форме!',
+                perfectContent: 'Поздравляем! Вы продемонстрировали невероятные способности в тестах скорости реакции и концентрации. Ваш мозг реагирует быстро, концентрация отличная, а память превосходна. Поддерживайте это состояние регулярными тренировками мозга, чтобы еще больше улучшить свои когнитивные способности! Жизнеспособность возраста мозга заботится о вас',
+                goodTitle: 'Хорошая работа! Ваш мозг может быть еще лучше!',
+                goodContent: 'Ваши результаты теста показывают хорошую работу мозга, хотя и с незначительными ошибками, общая производительность отличная. Продолжайте тренировки мозга и поддерживайте хорошие привычки образа жизни, такие как достаточный сон, сбалансированное питание и умеренные физические упражнения для улучшения когнитивной функции. Жизнеспособность возраста мозга заботится о вас',
+                needImprovementTitle: 'Вашему мозгу нужна небольшая растяжка!',
+                needImprovementContent: 'Сегодняшний тест может быть немного сложным для вас. Практикуйте больше тренировок мозга для улучшения концентрации и памяти. Не волнуйтесь, когнитивные способности можно улучшить через практику! Уделяйте 10-15 минут в день на подобные игры для мозга с регулярным режимом, и вы увидите прогресс! Жизнеспособность возраста мозга заботится о вас',
+                noData: 'Нет доступных данных',
+                enterNameAlert: 'Пожалуйста, введите ваше имя',
+                phase2Title: 'Начинается этап 2!',
+                phase2Content: 'Теперь проверяем вашу визуально-пространственную память.<br>Запомните положение цветных блоков, затем найдите указанный цвет!',
+                phase3Title: '⚠️ Внимание! Правила изменились! ⚠️',
+                phase3Content: 'Теперь смотрите на цвета, а не на слова! Нажмите кнопку, соответствующую цвету шрифта,<br>а не содержанию текста! Сконцентрируйтесь!',
+                phase4Title: '🎯 Этап 3: Расширенный тест памяти',
+                phase4Content: 'Сложность увеличена! Впереди больше сеток памяти,<br>сконцентрируйтесь больше!',
+                goldTier: 'Золото',
+                silverTier: 'Серебро',
+                bronzeTier: 'Бронза',
+                globalRanking: 'Глобальный рейтинг',
+                globalFirstHalfRankLabel: 'Глобальный рейтинг первые 10',
+                globalSecondHalfRankLabel: 'Глобальный рейтинг последние 10',
+                topRankPrefix: '#',
+                players: 'игроков',
+                findColor: 'Найдите {color} блок',
+        // ✅ Новое: Названия рангов
+        mythicTier: 'Мифический',
+        challengerTier: 'Претендент',
+        grandmasterTier: 'Грандмастер',
+        masterTier: 'Мастер',
+        diamondTier: 'Алмаз',
+        emeraldTier: 'Изумруд',
+        platinumTier: 'Платина',
+        goldTier: 'Золото',
+        silverTier: 'Серебро',
+        bronzeTier: 'Бронза',
+        
+        // ✅ Новое: Следующий ранг
+        nextTier: 'Следующий ранг',
+        requirement: 'Требование',
+        maxTierReached: 'Достигнут максимальный ранг!',
+        noNextTier: 'Нет',
+        
+        // ✅ Новое: Требования для повышения
+        silverReq: '6/10 (4 ошибки)',
+        goldReq: '7/10 (3 ошибки)',
+        platinumReq: '8/10 (2 ошибки)',
+        emeraldReq: '9/10 (1 ошибка)',
+        diamondReq: '10/10 и ≤60с',
+        masterReq: '10/10 и ≤55с',
+        grandmasterReq: '10/10 и ≤48с',
+        challengerReq: '10/10 и ≤46с',
+        mythicReq: '10/10 и ≤43с'
+
+            },
+            
+            // 한국어 (Korean)
+            'ko': {
+                pageTitle: '두뇌 활력 테스트 - 스트룹 효과 및 기억력 챌린지',
+                gameTitle: '🧠 두뇌 활력 테스트',
+                welcomeMessage: '두뇌 훈련 센터에 오신 것을 환영합니다! 집중력과 기억력에 도전할 준비가 되셨나요?',
+                companyName: '브레인 에이지 바이탈리티',
+                enterNameLabel: '이름을 입력하세요:',
+                namePlaceholder: '이름 입력',
+                startButton: '게임 시작',
+                gameRulesTitle: '📋 게임 규칙',
+                rule1: '총 20개 레벨, 4단계로 구성',
+                rule2: '처음 10개 레벨은 반응 속도와 집중력 테스트',
+                rule3: '마지막 10개 레벨은 기억력과 공간 인식 테스트',
+                rule4: '레벨당 3초, 빠르게 답하세요',
+                firstRuleInfo: '레벨 1-5: 텍스트 내용과 일치하는 버튼 클릭',
+                clickTextInstruction: '📝 팁: 텍스트를 읽고 색상은 무시하세요',
+                readyMessage: '준비되셨나요?',
+                ruleChangeTitle: '⚠️ 주의! 규칙이 바뀌었습니다! ⚠️',
+                continueButton: '도전 계속하기',
+                instructionText: '텍스트 내용과 일치하는 색상을 클릭하세요',
+                instructionColor: '글꼴 색상과 일치하는 색상을 클릭하세요',
+                colorRed: '빨강',
+                colorYellow: '노랑',
+                colorBlue: '파랑',
+                colorGreen: '초록',
+                colorRedShort: '빨강',
+                colorYellowShort: '노랑',
+                colorBlueShort: '파랑',
+                colorGreenShort: '초록',
+                rememberPosition: '색상 블록의 위치를 기억하세요',
+                rememberColors: '색상 위치 기억 중...',
+                timeRemaining: '남은 시간: ',
+                seconds: '초',
+                levelLabel: '레벨',
+                levelSuffix: '',
+                level: '레벨',
+                detailedScore: '📊 상세 점수',
+                type1Name: '유형 1 (텍스트 읽기)',
+                type2Name: '유형 2 (색상 보기)',
+                type3Name: '유형 3 (4칸 기억)',
+                type4Name: '유형 4 (9칸 기억)',
+                timeStats: '⏱️ 시간 통계',
+                first10Levels: '처음 10개 레벨',
+                last10Levels: '마지막 10개 레벨',
+                localRanking: '로컬 순위',
+                onlineRanking: '글로벌 순위',
+                localLeaderboard: '🏆 로컬 리더보드',
+                first10Ranking: '처음 10개 레벨 (완벽 & 최고 속도)',
+                last10Ranking: '마지막 10개 레벨 (완벽 & 최고 속도)',
+                myTierLeaderboard: '내 티어 리더보드',
+                loading: '로딩 중...',
+                playAgain: '다시 플레이',
+                learnMore: '두뇌 훈련에 대해 더 알아보기',
+                correct: '✓ 정답!',
+                incorrect: '✗ 오답!',
+                timeUp: '⏰ 시간 초과!',
+                perfectTitle: '놀라워요! 당신의 두뇌는 최고 상태입니다!',
+                perfectContent: '축하합니다! 반응 속도와 집중력 테스트에서 놀라운 능력을 보여주셨습니다. 두뇌 반응이 빠르고, 집중력이 뛰어나며, 기억력도 훌륭합니다. 정기적인 두뇌 훈련으로 이 상태를 유지하여 인지 능력을 더욱 향상시키세요! 브레인 에이지 바이탈리티가 여러분을 응원합니다',
+                goodTitle: '잘했어요! 두뇌가 더 좋아질 수 있습니다!',
+                goodContent: '테스트 결과 좋은 두뇌 기능을 보여주고 있습니다. 약간의 실수가 있었지만 전반적인 성과는 우수합니다. 두뇌 훈련을 계속하고 충분한 수면, 균형 잡힌 식단, 적당한 운동과 같은 좋은 생활 습관을 유지하여 인지 기능을 개선하세요. 브레인 에이지 바이탈리티가 여러분을 응원합니다',
+                needImprovementTitle: '두뇌에 약간의 스트레칭이 필요합니다!',
+                needImprovementContent: '오늘 테스트가 조금 어려웠을 수 있습니다. 집중력과 기억력을 향상시키기 위해 더 많은 두뇌 훈련을 연습하세요. 걱정하지 마세요, 인지 능력은 연습을 통해 향상될 수 있습니다! 규칙적인 루틴으로 매일 10-15분간 유사한 두뇌 게임을 하면 진전을 볼 수 있습니다! 브레인 에이지 바이탈리티가 여러분을 응원합니다',
+                noData: '사용 가능한 데이터 없음',
+                enterNameAlert: '이름을 입력하세요',
+                phase2Title: '2단계 시작!',
+                phase2Content: '이제 시각-공간 기억력을 테스트합니다.<br>색상 블록의 위치를 기억한 후 지정된 색상을 찾으세요!',
+                phase3Title: '⚠️ 주의! 규칙이 바뀌었습니다! ⚠️',
+                phase3Content: '지금부터는 색상을 보고 단어는 보지 마세요! 글꼴 색상과 일치하는 버튼을 클릭하세요,<br>텍스트 내용이 아닙니다! 집중하세요!',
+                phase4Title: '🎯 3단계: 고급 기억력 테스트',
+                phase4Content: '난이도 증가! 더 많은 기억 칸이 앞에 있습니다,<br>더 집중하세요!',
+                goldTier: '골드',
+                silverTier: '실버',
+                bronzeTier: '브론즈',
+                globalRanking: '글로벌 순위',
+                globalFirstHalfRankLabel: '처음 10 글로벌 순위',
+                globalSecondHalfRankLabel: '마지막 10 글로벌 순위',
+                topRankPrefix: '#',
+                players: '명의 플레이어',
+                findColor: '{color} 블록을 찾으세요',
+        // ✅ 신규: 등급 이름
+        mythicTier: '미식',
+        challengerTier: '챌린저',
+        grandmasterTier: '그랜드마스터',
+        masterTier: '마스터',
+        diamondTier: '다이아몬드',
+        emeraldTier: '에메랄드',
+        platinumTier: '플래티넘',
+        goldTier: '골드',
+        silverTier: '실버',
+        bronzeTier: '브론즈',
+        
+        // ✅ 신규: 다음 등급
+        nextTier: '다음 등급',
+        requirement: '요구 사항',
+        maxTierReached: '최고 등급 달성!',
+        noNextTier: '없음',
+        
+        // ✅ 신규: 승급 요구 사항
+        silverReq: '6/10 (4개 틀림)',
+        goldReq: '7/10 (3개 틀림)',
+        platinumReq: '8/10 (2개 틀림)',
+        emeraldReq: '9/10 (1개 틀림)',
+        diamondReq: '10/10 및 ≤60초',
+        masterReq: '10/10 및 ≤55초',
+        grandmasterReq: '10/10 및 ≤48초',
+        challengerReq: '10/10 및 ≤46초',
+        mythicReq: '10/10 및 ≤43초'
+    },
+            
+            // Italiano (Italian)
+            'it': {
+                pageTitle: 'Test di Vitalità Cerebrale - Effetto Stroop e Sfida della Memoria',
+                gameTitle: '🧠 Test di Vitalità Cerebrale',
+                welcomeMessage: 'Benvenuto al Centro di Allenamento Cerebrale! Pronto a sfidare la tua concentrazione e memoria?',
+                companyName: 'Vitalità dell\'Età Cerebrale',
+                enterNameLabel: 'Per favore inserisci il tuo nome:',
+                namePlaceholder: 'Inserisci nome',
+                startButton: 'Inizia Gioco',
+                gameRulesTitle: '📋 Regole del Gioco',
+                rule1: '20 livelli in totale, divisi in quattro fasi',
+                rule2: 'I primi 10 livelli testano velocità di reazione e concentrazione',
+                rule3: 'Gli ultimi 10 livelli testano memoria e consapevolezza spaziale',
+                rule4: '3 secondi per livello, rispondi velocemente',
+                firstRuleInfo: 'Livelli 1-5: Clicca sul pulsante corrispondente al contenuto del testo',
+                clickTextInstruction: '📝 Suggerimento: Leggi il testo, ignora il colore',
+                readyMessage: 'Sei pronto?',
+                ruleChangeTitle: '⚠️ Attenzione! Le regole sono cambiate! ⚠️',
+                continueButton: 'Continua la Sfida',
+                instructionText: 'Clicca sul colore corrispondente al contenuto del testo',
+                instructionColor: 'Clicca sul colore corrispondente al colore del carattere',
+                colorRed: 'Rosso',
+                colorYellow: 'Giallo',
+                colorBlue: 'Blu',
+                colorGreen: 'Verde',
+                colorRedShort: 'Rosso',
+                colorYellowShort: 'Giallo',
+                colorBlueShort: 'Blu',
+                colorGreenShort: 'Verde',
+                rememberPosition: 'Ricorda la posizione dei blocchi colorati',
+                rememberColors: 'Memorizzazione posizioni dei colori...',
+                timeRemaining: 'Tempo Rimanente: ',
+                seconds: 's',
+                levelLabel: 'Livello',
+                levelSuffix: '',
+                level: 'Livello',
+                detailedScore: '📊 Punteggio Dettagliato',
+                type1Name: 'Tipo 1 (Leggere Testo)',
+                type2Name: 'Tipo 2 (Vedere Colore)',
+                type3Name: 'Tipo 3 (Memoria 4 Griglie)',
+                type4Name: 'Tipo 4 (Memoria 9 Griglie)',
+                timeStats: '⏱️ Statistiche Tempo',
+                first10Levels: 'Primi 10 Livelli',
+                last10Levels: 'Ultimi 10 Livelli',
+                localRanking: 'Classifica Locale',
+                onlineRanking: 'Classifica Globale',
+                localLeaderboard: '🏆 Classifica Locale',
+                first10Ranking: 'Primi 10 Livelli (Perfetto e Più Veloce)',
+                last10Ranking: 'Ultimi 10 Livelli (Perfetto e Più Veloce)',
+                myTierLeaderboard: 'La Mia Classifica di Livello',
+                loading: 'Caricamento...',
+                playAgain: 'Gioca di Nuovo',
+                learnMore: 'Scopri di Più sull\'Allenamento Cerebrale',
+                correct: '✓ Corretto!',
+                incorrect: '✗ Sbagliato!',
+                timeUp: '⏰ Tempo Scaduto!',
+                perfectTitle: 'Fantastico! Il tuo cervello è in condizioni ottimali!',
+                perfectContent: 'Congratulazioni! Hai dimostrato abilità incredibili nei test di velocità di reazione e concentrazione. Il tuo cervello risponde rapidamente, la concentrazione è eccellente e la memoria è superba. Mantieni questo stato con un allenamento cerebrale regolare per migliorare ulteriormente le tue capacità cognitive! Vitalità dell\'Età Cerebrale si prende cura di te',
+                goodTitle: 'Buon lavoro! Il tuo cervello può essere ancora migliore!',
+                goodContent: 'I tuoi risultati mostrano una buona funzione cerebrale, anche se con errori minori, la prestazione complessiva è eccellente. Continua l\'allenamento cerebrale e mantieni buone abitudini di vita come sonno adeguato, dieta equilibrata ed esercizio moderato per migliorare la funzione cognitiva. Vitalità dell\'Età Cerebrale si prende cura di te',
+                needImprovementTitle: 'Il tuo cervello ha bisogno di un po\' di stretching!',
+                needImprovementContent: 'Il test di oggi potrebbe essere leggermente impegnativo per te. Pratica più allenamento cerebrale per migliorare concentrazione e memoria. Non preoccuparti, le capacità cognitive possono essere migliorate attraverso la pratica! Dedica 10-15 minuti al giorno a giochi cerebrali simili con routine regolari, e vedrai progressi! Vitalità dell\'Età Cerebrale si prende cura di te',
+                noData: 'Nessun dato disponibile',
+                enterNameAlert: 'Per favore inserisci il tuo nome',
+                phase2Title: 'Inizia la Fase 2!',
+                phase2Content: 'Ora testiamo la tua memoria visuo-spaziale.<br>Ricorda le posizioni dei blocchi colorati, poi trova il colore specificato!',
+                phase3Title: '⚠️ Attenzione! Le regole sono cambiate! ⚠️',
+                phase3Content: 'D\'ora in poi, guarda i colori non le parole! Clicca sul pulsante corrispondente al colore del carattere,<br>non al contenuto del testo! Concentrati!',
+                phase4Title: '🎯 Fase 3: Test di Memoria Avanzato',
+                phase4Content: 'Difficoltà aumentata! Più griglie di memoria in arrivo,<br>concentrati di più!',
+                goldTier: 'Oro',
+                silverTier: 'Argento',
+                bronzeTier: 'Bronzo',
+                globalRanking: 'Classifica Globale',
+                globalFirstHalfRankLabel: 'Classifica Globale Primi 10',
+                globalSecondHalfRankLabel: 'Classifica Globale Ultimi 10',
+                topRankPrefix: '#',
+                players: 'giocatori',
+                findColor: 'Trova il blocco {color}',
+        // ✅ Nuovo: Nomi dei Ranghi
+        mythicTier: 'Mitico',
+        challengerTier: 'Sfidante',
+        grandmasterTier: 'Gran Maestro',
+        masterTier: 'Maestro',
+        diamondTier: 'Diamante',
+        emeraldTier: 'Smeraldo',
+        platinumTier: 'Platino',
+        goldTier: 'Oro',
+        silverTier: 'Argento',
+        bronzeTier: 'Bronzo',
+        
+        // ✅ Nuovo: Prossimo Rango
+        nextTier: 'Prossimo Rango',
+        requirement: 'Requisito',
+        maxTierReached: 'Rango Massimo Raggiunto!',
+        noNextTier: 'Nessuno',
+        
+        // ✅ Nuovo: Requisiti di Promozione
+        silverReq: '6/10 (4 errori)',
+        goldReq: '7/10 (3 errori)',
+        platinumReq: '8/10 (2 errori)',
+        emeraldReq: '9/10 (1 errore)',
+        diamondReq: '10/10 e ≤60s',
+        masterReq: '10/10 e ≤55s',
+        grandmasterReq: '10/10 e ≤48s',
+        challengerReq: '10/10 e ≤46s',
+        mythicReq: '10/10 e ≤43s'
+
+            }
+        };
+
+        // ========== 語言檢測與應用函數 ==========
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            const langCode = browserLang.toLowerCase();
+            
+            // 精確匹配
+            if (translations[browserLang]) {
+                return browserLang;
+            }
+            
+            // 匹配主語言代碼
+            const mainLang = langCode.split('-')[0];
+            const matchedLang = Object.keys(translations).find(key => 
+                key.toLowerCase().startsWith(mainLang)
+            );
+            
+            // 如果找到匹配的語言則返回，否則默認返回繁體中文
+            return matchedLang || 'zh-TW';
+        }
+
+
+// ========== 語言檢測與應用函數 ==========
+function detectAndApplyLanguage() {
+    let userLang = navigator.language || navigator.userLanguage;
+    
+    if (translations[userLang]) {
+        currentTranslation = translations[userLang];
+    } else {
+        const mainLang = userLang.split('-')[0];
+        if (translations[mainLang]) {
+            currentTranslation = translations[mainLang];
+        } else {
+            currentTranslation = translations['zh-TW'];
+        }
+    }
+    
+    applyTranslations();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 所有 DOM 操作放在這裡
+    const startBtn = document.getElementById('startGameBtn');
+    if (startBtn) {
+        startBtn.addEventListener('click', enterGame);
+    }
+    detectAndApplyLanguage();
+    
+    // ✅ 自動遷移舊資料到新的十級段位系統
+    migrateOldData();
+});
+// ========== 應用翻譯到頁面 ==========
+// ========== 應用翻譯到頁面 ==========
+function applyTranslations() {
+    const t = currentTranslation;
+    
+    // 更新頁面標題
+    document.title = t.pageTitle;
+    
+    // ========== 名稱輸入畫面 (nameScreen) ==========
+    const nameScreenH1 = document.querySelector('#nameScreen h1');
+    if (nameScreenH1) nameScreenH1.textContent = t.gameTitle;
+    
+    const nameScreenP = document.querySelector('#nameScreen > div > p');
+    if (nameScreenP) nameScreenP.textContent = t.welcomeMessage;
+    
+    const nameScreenH4 = document.querySelector('#nameScreen h4');
+    if (nameScreenH4) nameScreenH4.textContent = t.companyName;
+    
+    const nameScreenLabel = document.querySelector('#nameScreen label');
+    if (nameScreenLabel) nameScreenLabel.textContent = t.enterNameLabel;
+    
+    const playerNameInput = document.getElementById('playerName');
+    if (playerNameInput) playerNameInput.placeholder = t.namePlaceholder;
+    
+    const nameScreenButton = document.querySelector('#nameScreen button');
+    if (nameScreenButton) nameScreenButton.textContent = t.startButton;
+    
+    const nameScreenRulesTitle = document.querySelector('#nameScreen .bg-indigo-50 h3');
+    if (nameScreenRulesTitle) nameScreenRulesTitle.textContent = t.gameRulesTitle;
+    
+    const nameRules = document.querySelectorAll('#nameScreen .bg-indigo-50 ul li');
+    if (nameRules.length >= 4) {
+        nameRules[0].textContent = t.rule1;
+        nameRules[1].textContent = t.rule2;
+        nameRules[2].textContent = t.rule3;
+        nameRules[3].textContent = t.rule4;
+    }
+    
+    // ========== 開始畫面 (startScreen) ==========
+    const startScreenH1 = document.querySelector('#startScreen h1');
+    if (startScreenH1) startScreenH1.textContent = t.gameTitle;
+    
+    const startScreenP = document.querySelector('#startScreen > div > p');
+    if (startScreenP) startScreenP.textContent = t.welcomeMessage;
+    
+    const startScreenH4 = document.querySelector('#startScreen h4');
+    if (startScreenH4) startScreenH4.textContent = t.companyName;
+    
+    const startScreenRulesTitle = document.querySelector('#startScreen .bg-indigo-50 h3');
+    if (startScreenRulesTitle) startScreenRulesTitle.textContent = t.gameRulesTitle;
+    
+    const startRules = document.querySelectorAll('#startScreen .bg-indigo-50 ul li');
+    if (startRules.length >= 2) {
+        startRules[0].textContent = t.firstRuleInfo;
+        startRules[1].textContent = t.clickTextInstruction;
+    }
+    
+    const startScreenButton = document.querySelector('#startScreen button');
+    if (startScreenButton) startScreenButton.textContent = t.startButton;
+    
+    // ========== 倒數畫面 (countdownScreen) ==========
+    const countdownReadyText = document.querySelector('#countdownScreen p');
+    if (countdownReadyText) countdownReadyText.textContent = t.readyMessage;
+    
+    // ========== 中場提示畫面 (midwayScreen) ==========
+    const midwayScreenH2 = document.querySelector('#midwayScreen h2');
+    if (midwayScreenH2) midwayScreenH2.textContent = t.ruleChangeTitle;
+    
+    const midwayScreenButton = document.querySelector('#midwayScreen button');
+    if (midwayScreenButton) midwayScreenButton.textContent = t.continueButton;
+    
+    // ========== Stroop測試畫面 (stroopScreen) ==========
+    const stroopInstruction = document.getElementById('stroopInstruction');
+    if (stroopInstruction) stroopInstruction.textContent = t.instructionText;
+    
+    const stroopButtons = document.querySelectorAll('#stroopScreen button[onclick^="selectColor"]');
+    if (stroopButtons.length >= 4) {
+        stroopButtons[0].textContent = t.colorRed;
+        stroopButtons[1].textContent = t.colorYellow;
+        stroopButtons[2].textContent = t.colorBlue;
+        stroopButtons[3].textContent = t.colorGreen;
+    }
+    
+    // ========== 記憶測試畫面 (memoryScreen) ==========
+    const memoryInstruction = document.getElementById('memoryInstruction');
+    if (memoryInstruction) memoryInstruction.textContent = t.rememberPosition;
+    
+    const memoryStatus = document.getElementById('memoryStatus');
+    if (memoryStatus) memoryStatus.textContent = t.rememberColors;
+    
+    const memoryTimerLabel = document.getElementById('memoryTimerLabel');
+    if (memoryTimerLabel) memoryTimerLabel.textContent = t.timeRemaining;
+    
+    const memoryTimerUnit = document.getElementById('memoryTimerUnit');
+    if (memoryTimerUnit) memoryTimerUnit.textContent = t.seconds;
+    
+    // ========== 結果畫面 (resultScreen) ==========
+const detailedScoreTitle = document.getElementById('detailedScoreTitle');
+if (detailedScoreTitle) detailedScoreTitle.textContent = t.detailedScore;
+    
+const labelType1 = document.getElementById('labelType1');
+const labelType2 = document.getElementById('labelType2');
+const labelType3 = document.getElementById('labelType3');
+const labelType4 = document.getElementById('labelType4');
+
+if (labelType1) labelType1.textContent = t.type1Name;
+if (labelType2) labelType2.textContent = t.type2Name;
+if (labelType3) labelType3.textContent = t.type3Name;
+if (labelType4) labelType4.textContent = t.type4Name;
+    
+    const timeStatsTitle = document.querySelector('#resultScreen .bg-blue-50 h3');
+    if (timeStatsTitle) timeStatsTitle.textContent = t.timeStats;
+    
+    const timeLabels = document.querySelectorAll('#resultScreen .bg-blue-50 .text-gray-600');
+    if (timeLabels.length >= 2) {
+        timeLabels[0].textContent = t.first10Levels;
+        timeLabels[1].textContent = t.last10Levels;
+    }
+    
+    // ========== 排行榜標籤 ==========
+    const localTabBtn = document.getElementById('localTabBtn');
+    if (localTabBtn) localTabBtn.textContent = '📱 ' + t.localRanking;
+    
+    const onlineTabBtn = document.getElementById('onlineTabBtn');
+    if (onlineTabBtn) onlineTabBtn.textContent = '🌐 ' + t.onlineRanking;
+    
+    const localLeaderboardTitle = document.querySelector('#localLeaderboardSection h3');
+    if (localLeaderboardTitle) localLeaderboardTitle.textContent = t.localLeaderboard;
+    
+const rankingTitles = document.querySelectorAll('#localLeaderboardSection h4');
+if (rankingTitles.length >= 2) {
+    rankingTitles[0].textContent = t.first10Ranking + '（按段位+分數+時間排序）';
+    rankingTitles[1].textContent = t.last10Ranking + '（按段位+分數+時間排序）';
+}    
+    // ========== 線上排行榜 ==========
+    const myTierLeaderboardTitle = document.getElementById('myTierLeaderboardTitle');
+    if (myTierLeaderboardTitle) {
+        myTierLeaderboardTitle.textContent = '🌐 ' + t.myTierLeaderboard;
+    }
+    
+    const onlineRankingTitles = document.querySelectorAll('#onlineLeaderboardSection h4');
+    if (onlineRankingTitles.length >= 2) {
+        onlineRankingTitles[0].textContent = t.first10Ranking;
+        onlineRankingTitles[1].textContent = t.last10Ranking;
+    }
+    
+    const onlineLoadingText = document.getElementById('onlineLoadingText');
+    if (onlineLoadingText) onlineLoadingText.textContent = t.loading;
+    
+    // ========== 按鈕文字 ==========
+    const playAgainBtn = document.querySelector('#resultScreen button[onclick="restartGame()"]');
+    if (playAgainBtn) playAgainBtn.textContent = t.playAgain + ' 🔄';
+    
+    const learnMoreLink = document.querySelector('#resultScreen a[href*="portaly"]');
+    if (learnMoreLink) learnMoreLink.textContent = t.learnMore + ' 📚';
+    
+    // ========== 全球排名標題 ==========
+    const globalRankingTitle = document.getElementById('globalRankingTitle');
+    if (globalRankingTitle) {
+        globalRankingTitle.textContent = '🌐 ' + t.globalRanking;
+    }
+    
+    // ========== 更新顏色名稱（用於遊戲邏輯） ==========
+    colorNames.red = t.colorRedShort;
+    colorNames.yellow = t.colorYellowShort;
+    colorNames.blue = t.colorBlueShort;
+    colorNames.green = t.colorGreenShort;
+    
+    console.log('✅ 翻譯已應用:', currentTranslation === translations['zh-TW'] ? '繁體中文' : 'Other Language');
+}
+// ========== 全局翻譯變量 ==========
+let currentTranslation = translations['zh-TW']; // 預設繁體中文
+
+// ========== Firebase 配置 ==========
+const FIREBASE_URL = "https://ranking-list-23afe-default-rtdb.firebaseio.com/leaderboard";
+
+// ========== 遊戲核心變量 ==========
+let playerName = '';
+let currentRound = 1;
+let score = 0;
+let type1Score = 0;
+let type2Score = 0;
+let type3Score = 0;
+let type4Score = 0;
+let timer = null;
+let stroopLocked = false; // ✅ 只鎖叫色階段，避免同一關結算兩次
+let timeLeft = 3;
+let gameStartTime = 0;
+let firstHalfStartTime = 0;
+let secondHalfStartTime = 0;
+let firstHalfEndTime = 0;
+let secondHalfEndTime = 0;
+let resultDateTime = '';
+
+const colors = ['red', 'yellow', 'blue', 'green'];
+const colorNames = {
+    'red': '紅',
+    'yellow': '黃',
+    'blue': '藍',
+    'green': '綠'
+};
+const colorCodes = {
+    'red': '#EF4444',
+    'yellow': '#FACC15',
+    'blue': '#3B82F6',
+    'green': '#10B981'
+};
+
+let memoryColors = [];
+let targetColor = '';
+let leaderboardData = JSON.parse(localStorage.getItem('leaderboardData')) || [];
+
+const resultMessages = {
+    perfect: {
+        icon: '🎉',
+        title: '太棒了！您的大腦處於巔峰狀態！',
+        content: '恭喜您！在反應速度與專注力測試中，您展現了驚人的能力。您的大腦反應迅速，專注力極佳，記憶力也非常優秀。繼續保持這樣的狀態，定期進行腦力訓練，您的認知能力會更上一層樓！巫奉約身腦齡活關心您'
+    },
+    good: {
+        icon: '😊',
+        title: '表現不錯！您的大腦還可以更好！',
+        content: '您的測試結果顯示大腦功能運作良好，雖然有少許誤判，但整體表現優異。建議您持續進行腦力訓練，保持良好的生活習慣，如充足睡眠、均衡飲食和適度運動，這些都能幫助提升認知功能。巫奉約身腦齡活關心您'
+    },
+    needImprovement: {
+        icon: '💪',
+        title: '大腦需要一點伸展操囉！',
+        content: '今天的測試對您來說可能稍具挑戰性，建議多做腦力訓練來提升專注力與記憶力。不用擔心，認知能力是可以透過練習來增強的！建議每天花10-15分鐘進行類似的腦力遊戲，配合規律作息，您一定會看到進步！巫奉約身腦齡活關心您'
+    }
+};
+
+const midwayMessages = {
+    phase2: {
+        title: '第二階段開始！',
+        content: '接下來將測試您的視覺空間記憶能力。<br>請記住顏色方塊的位置，然後找出指定的顏色！'
+    },
+    phase3: {
+        title: '⚠️ 注意！規則改變了！⚠️',
+        content: '從現在開始，看色不看字喔！請點擊「字體顏色」對應的按鈕，<br>而不是文字內容！請集中注意力！'
+    },
+    phase4: {
+        title: '🎯 第三階段：進階記憶測試',
+        content: '難度升級！接下來將增加記憶方格數，<br>請更加集中注意力！'
+    }
+};
+
+// ========== 等級判定函數 ==========
+// ========== 等級判定函數（十級段位） ==========
+function getTierLevel(score, time, isFirstHalf) {
+    if (isFirstHalf) {
+        // === 前10關的等級判定 ===
+        if (score === 10) {
+            // 滿分情況，按時間判定
+            if (time <= 43) return 'mythic';        // 神話
+            if (time <= 46) return 'challenger';    // 菁英
+            if (time <= 48) return 'grandmaster';   // 宗師
+            if (time <= 55) return 'master';        // 大師
+            if (time <= 60) return 'diamond';       // 鑽石
+            return 'emerald';  // 滿分但超時，給翡翠
+        } else if (score === 9) {
+            return 'emerald';   // 翡翠（錯1題）
+        } else if (score === 8) {
+            return 'platinum';  // 白金（錯2題）
+        } else if (score === 7) {
+            return 'gold';      // 黃金（錯3題）
+        } else if (score === 6) {
+            return 'silver';    // 白銀（錯4題）
+        } else if (score >= 5) {
+            return 'bronze';    // 青銅（錯5題）
+        }
+        return null;  // 低於5分不給段位
+    } else {
+        // === 後10關的等級判定 ===
+        if (score === 10) {
+            // 滿分情況，按時間判定
+            if (time <= 64) return 'mythic';        // 神話
+            if (time <= 68) return 'challenger';    // 菁英
+            if (time <= 74) return 'grandmaster';   // 宗師
+            if (time <= 78) return 'master';        // 大師
+            if (time <= 100) return 'diamond';      // 鑽石
+            return 'emerald';  // 滿分但超時，給翡翠
+        } else if (score === 9) {
+            return 'emerald';   // 翡翠（錯1題）
+        } else if (score === 8) {
+            return 'platinum';  // 白金（錯2題）
+        } else if (score === 7) {
+            return 'gold';      // 黃金（錯3題）
+        } else if (score === 6) {
+            return 'silver';    // 白銀（錯4題）
+        } else if (score >= 5) {
+            return 'bronze';    // 青銅（錯5題）
+        }
+        return null;  // 低於5分不給段位
+    }
+}
+// ========== 數據遷移：重新計算所有舊記錄的段位 ==========
+function migrateOldData() {
+    console.log('開始遷移舊數據...');
+    
+    let updated = 0;
+    
+    leaderboardData.forEach(record => {
+        // 重新計算前10關段位
+const newFirstTier = getTierLevel(
+  Number(record.firstHalfScore ?? 0),
+  Number(record.firstHalfTime ?? 0),
+  true
+);
+        
+        // 重新計算後10關段位
+        const newSecondTier = getTierLevel(
+            record.secondHalfScore, 
+            record.secondHalfTime, 
+            false
+        );
+        
+        // 只有當段位改變時才更新
+        if (record.firstHalfTier !== newFirstTier || record.secondHalfTier !== newSecondTier) {
+            record.firstHalfTier = newFirstTier;
+            record.secondHalfTier = newSecondTier;
+            updated++;
+        }
+    });
+    
+    // 儲存到 localStorage
+    if (updated > 0) {
+        localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+        console.log(`✅ 成功遷移 ${updated} 筆記錄`);
+    } else {
+        console.log('✅ 所有記錄已是最新版本');
+    }
+    
+    return updated;
+}
+// ========== 獲取等級名稱（翻譯） ==========
+function getTierName(tier) {
+    const t = currentTranslation;
+    const tierNames = {
+        'mythic': t.mythicTier || '神話',
+        'challenger': t.challengerTier || '菁英',
+        'grandmaster': t.grandmasterTier || '宗師',
+        'master': t.masterTier || '大師',
+        'diamond': t.diamondTier || '鑽石',
+        'emerald': t.emeraldTier || '翡翠',
+        'platinum': t.platinumTier || '白金',
+        'gold': t.goldTier || '黃金',
+        'silver': t.silverTier || '白銀',
+        'bronze': t.bronzeTier || '青銅'
+    };
+    return tierNames[tier] || tier;
+}
+// ========== 獲取等級圖標 ==========
+function getTierIcon(tier) {
+    const icons = {
+        'mythic': '🌟',      // 神話
+        'challenger': '👑',  // 菁英
+        'grandmaster': '💎', // 宗師
+        'master': '🏆',      // 大師
+        'diamond': '💠',     // 鑽石
+        'emerald': '💚',     // 翡翠
+        'platinum': '⚪',    // 白金
+        'gold': '🥇',        // 黃金
+        'silver': '🥈',      // 白銀
+        'bronze': '🥉'       // 青銅
+    };
+    return icons[tier] || '🏅';
+}
+// ========== 獲取等級顏色 ==========
+function getTierColor(tier) {
+    const colors = {
+        'mythic': 'text-purple-600',      // 神話（紫色）
+        'challenger': 'text-yellow-600',  // 菁英（金黃色）
+        'grandmaster': 'text-red-600',    // 宗師（紅色）
+        'master': 'text-pink-600',        // 大師（粉紅色）
+        'diamond': 'text-blue-600',       // 鑽石（藍色）
+        'emerald': 'text-green-600',      // 翡翠（綠色）
+        'platinum': 'text-gray-400',      // 白金（淺灰色）
+        'gold': 'text-yellow-500',        // 黃金（黃色）
+        'silver': 'text-gray-500',        // 白銀（灰色）
+        'bronze': 'text-orange-600'       // 青銅（橙色）
+    };
+    return colors[tier] || 'text-gray-600';
+}
+
+// ========== 獲取下一個等級 ==========
+function getNextTier(currentTier) {
+    const tierOrder = [
+        'bronze',      // 青銅
+        'silver',      // 白銀
+        'gold',        // 黃金
+        'platinum',    // 白金
+        'emerald',     // 翡翠
+        'diamond',     // 鑽石
+        'master',      // 大師
+        'grandmaster', // 宗師
+        'challenger',  // 菁英
+        'mythic'       // 神話（最高）
+    ];
+    
+    const currentIndex = tierOrder.indexOf(currentTier);
+    
+    // 如果已經是神話或找不到當前等級
+    if (currentIndex === -1 || currentIndex === tierOrder.length - 1) {
+        return null;
+    }
+    
+    return tierOrder[currentIndex + 1];
+}
+
+// ========== 獲取升級條件說明 ==========
+function getUpgradeRequirement(nextTier, isFirstHalf) {
+    const t = currentTranslation;
+    
+    if (!nextTier) {
+        return t.noNextTier || '不存在';
+    }
+    
+const requirements = {
+    'silver': isFirstHalf ? '6/10（錯4題）' : '6/10（錯4題）',
+    'gold': isFirstHalf ? '7/10（錯3題）' : '7/10（錯3題）',
+    'platinum': isFirstHalf ? '8/10（錯2題）' : '8/10（錯2題）',
+    'emerald': isFirstHalf ? '9/10（錯1題）' : '9/10（錯1題）',
+    'diamond': isFirstHalf ? '10/10 且 ≤60秒' : '10/10 且 ≤100秒',  // ✅ 後10關是100秒
+    'master': isFirstHalf ? '10/10 且 ≤55秒' : '10/10 且 ≤78秒',     // ✅ 後10關是78秒
+    'grandmaster': isFirstHalf ? '10/10 且 ≤48秒' : '10/10 且 ≤74秒', // ✅ 後10關是74秒
+    'challenger': isFirstHalf ? '10/10 且 ≤46秒' : '10/10 且 ≤68秒',  // ✅ 後10關是68秒
+    'mythic': isFirstHalf ? '10/10 且 ≤43秒' : '10/10 且 ≤64秒'       // ✅ 後10關是64秒
+};    
+    return requirements[nextTier] || '';
+}
+// ========== 工具函數 ==========
+function formatDateTime(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+function getRecordDateTime(record) {
+  if (!record) return '';
+
+  // 1) 新資料：直接用 dateTime
+  if (typeof record.dateTime === 'string' && record.dateTime.trim() !== '') {
+    return record.dateTime.trim();
+  }
+
+  // 2) 舊資料：timestamp = "YYYY-MM-DD HH:mm:ss"
+  if (typeof record.timestamp === 'string' && record.timestamp.trim() !== '') {
+    const s = record.timestamp.trim();
+
+    // 如果就是你舊資料那種格式，直接顯示即可（最快也最穩）
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(s)) return s;
+
+    // 其他字串格式：嘗試 parse
+    const parsed = Date.parse(s.replace(' ', 'T'));
+    if (Number.isFinite(parsed)) return formatDateTime(new Date(parsed));
+  }
+
+  // 3) 本地新資料：timestamp = 毫秒數字
+  if (typeof record.timestamp === 'number' && Number.isFinite(record.timestamp)) {
+    return formatDateTime(new Date(record.timestamp));
+  }
+
+  return '';
+}
+
+function enterGame() {
+    const inputName = document.getElementById('playerName').value.trim();
+    if (!inputName) {
+        alert(currentTranslation.enterNameAlert);
+        return;
+    }
+    playerName = inputName;
+    document.getElementById('nameScreen').classList.add('hidden');
+    document.getElementById('startScreen').classList.remove('hidden');
+}
+
+function startGame() {
+    currentRound = 1;
+    score = 0;
+    type1Score = 0;
+    type2Score = 0;
+    type3Score = 0;
+    type4Score = 0;
+    gameStartTime = Date.now();
+    firstHalfStartTime = Date.now();
+    hideAllScreens();
+    proceedToNextRound();
+}
+
+function hideAllScreens() {
+    document.getElementById('nameScreen').classList.add('hidden');
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('countdownScreen').classList.add('hidden');
+    document.getElementById('midwayScreen').classList.add('hidden');
+    document.getElementById('stroopScreen').classList.add('hidden');
+    document.getElementById('memoryScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+}
+
+function proceedToNextRound() {
+    if (currentRound === 6 || currentRound === 11 || currentRound === 16) {
+        if (currentRound === 11) {
+            firstHalfEndTime = Date.now();
+            secondHalfStartTime = Date.now();
+        }
+        showMidway(currentRound);
+        return;
+    }
+    showCountdown();
+}
+
+function showCountdown() {
+    hideAllScreens();
+    const screen = document.getElementById('countdownScreen');
+    screen.classList.remove('hidden');
+    screen.classList.add('fade-in');
+    
+    const t = currentTranslation;
+    
+    const levelHeader = document.querySelector('#countdownScreen h2');
+    levelHeader.innerHTML = `${t.level} <span id="currentLevel">${currentRound}</span> ${t.levelSuffix}`;
+    
+    document.getElementById('currentLevel').textContent = currentRound;
+    
+    let count = 2;
+    const countdownEl = document.getElementById('countdownNumber');
+    countdownEl.textContent = count;
+    countdownEl.classList.add('pulse');
+    
+    const countInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownEl.textContent = count;
+            countdownEl.classList.remove('pulse');
+            setTimeout(() => countdownEl.classList.add('pulse'), 10);
+        } else {
+            clearInterval(countInterval);
+            startRound();
+        }
+    }, 1000);
+}
+
+function startRound() {
+    if (currentRound <= 5) {
+        startStroopRound(1);
+    } else if (currentRound <= 10) {
+        startStroopRound(2);
+    } else if (currentRound <= 15) {
+        startMemoryRound(4);
+    } else {
+        startMemoryRound(9);
+    }
+}
+
+function showMidway(roundNum) {
+    hideAllScreens();
+    const screen = document.getElementById('midwayScreen');
+    screen.classList.remove('hidden');
+    screen.classList.add('fade-in');
+    
+    const t = currentTranslation;
+    let title, content;
+    
+    if (roundNum === 6) {
+        title = t.phase3Title;
+        content = t.phase3Content;
+    } else if (roundNum === 11) {
+        title = t.phase2Title;
+        content = t.phase2Content;
+    } else if (roundNum === 16) {
+        title = t.phase4Title;
+        content = t.phase4Content;
+    }
+    
+    document.getElementById('midwayTitle').innerHTML = title;
+    document.getElementById('midwayContent').innerHTML = content;
+}
+
+function continueMidway() {
+    showCountdown();
+}
+
+function startStroopRound(type) {
+    hideAllScreens();
+stroopLocked = false;
+    const screen = document.getElementById('stroopScreen');
+    screen.classList.remove('hidden');
+    screen.classList.add('fade-in');
+    
+    const t = currentTranslation;
+    
+    const levelContainer = document.querySelector('#stroopScreen .flex.justify-between .font-bold.text-gray-700');
+    levelContainer.innerHTML = `${t.levelLabel} <span id="stroopLevel">${currentRound}</span>/20`;
+    
+    const timerContainer = document.querySelector('#stroopScreen .flex.justify-between .font-bold.text-indigo-600');
+    
+    document.getElementById('stroopLevel').textContent = currentRound;
+    document.getElementById('stroopFeedback').classList.add('hidden');
+    
+    if (type === 1) {
+        document.getElementById('stroopInstruction').textContent = t.instructionText;
+    } else {
+        document.getElementById('stroopInstruction').textContent = t.instructionColor;
+    }
+    
+    const wordColor = colors[Math.floor(Math.random() * colors.length)];
+    let textColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    while (textColor === wordColor) {
+        textColor = colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    const wordEl = document.getElementById('stroopWord');
+    wordEl.textContent = colorNames[wordColor];
+    wordEl.style.color = colorCodes[textColor];
+    
+    wordEl.dataset.type = type;
+    if (type === 1) {
+        wordEl.dataset.correct = wordColor;
+    } else {
+        wordEl.dataset.correct = textColor;
+    }
+    
+    timeLeft = 3;
+    timerContainer.innerHTML = `${t.timeRemaining} <span id="stroopTimer">${timeLeft}</span>${t.seconds}`;
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('stroopTimer').textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            selectColor(null);
+        }
+    }, 1000);
+}
+
+function selectColor(selectedColor) {
+    // ✅ 防止同一關被結算兩次（最後一秒點擊 + 倒數 time up）
+    if (stroopLocked) return;
+    stroopLocked = true;
+
+    // ✅ 關閉計時器並置空，避免第二次仍通過「timer 存在」的判斷
+    if (timer) {
+        clearInterval(timer);
+        timer = null;
+    }
+
+    const t = currentTranslation;
+    const wordEl = document.getElementById('stroopWord');
+    const correctColor = wordEl.dataset.correct;
+    const typeNum = parseInt(wordEl.dataset.type, 10);
+
+    const feedbackEl = document.getElementById('stroopFeedback');
+    feedbackEl.classList.remove('hidden');
+
+    // 禁用按鈕，避免連點
+    const colorButtons = document.querySelectorAll('#stroopScreen button[onclick^="selectColor"]');
+    colorButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.classList.remove('hover:bg-red-600', 'hover:bg-yellow-500', 'hover:bg-blue-600', 'hover:bg-green-600');
+    });
+
+    if (selectedColor === correctColor) {
+        feedbackEl.textContent = t.correct;
+        feedbackEl.className = 'text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold text-green-600 pulse';
+        score++;
+        if (typeNum === 1) type1Score++;
+        else type2Score++;
+    } else {
+        feedbackEl.textContent = t.incorrect;
+        feedbackEl.className = 'text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold text-red-600 shake';
+    }
+
+    setTimeout(() => {
+        // 恢復按鈕
+        colorButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+
+        currentRound++;
+        if (currentRound <= 20) {
+            proceedToNextRound();
+        } else {
+            secondHalfEndTime = Date.now();
+            showResult();
+        }
+    }, 1200);
+}
+function startMemoryRound(gridSize) {
+    hideAllScreens();
+    const screen = document.getElementById('memoryScreen');
+    screen.classList.remove('hidden');
+    screen.classList.add('fade-in');
+    
+    const t = currentTranslation;
+    
+    const levelContainer = document.querySelector('#memoryScreen .flex.justify-between .font-bold.text-gray-700');
+    levelContainer.innerHTML = `${t.levelLabel} <span id="memoryLevel">${currentRound}</span>/20`;
+    
+    document.getElementById('memoryLevel').textContent = currentRound;
+    document.getElementById('memoryFeedback').classList.add('hidden');
+    document.getElementById('memoryInstruction').textContent = t.rememberPosition;
+    
+    document.getElementById('memoryTimerLabel').classList.add('hidden');
+    document.getElementById('memoryTimer').classList.add('hidden');
+    document.getElementById('memoryTimerUnit').classList.add('hidden');
+    document.getElementById('memoryStatus').classList.remove('hidden');
+    document.getElementById('memoryStatus').textContent = t.rememberColors;
+    
+    const grid4Container = document.getElementById('memoryGrid4');
+    const grid9Container = document.getElementById('memoryGrid9');
+    
+    if (gridSize === 4) {
+        grid4Container.classList.remove('hidden');
+        grid9Container.classList.add('hidden');
+        const grid4 = grid4Container.querySelector('.grid');
+        generateMemoryGrid(4, grid4);
+    } else {
+        grid4Container.classList.add('hidden');
+        grid9Container.classList.remove('hidden');
+        const grid9 = grid9Container.querySelector('.grid');
+        generateMemoryGrid(9, grid9);
+    }
+}
+
+function generateMemoryGrid(size, container) {
+    container.innerHTML = '';
+    memoryColors = [];
+    
+    if (size === 4) {
+        memoryColors = ['red', 'yellow', 'blue', 'green'].sort(() => Math.random() - 0.5);
+    } else {
+        for (let i = 0; i < 9; i++) {
+            memoryColors.push(colors[i % 4]);
+        }
+        memoryColors = memoryColors.sort(() => Math.random() - 0.5);
+    }
+    
+    targetColor = memoryColors[Math.floor(Math.random() * size)];
+    
+    memoryColors.forEach((color, index) => {
+        const card = document.createElement('div');
+        if (size === 4) {
+            card.className = 'memory-card-4 rounded-lg md:rounded-2xl shadow-lg transition-all cursor-pointer card-flip';
+        } else {
+            card.className = 'memory-card-9 rounded-lg md:rounded-2xl shadow-lg transition-all cursor-pointer card-flip';
+        }
+        card.style.backgroundColor = colorCodes[color];
+        card.dataset.index = index;
+        card.dataset.color = color;
+        card.dataset.size = size;
+        container.appendChild(card);
+    });
+    
+    setTimeout(() => {
+        flipCards(container);
+    }, 2000);
+}
+
+function flipCards(container) {
+    const t = currentTranslation;
+    const colorSquare = `<span class="inline-block w-6 h-6 md:w-10 md:h-10 rounded-md md:rounded-lg ml-2 align-middle border-2 border-gray-300 shadow-sm" style="background-color: ${colorCodes[targetColor]};"></span>`;
+    document.getElementById('memoryInstruction').innerHTML = t.findColor.replace('{color}', colorNames[targetColor]) + colorSquare;
+    
+    document.getElementById('memoryStatus').classList.add('hidden');
+    document.getElementById('memoryTimerLabel').classList.remove('hidden');
+    document.getElementById('memoryTimer').classList.remove('hidden');
+    document.getElementById('memoryTimerUnit').classList.remove('hidden');
+    
+    document.getElementById('memoryTimerLabel').textContent = t.timeRemaining;
+    document.getElementById('memoryTimerUnit').textContent = t.seconds;
+    
+    const cards = container.querySelectorAll('div');
+    cards.forEach(card => {
+        card.style.backgroundColor = '#9CA3AF';
+        card.classList.add('hover:bg-gray-500');
+        card.onclick = () => checkMemory(card);
+    });
+    
+    timeLeft = 3;
+    document.getElementById('memoryTimer').textContent = timeLeft;
+    
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('memoryTimer').textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            const feedbackEl = document.getElementById('memoryFeedback');
+            feedbackEl.classList.remove('hidden');
+            feedbackEl.textContent = t.timeUp;
+            feedbackEl.className = 'text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold text-red-600 shake';
+            
+            cards.forEach(c => c.onclick = null);
+            
+            cards.forEach(c => {
+                if (c.dataset.color === targetColor) {
+                    c.style.backgroundColor = colorCodes[targetColor];
+                    c.style.border = '4px solid #10B981';
+                }
+            });
+            
+            setTimeout(() => {
+                currentRound++;
+                if (currentRound <= 20) {
+                    proceedToNextRound();
+                } else {
+                    secondHalfEndTime = Date.now();
+                    showResult();
+                }
+            }, 1200);
+        }
+    }, 1000);
+}
+
+function checkMemory(card) {
+    if (timer) clearInterval(timer);
+    
+    const t = currentTranslation;
+    const selectedColor = card.dataset.color;
+    const gridSize = parseInt(card.dataset.size);
+    const feedbackEl = document.getElementById('memoryFeedback');
+    feedbackEl.classList.remove('hidden');
+    
+    card.style.backgroundColor = colorCodes[selectedColor];
+    
+    const container = card.parentElement;
+    const allCards = container.querySelectorAll('div');
+    allCards.forEach(c => c.onclick = null);
+    
+    if (selectedColor === targetColor) {
+        feedbackEl.textContent = t.correct;
+        feedbackEl.className = 'text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold text-green-600 pulse';
+        score++;
+        if (gridSize === 4) type3Score++;
+        else type4Score++;
+    } else {
+        feedbackEl.textContent = t.incorrect;
+        feedbackEl.className = 'text-center mt-2 md:mt-6 text-xl md:text-3xl font-bold text-red-600 shake';
+        
+        allCards.forEach(c => {
+            if (c.dataset.color === targetColor) {
+                c.style.backgroundColor = colorCodes[targetColor];
+                c.style.border = '4px solid #10B981';
+            }
+        });
+    }
+    
+    setTimeout(() => {
+        currentRound++;
+        if (currentRound <= 20) {
+            proceedToNextRound();
+        } else {
+            secondHalfEndTime = Date.now();
+            showResult();
+        }
+    }, 1200);
+}
+
+function showResult() {
+    hideAllScreens();
+    const screen = document.getElementById('resultScreen');
+    screen.classList.remove('hidden');
+    screen.classList.add('fade-in');
+    
+    const t = currentTranslation;
+    
+const firstHalfTime = ((firstHalfEndTime - firstHalfStartTime) / 1000).toFixed(2);
+const secondHalfTime = ((secondHalfEndTime - secondHalfStartTime) / 1000).toFixed(2);
+    
+    const firstHalfScore = type1Score + type2Score;
+    const secondHalfScore = type3Score + type4Score;
+    
+const firstHalfTier = getTierLevel(firstHalfScore, parseFloat(firstHalfTime), true);
+const secondHalfTier = getTierLevel(secondHalfScore, parseFloat(secondHalfTime), false);
+    
+// ✅ 添加：顯示當前等級 + 下一等級預告
+const firstNextTier = getNextTier(firstHalfTier);
+const secondNextTier = getNextTier(secondHalfTier);
+
+// 獲取等級顏色和圖標
+const firstTierIcon = getTierIcon(firstHalfTier);
+const firstTierName = getTierName(firstHalfTier);
+const firstTierColor = getTierColor(firstHalfTier);
+
+const secondTierIcon = getTierIcon(secondHalfTier);
+const secondTierName = getTierName(secondHalfTier);
+const secondTierColor = getTierColor(secondHalfTier);
+
+// 前10關等級顯示
+let firstTierHTML = `
+    <div class="flex items-center justify-center gap-2 mb-2">
+        <span class="${firstTierColor}" style="font-size: 2rem;">${firstTierIcon}</span>
+        <span class="font-bold text-lg md:text-xl">${firstTierName}</span>
+    </div>
+`;
+
+if (firstNextTier) {
+    const nextTierIcon = getTierIcon(firstNextTier);
+    const nextTierName = getTierName(firstNextTier);
+    const nextTierColor = getTierColor(firstNextTier);
+    const upgradeReq = getUpgradeRequirement(firstNextTier, true);
+    
+firstTierHTML += `
+    <div class="text-sm md:text-base mt-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-indigo-200 shadow-sm">
+        <div class="font-bold text-indigo-700 mb-2">
+            ⬆️ ${t.nextTier || '下一等級'}
+        </div>
+        <div class="flex items-center justify-center gap-2 mb-2">
+            <span class="${nextTierColor}" style="font-size: 1.8rem;">${nextTierIcon}</span>
+            <span class="font-bold text-lg">${nextTierName}</span>
+        </div>
+        <div class="text-xs md:text-sm text-gray-600 bg-white px-3 py-2 rounded">
+            📋 ${t.requirement || '條件'}：<span class="font-semibold text-indigo-600">${upgradeReq}</span>
+        </div>
+    </div>
+`;
+} else {
+    firstTierHTML += `
+        <div class="text-sm md:text-base text-purple-600 font-bold mt-2 p-2 bg-purple-50 rounded-lg border border-purple-200">
+            🎉 ${t.maxTierReached || '已達最高等級！'}
+        </div>
+    `;
+}
+
+document.getElementById('resultFirstTier').innerHTML = firstTierHTML;
+
+// 後10關等級顯示
+let secondTierHTML = `
+    <div class="flex items-center justify-center gap-2 mb-2">
+        <span class="${secondTierColor}" style="font-size: 2rem;">${secondTierIcon}</span>
+        <span class="font-bold text-lg md:text-xl">${secondTierName}</span>
+    </div>
+`;
+
+if (secondNextTier) {
+    const nextTierIcon = getTierIcon(secondNextTier);
+    const nextTierName = getTierName(secondNextTier);
+    const nextTierColor = getTierColor(secondNextTier);
+    const upgradeReq = getUpgradeRequirement(secondNextTier, false);
+    
+    secondTierHTML += `
+        <div class="text-sm md:text-base text-gray-600 mt-2 p-2 bg-gray-50 rounded-lg border border-gray-200">
+            <div class="font-semibold mb-1">${t.nextTier || '下一等級'}：</div>
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <span class="${nextTierColor}" style="font-size: 1.5rem;">${nextTierIcon}</span>
+                <span class="font-bold">${nextTierName}</span>
+            </div>
+            <div class="text-xs md:text-sm text-gray-500">
+                ${t.requirement || '條件'}：${upgradeReq}
+            </div>
+        </div>
+    `;
+} else {
+    secondTierHTML += `
+        <div class="text-sm md:text-base text-purple-600 font-bold mt-2 p-2 bg-purple-50 rounded-lg border border-purple-200">
+            🎉 ${t.maxTierReached || '已達最高等級！'}
+        </div>
+    `;
+}
+
+document.getElementById('resultSecondTier').innerHTML = secondTierHTML;
+
+    document.getElementById('resultName').textContent = playerName;
+    
+    const now = new Date();
+    resultDateTime = formatDateTime(now);
+    document.getElementById('resultDateTime').textContent = resultDateTime;
+    
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('type1Score').textContent = type1Score;
+    document.getElementById('type2Score').textContent = type2Score;
+    document.getElementById('type3Score').textContent = type3Score;
+    document.getElementById('type4Score').textContent = type4Score;
+document.getElementById('firstHalfTime').textContent = firstHalfTime;
+document.getElementById('secondHalfTime').textContent = secondHalfTime;
+    
+    let message;
+    if (score === 20) {
+        message = resultMessages.perfect;
+    } else if (score >= 15) {
+        message = resultMessages.good;
+    } else {
+        message = resultMessages.needImprovement;
+    }
+    
+    document.getElementById('resultIcon').textContent = message.icon;
+    document.getElementById('resultTitle').textContent = t.perfectTitle;
+    document.getElementById('resultContent').textContent = t.perfectContent;
+    
+    if (score === 20) {
+        document.getElementById('resultTitle').textContent = t.perfectTitle;
+        document.getElementById('resultContent').textContent = t.perfectContent;
+    } else if (score >= 15) {
+        document.getElementById('resultTitle').textContent = t.goodTitle;
+        document.getElementById('resultContent').textContent = t.goodContent;
+    } else {
+        document.getElementById('resultTitle').textContent = t.needImprovementTitle;
+        document.getElementById('resultContent').textContent = t.needImprovementContent;
+    }
+    
+    const gameData = {
+        name: playerName,
+        score: score,
+        type1Score: type1Score,
+        type2Score: type2Score,
+        type3Score: type3Score,
+        type4Score: type4Score,
+firstHalfTime: parseFloat(firstHalfTime), // ✅ 儲存為浮點數
+secondHalfTime: parseFloat(secondHalfTime), // ✅ 儲存為浮點數
+        firstHalfScore: firstHalfScore,
+        secondHalfScore: secondHalfScore,
+        firstHalfTier: firstHalfTier,
+        secondHalfTier: secondHalfTier,
+        timestamp: now.getTime(),
+        dateTime: resultDateTime
+    };
+    
+    leaderboardData.push(gameData);
+    localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+    
+    updateLocalLeaderboard();
+    
+    sendToFirebase(gameData);
+}
+
+function updateLocalLeaderboard() {
+  const t = currentTranslation;
+
+  const firstContainer = document.getElementById('leaderboardFirst');
+  const secondContainer = document.getElementById('leaderboardSecond');
+  if (!firstContainer || !secondContainer) return;
+
+  const tierOrder = {
+    mythic: 1,
+    challenger: 2,
+    grandmaster: 3,
+    master: 4,
+    diamond: 5,
+    emerald: 6,
+    platinum: 7,
+    gold: 8,
+    silver: 9,
+    bronze: 10
+  };
+
+  const firstHalfSorted = [...leaderboardData]
+    .filter(d => d.firstHalfTier != null)
+    .sort((a, b) => {
+      const td = (tierOrder[a.firstHalfTier] ?? 999) - (tierOrder[b.firstHalfTier] ?? 999);
+      if (td !== 0) return td;
+      const sd = (Number(b.firstHalfScore ?? 0) - Number(a.firstHalfScore ?? 0));
+      if (sd !== 0) return sd;
+      return Number(a.firstHalfTime ?? 999999) - Number(b.firstHalfTime ?? 999999);
+    })
+    .slice(0, 10);
+
+  const secondHalfSorted = [...leaderboardData]
+    .filter(d => d.secondHalfTier != null)
+    .sort((a, b) => {
+      const td = (tierOrder[a.secondHalfTier] ?? 999) - (tierOrder[b.secondHalfTier] ?? 999);
+      if (td !== 0) return td;
+      const sd = (Number(b.secondHalfScore ?? 0) - Number(a.secondHalfScore ?? 0));
+      if (sd !== 0) return sd;
+      return Number(a.secondHalfTime ?? 999999) - Number(b.secondHalfTime ?? 999999);
+    })
+    .slice(0, 10);
+
+  firstContainer.innerHTML = '';
+  secondContainer.innerHTML = '';
+
+  const latest = leaderboardData[leaderboardData.length - 1];
+
+  // 前10關
+  if (firstHalfSorted.length === 0) {
+    firstContainer.innerHTML =
+      `<div class="bg-white p-2 md:p-4 rounded-lg text-center text-gray-500 text-xs md:text-base">${t.noData}</div>`;
+  } else {
+    firstHalfSorted.forEach((data, index) => {
+      const isCurrentPlayer = latest && data.timestamp === latest.timestamp;
+      const bgColor = isCurrentPlayer ? 'bg-yellow-50 border-2 border-yellow-400' : 'bg-white';
+
+      const tierIcon = getTierIcon(data.firstHalfTier);
+      const tierColor = getTierColor(data.firstHalfTier);
+
+      const rankDisplay = index < 3
+        ? `<span class="text-xl md:text-3xl">${['🥇', '🥈', '🥉'][index]}</span>`
+        : `<span class="font-bold text-gray-600 text-sm md:text-lg">#${index + 1}</span>`;
+
+const dt = getRecordDateTime(data);
+      const div = document.createElement('div');
+      div.className = `${bgColor} p-2 md:p-4 rounded-lg flex justify-between items-center text-xs md:text-base`;
+      div.innerHTML = `
+        <div class="flex items-center gap-1 md:gap-3 flex-1 min-w-0">
+          <div class="w-8 md:w-12 text-center shrink-0">${rankDisplay}</div>
+          <div class="font-bold text-indigo-600 truncate flex-1">${data.name ?? ''}</div>
+          <div class="${tierColor} text-base md:text-2xl shrink-0">${tierIcon}</div>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="font-bold text-blue-600">${Number(data.firstHalfTime ?? 0).toFixed(2)}${t.seconds}</div>
+          <div class="text-gray-500 text-xs md:text-sm">${Number(data.firstHalfScore ?? 0)}/10</div>
+          <div class="text-gray-400 text-[10px] md:text-xs">${dt}</div>
+        </div>
+      `;
+      firstContainer.appendChild(div);
+    });
+  }
+
+  // 後10關
+  if (secondHalfSorted.length === 0) {
+    secondContainer.innerHTML =
+      `<div class="bg-white p-2 md:p-4 rounded-lg text-center text-gray-500 text-xs md:text-base">${t.noData}</div>`;
+  } else {
+    secondHalfSorted.forEach((data, index) => {
+      const isCurrentPlayer = latest && data.timestamp === latest.timestamp;
+      const bgColor = isCurrentPlayer ? 'bg-yellow-50 border-2 border-yellow-400' : 'bg-white';
+
+      const tierIcon = getTierIcon(data.secondHalfTier);
+      const tierColor = getTierColor(data.secondHalfTier);
+
+      const rankDisplay = index < 3
+        ? `<span class="text-xl md:text-3xl">${['🥇', '🥈', '🥉'][index]}</span>`
+        : `<span class="font-bold text-gray-600 text-sm md:text-lg">#${index + 1}</span>`;
+
+const dt = getRecordDateTime(data);
+      const div = document.createElement('div');
+      div.className = `${bgColor} p-2 md:p-4 rounded-lg flex justify-between items-center text-xs md:text-base`;
+      div.innerHTML = `
+        <div class="flex items-center gap-1 md:gap-3 flex-1 min-w-0">
+          <div class="w-8 md:w-12 text-center shrink-0">${rankDisplay}</div>
+          <div class="font-bold text-indigo-600 truncate flex-1">${data.name ?? ''}</div>
+          <div class="${tierColor} text-base md:text-2xl shrink-0">${tierIcon}</div>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="font-bold text-blue-600">${Number(data.secondHalfTime ?? 0).toFixed(2)}${t.seconds}</div>
+          <div class="text-gray-500 text-xs md:text-sm">${Number(data.secondHalfScore ?? 0)}/10</div>
+          <div class="text-gray-400 text-[10px] md:text-xs">${dt}</div>
+        </div>
+      `;
+      secondContainer.appendChild(div);
+    });
+  }
+}
+
+function showLeaderboard(type) {
+    const localBtn = document.getElementById('localTabBtn');
+    const onlineBtn = document.getElementById('onlineTabBtn');
+    const localSection = document.getElementById('localLeaderboardSection');
+    const onlineSection = document.getElementById('onlineLeaderboardSection');
+    
+    if (type === 'local') {
+        localBtn.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+        localBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        onlineBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        onlineBtn.classList.add('bg-gray-400', 'hover:bg-gray-500');
+        localSection.classList.remove('hidden');
+        onlineSection.classList.add('hidden');
+    } else {
+        onlineBtn.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+        onlineBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        localBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        localBtn.classList.add('bg-gray-400', 'hover:bg-gray-500');
+        onlineSection.classList.remove('hidden');
+        localSection.classList.add('hidden');
+        
+        fetchAndDisplayOnlineLeaderboard();
+    }
+}
+
+function sendToFirebase(data) {
+    const payload = {
+        name: data.name,
+        score: data.score,
+        type1Score: data.type1Score,
+        type2Score: data.type2Score,
+        type3Score: data.type3Score,
+        type4Score: data.type4Score,
+        firstHalfTime: data.firstHalfTime,
+        secondHalfTime: data.secondHalfTime,
+        firstHalfScore: data.firstHalfScore,
+        secondHalfScore: data.secondHalfScore,
+        firstHalfTier: data.firstHalfTier,
+        secondHalfTier: data.secondHalfTier,
+        timestamp: data.timestamp,
+        dateTime: data.dateTime
+    };
+    
+    fetch(FIREBASE_URL + '.json', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('Data sent to Firebase:', result);
+    })
+    .catch(error => {
+        console.error('Error sending to Firebase:', error);
+    });
+}
+
+async function fetchAndDisplayOnlineLeaderboard() {
+  const t = currentTranslation;
+  const loadingText = document.getElementById('onlineLoadingText');
+  const firstContainer = document.getElementById('onlineLeaderboardFirst');
+  const secondContainer = document.getElementById('onlineLeaderboardSecond');
+
+  if (!loadingText || !firstContainer || !secondContainer) return;
+
+  loadingText.classList.remove('hidden');
+  loadingText.textContent = t.loading;
+
+  firstContainer.innerHTML = '';
+  secondContainer.innerHTML = '';
+
+  const currentPlayerData = leaderboardData[leaderboardData.length - 1];
+  if (!currentPlayerData) {
+    loadingText.textContent = t.noData;
+    return;
+  }
+
+  const playerFirstTier = currentPlayerData.firstHalfTier;
+  const playerSecondTier = currentPlayerData.secondHalfTier;
+
+  try {
+    const response = await fetch(FIREBASE_URL + '.json');
+    const data = await response.json();
+
+    if (!data) {
+      loadingText.textContent = t.noData;
+      return;
+    }
+
+    const allPlayers = Object.values(data)
+      .filter(Boolean)
+      .map(p => {
+        const firstHalfScore = Number(p.firstHalfScore ?? 0);
+        const secondHalfScore = Number(p.secondHalfScore ?? 0);
+
+        const firstHalfTime = Number(p.firstHalfTime ?? 0);
+        const secondHalfTime = Number(p.secondHalfTime ?? 0);
+
+        const firstHalfTier = p.firstHalfTier ?? getTierLevel(firstHalfScore, firstHalfTime, true);
+        const secondHalfTier = p.secondHalfTier ?? getTierLevel(secondHalfScore, secondHalfTime, false);
+
+        // timestamp：字串 "YYYY-MM-DD HH:mm:ss" -> ms
+        let ts = p.timestamp;
+        if (typeof ts === 'string') {
+          const iso = ts.replace(' ', 'T');
+          const parsed = Date.parse(iso);
+          ts = Number.isFinite(parsed) ? parsed : ts;
+        }
+
+        // 若舊資料沒有 dateTime：嘗試由 timestamp(ms) 生成
+const dateTime = getRecordDateTime({ ...p, timestamp: ts });
+
+        return {
+          ...p,
+          firstHalfScore,
+          secondHalfScore,
+          firstHalfTime,
+          secondHalfTime,
+          firstHalfTier,
+          secondHalfTier,
+          timestamp: ts,
+          dateTime
+        };
+      });
+
+    const firstHalfFiltered = allPlayers
+      .filter(p => p.firstHalfTier === playerFirstTier)
+      .sort((a, b) => {
+        const scoreDiff = Number(b.firstHalfScore ?? 0) - Number(a.firstHalfScore ?? 0);
+        if (scoreDiff !== 0) return scoreDiff;
+        return Number(a.firstHalfTime ?? 999999) - Number(b.firstHalfTime ?? 999999);
+      })
+      .slice(0, 200);
+
+    const secondHalfFiltered = allPlayers
+      .filter(p => p.secondHalfTier === playerSecondTier)
+      .sort((a, b) => {
+        const scoreDiff = Number(b.secondHalfScore ?? 0) - Number(a.secondHalfScore ?? 0);
+        if (scoreDiff !== 0) return scoreDiff;
+        return Number(a.secondHalfTime ?? 999999) - Number(b.secondHalfTime ?? 999999);
+      })
+      .slice(0, 200);
+
+    const idx1 = firstHalfFiltered.findIndex(p => p.timestamp === currentPlayerData.timestamp);
+    const playerFirstRank = idx1 >= 0 ? idx1 + 1 : 0;
+
+    const idx2 = secondHalfFiltered.findIndex(p => p.timestamp === currentPlayerData.timestamp);
+    const playerSecondRank = idx2 >= 0 ? idx2 + 1 : 0;
+
+    displayGlobalTierRank(playerFirstTier, playerSecondTier, playerFirstRank, playerSecondRank);
+
+    loadingText.classList.add('hidden');
+
+    displayFilteredLeaderboard(firstHalfFiltered, firstContainer, currentPlayerData, true);
+    displayFilteredLeaderboard(secondHalfFiltered, secondContainer, currentPlayerData, false);
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    loadingText.textContent = '❌ ' + t.noData;
+  }
+}
+function displayGlobalTierRank(firstTier, secondTier, firstRank, secondRank) {
+    const t = currentTranslation;
+    const globalRankDisplay = document.getElementById('globalTierRankDisplay');
+    
+    if (!globalRankDisplay) {
+        console.error('globalTierRankDisplay element not found!');
+        return;
+    }
+    
+    const firstTierIcon = getTierIcon(firstTier);
+    const firstTierName = getTierName(firstTier);
+    
+    const secondTierIcon = getTierIcon(secondTier);
+    const secondTierName = getTierName(secondTier);
+    
+    const firstRankDisplay = firstRank > 0 ? `TOP${firstRank}` : '-';
+    const secondRankDisplay = secondRank > 0 ? `TOP${secondRank}` : '-';
+    
+    // ✅ 一橫排顯示格式
+    globalRankDisplay.innerHTML = `
+        <div class="text-center text-sm md:text-xl text-white font-bold py-2 md:py-3">
+            ${t.globalRanking}：${firstTierIcon} ${firstTierName} ${firstRankDisplay} (${t.first10Levels})、${secondTierIcon} ${secondTierName} ${secondRankDisplay} (${t.last10Levels})
+        </div>
+    `;
+}
+
+function displayFilteredLeaderboard(filteredData, container, currentPlayerData, isFirstHalf) {
+  const t = currentTranslation;
+
+  container.innerHTML = '';
+
+  if (!filteredData || filteredData.length === 0) {
+    container.innerHTML =
+      `<div class="bg-white p-2 md:p-4 rounded-lg text-center text-gray-500 text-xs md:text-base">${t.noData}</div>`;
+    return;
+  }
+
+  const tierField = isFirstHalf ? 'firstHalfTier' : 'secondHalfTier';
+  const playerTier = currentPlayerData?.[tierField];
+  const tierName = getTierName(playerTier);
+  const tierIcon = getTierIcon(playerTier);
+  const tierColor = getTierColor(playerTier);
+
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'mb-3 md:mb-4 p-3 md:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border-2 border-indigo-200';
+  headerDiv.innerHTML = `
+    <div class="flex items-center justify-center gap-2 md:gap-3">
+      <span class="${tierColor} text-2xl md:text-4xl">${tierIcon}</span>
+      <span class="text-base md:text-xl font-bold text-gray-700">${tierName}</span>
+      <span class="text-xs md:text-sm text-gray-500">(${filteredData.length} ${t.players})</span>
+    </div>
+  `;
+  container.appendChild(headerDiv);
+
+  const timeField = isFirstHalf ? 'firstHalfTime' : 'secondHalfTime';
+  const scoreField = isFirstHalf ? 'firstHalfScore' : 'secondHalfScore';
+
+  filteredData.forEach((data, index) => {
+    const isCurrentPlayer = currentPlayerData && (data.timestamp === currentPlayerData.timestamp);
+    const bgColor = isCurrentPlayer ? 'bg-yellow-50 border-2 border-yellow-400' : 'bg-white';
+
+    const rankDisplay = index < 3
+      ? `<span class="text-xl md:text-3xl">${['🥇', '🥈', '🥉'][index]}</span>`
+      : `<span class="font-bold text-gray-600 text-sm md:text-lg">#${index + 1}</span>`;
+
+const dt = getRecordDateTime(data);
+    const div = document.createElement('div');
+    div.className = `${bgColor} p-2 md:p-4 rounded-lg flex justify-between items-center mb-2 text-xs md:text-base`;
+    div.innerHTML = `
+      <div class="flex items-center gap-1 md:gap-3 flex-1 min-w-0">
+        <div class="w-8 md:w-12 text-center shrink-0">${rankDisplay}</div>
+        <div class="font-bold text-indigo-600 truncate flex-1">${data.name ?? ''}</div>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="font-bold text-blue-600">${Number(data[timeField] ?? 0).toFixed(2)}${t.seconds}</div>
+        <div class="text-gray-500 text-xs md:text-sm">${Number(data[scoreField] ?? 0)}/10</div>
+        <div class="text-gray-400 text-[10px] md:text-xs">${dt}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+function restartGame() {
+    currentRound = 1;
+    score = 0;
+    type1Score = 0;
+    type2Score = 0;
+    type3Score = 0;
+    type4Score = 0;
+    gameStartTime = 0;
+    firstHalfStartTime = 0;
+    secondHalfStartTime = 0;
+    firstHalfEndTime = 0;
+    secondHalfEndTime = 0;
+    resultDateTime = '';
+    
+    hideAllScreens();
+    document.getElementById('startScreen').classList.remove('hidden');
+    
+    const localBtn = document.getElementById('localTabBtn');
+    const onlineBtn = document.getElementById('onlineTabBtn');
+    localBtn.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+    localBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+    onlineBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+    onlineBtn.classList.add('bg-gray-400', 'hover:bg-gray-500');
+    
+    const localSection = document.getElementById('localLeaderboardSection');
+    const onlineSection = document.getElementById('onlineLeaderboardSection');
+    localSection.classList.remove('hidden');
+    onlineSection.classList.add('hidden');
+}
+
+    </script>
+</body>
+</html>
