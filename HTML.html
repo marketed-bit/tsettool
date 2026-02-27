@@ -320,7 +320,7 @@
                 <button class="btn btn-success btn-large" id="btn-show-login" disabled>📧 電子郵件登入</button>
                 <button class="btn btn-success btn-large" id="btn-show-register" disabled>📝 註冊新帳號</button>
             </div>
-            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0443</p>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0456</p>
         </article>
     </section>
 
@@ -1001,10 +1001,12 @@ const StimuliGenerator = {
 setStatus('載入 Firebase SDK...');
 let fb;
 try {
-    const [ { initializeApp }, 
-{ getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider, signOut, onAuthStateChanged }, 
-{ getDatabase, ref, set, get, push, query, orderByChild, limitToLast, update },        
-{ getAnalytics }
+    const [
+        { initializeApp },
+        { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+          signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged },
+        { getDatabase, ref, set, get, push, query, orderByChild, limitToLast, update },
+        { getAnalytics }
     ] = await Promise.all([
         import('firebase/app'),
         import('firebase/auth'),
@@ -1015,7 +1017,7 @@ try {
     setStatus('連線 Firebase...');
     const firebaseConfig = {
         apiKey:            "AIzaSyCGVl6iHyWJXGMqCqq8DR2EHCoI5G2CTto",
-        authDomain:        "login.wusbrain.com",
+        authDomain:        " testtool-cc280.firebaseapp.com",
         databaseURL:       "https://testtool-cc280-default-rtdb.firebaseio.com",
         projectId:         "testtool-cc280",
         storageBucket:     "testtool-cc280.firebasestorage.app",
@@ -1034,7 +1036,7 @@ try {
         auth, database, googleProvider,
         ref, set, get, push, query, orderByChild, limitToLast, update,
         createUserWithEmailAndPassword, signInWithEmailAndPassword,
-        signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged
+        signInWithPopup, signOut, onAuthStateChanged
     };
     console.log('✅ Firebase 初始化完成');
 
@@ -1404,11 +1406,14 @@ async handleRegister() {
 async loginWithGoogle() {
     if (!fb) { alert(t('alerts.google_offline')); return; }
     try {
-        // ✅ 改用跳轉登入，對 LINE/FB 內建瀏覽器與 Safari 友善很多
-        // 呼叫後網頁會直接跳轉，不需要等 await 後面的程式，因為回來時網頁會重新載入
-        fb.signInWithRedirect(fb.auth, fb.googleProvider);
+        await fb.signInWithPopup(fb.auth, fb.googleProvider);
+        alert(t('alerts.google_success'));
+        await this.loadUserProfile();
+        this.showPage('profile');
     } catch (err) {
-        alert(t('alerts.google_fail') + err.message);
+        if (err.code !== 'auth/popup-closed-by-user') {
+            alert(t('alerts.google_fail') + err.message);
+        }
     }
 },
 
