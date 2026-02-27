@@ -648,29 +648,34 @@ function ta(path) {
 
 // ==================== Advice JSON（建議文字）====================
 
-const ADVICE_JSON_URL =
-    'https://raw.githubusercontent.com/marketed-bit/tsettool/main/advice.json';
+// ==================== Advice JSON（建議文字）====================
 
 let ADVICE_JSON = null;
 
 async function fetchAdviceJSON() { 
-if (ADVICE_JSON) return ADVICE_JSON; // 3. 已載入則不再請求 
-try { 
-const res = await fetch(ADVICE_JSON_URL, { 
-cache: 'default', // 4. 允許使用快取 
-headers: { 'Accept': 'application/json; charset=utf-8' } 
-});
+    if (ADVICE_JSON) return ADVICE_JSON; // 已載入則不再請求 
+    
+    // ✅ 動態判斷要抓取哪一個檔案：如果是日文就抓 advice_ja.json，否則抓 advice.json
+    const currentLang = (i18n && i18n.meta && i18n.meta.lang) ? i18n.meta.lang : 'zh-TW';
+    const fileName = (currentLang === 'ja') ? 'advice_ja.json' : 'advice.json';
+    const adviceUrl = `https://raw.githubusercontent.com/marketed-bit/tsettool/main/${fileName}`;
+
+    try { 
+        const res = await fetch(adviceUrl, { 
+            cache: 'default', // 允許使用快取 
+            headers: { 'Accept': 'application/json; charset=utf-8' } 
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const buffer  = await res.arrayBuffer();
         const decoder = new TextDecoder('utf-8');
         ADVICE_JSON = JSON.parse(decoder.decode(buffer));
 
-        console.log('✅ ADVICE JSON 載入完成');
+        console.log(`✅ ADVICE JSON (${fileName}) 載入完成`);
         return ADVICE_JSON;
 
     } catch (err) {
-        console.error('❌ ADVICE JSON 載入失敗，使用備用文字:', err);
+        console.error(`❌ ADVICE JSON (${fileName}) 載入失敗，使用備用文字:`, err);
         ADVICE_JSON = null;
         return null;
     }
@@ -759,7 +764,7 @@ const CONFIG = {
     MEM_PENALTY_PER_ERROR: 4,
     REACTION_TIME_LIMIT: 5.00,
     VISITOR_TOKEN_TTL: 60 * 60 * 1000,
-BASE_RK: { mem: 50, rea: 10, spa: 12, seq: 25 },
+BASE_RK: { mem: 40, rea: 10, spa: 12, seq: 25 },
     MEM_AGE_MULTIPLIERS: {
         'toddler': 2.00, 'child': 1.50, 'teen': 0.90,
         'young_adult': 0.80, 'pre_middle': 0.95, 'middle': 1.00,
