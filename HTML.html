@@ -1406,14 +1406,11 @@ async handleRegister() {
 async loginWithGoogle() {
     if (!fb) { alert(t('alerts.google_offline')); return; }
     try {
-        await fb.signInWithPopup(fb.auth, fb.googleProvider);
-        alert(t('alerts.google_success'));
-        await this.loadUserProfile();
-        this.showPage('profile');
+        // ✅ 改用跳轉登入，對 LINE/FB 內建瀏覽器與 Safari 友善很多
+        // 呼叫後網頁會直接跳轉，不需要等 await 後面的程式，因為回來時網頁會重新載入
+        fb.signInWithRedirect(fb.auth, fb.googleProvider);
     } catch (err) {
-        if (err.code !== 'auth/popup-closed-by-user') {
-            alert(t('alerts.google_fail') + err.message);
-        }
+        alert(t('alerts.google_fail') + err.message);
     }
 },
 
