@@ -2649,6 +2649,16 @@ renderAbilityResults(computed) {
         `;
 
         // ✅ Bug 5 修正：level-badge 改用 tLevel()
+// ✅ Bug 5 修正：level-badge 改用 tLevel()
+        // ✅ 判斷：如果是專注力 (att) 就不顯示額外的時間與答對題數
+        const extraDetails = (ab === 'att') ? '' : `
+            <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
+                ${t('pages.results.total_time')} ${d.totalTime}s
+                &nbsp;|&nbsp;
+                ${t('pages.results.correct')} ${d.correctCount} / ${d.totalCount}
+            </div>
+        `;
+
         card.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div>
@@ -2658,11 +2668,7 @@ renderAbilityResults(computed) {
                     <div style="font-size:2rem;font-weight:bold;">
                         ${d.score}<span style="font-size:1rem;"> / 100</span>
                     </div>
-                    <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
-                        ${t('pages.results.total_time')} ${d.totalTime}s
-                        &nbsp;|&nbsp;
-                        ${t('pages.results.correct')} ${d.correctCount} / ${d.totalCount}
-                    </div>
+                    ${extraDetails}
                 </div>
                 <div class="level-badge level-${d.level}"
                     style="background:rgba(0,0,0,0.25);
@@ -2892,7 +2898,7 @@ renderPercentileInfo(computed, age, gender) {
 
     abilities.forEach(ab => {
         const pct      = getPercentile(ab);
-        const leadPct  = 100 - pct;
+        const leadPct  = pct;
         const isGood   = pct >= 60;
         const lv       = computed[ab]?.level || '正常';
         const barColor = colorMap[lv] || '#888';
