@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "lang": "ja",
+    "title": "認知能力テストシステム"
+  },
+  "loading": {
+    "default": "読み込み中...",
+    "firebase_sdk": "Firebase SDK を読み込み中...",
+    "firebase_connect": "Firebase に接続中...",
+    "advice_json": "アドバイステキストを読み込み中...",
+    "advice_retry": "アドバイステキストを再読み込み中..."
+  },
+  "pages": {
+    "home": {
+      "title": "🧠 認知能力テスト",
+      "subtitle": "認知能力評価システムへようこそ\n認知専門家による設計\n本テストで以下を総合的に評価します：",
+      "ability_cards": {
+        "mem_title": "🧠 記憶力",
+        "mem_desc": "順序を覚えて、短期記憶能力を評価",
+        "rea_title": "⚡ 反応力",
+        "rea_desc": "Yes/Noテストで反応・抑制能力を評価",
+        "spa_title": "🔄 空間力",
+        "spa_desc": "思考の転換で空間認識能力を評価",
+        "att_title": "🎯 集中力",
+        "att_desc": "3つの平均で集中力の安定度を評価"
+      },
+      "info_table": {
+        "heading": "🧠 認知能力テスト",
+        "col_item": "テスト項目",
+        "col_count": "問題数／ステージ",
+        "col_time": "制限時間",
+        "mem_label": "🔵 記憶力",
+        "mem_count": "5問",
+        "mem_time": "各問10秒",
+        "rea_label": "🟡 反応力",
+        "rea_count": "10問",
+        "rea_time": "各問5秒",
+        "seq_label": "🔢 数字順序",
+        "seq_count": "2ステージ",
+        "seq_count_sub": "3×3 & 4×4",
+        "seq_time": "スピード計測",
+        "seq_time_sub": "制限なし",
+        "spa_label": "🟢 空間力",
+        "spa_count": "10問",
+        "spa_time": "各問5秒",
+        "att_label": "🔴 集中力",
+        "att_desc": "各項目から自動計算"
+      },
+      "badges": {
+        "age_range": "✅ 5〜120歳対応",
+        "duration": "⏱ 約3〜5分"
+      },
+      "guest_warning": "⚠️ <strong>ゲストモード</strong>では成績を保存できず、認知能力の変化を追跡できません。<br><strong>ログイン後</strong>にご利用いただくことをお勧めします。",
+      "btn_guest": "👤 ゲストとしてテスト開始",
+      "btn_google": "🔐 Googleでログイン",
+      "btn_login": "📧 メールアドレスでログイン",
+      "btn_register": "📝 新規アカウント登録",
+      "footer": "このシステムの技術提供"
+    },
+    "login": {
+      "title": "🔐 ログイン",
+      "info": "ログインするとテスト履歴や進捗を確認できます",
+      "email_label": "📧 メールアドレス",
+      "email_placeholder": "メールアドレスを入力",
+      "password_label": "🔒 パスワード",
+      "password_placeholder": "パスワードを入力",
+      "btn_submit": "ログイン",
+      "btn_cancel": "キャンセル"
+    },
+    "register": {
+      "title": "📝 新規登録",
+      "info": "アカウント登録でテスト記録を保存し、進捗を追跡できます",
+      "email_label": "📧 メールアドレス",
+      "email_placeholder": "your@email.com",
+      "password_label": "🔒 パスワード（6文字以上）",
+      "password_placeholder": "パスワードを設定",
+      "confirm_label": "🔒 パスワード確認",
+      "confirm_placeholder": "パスワードを再入力",
+      "btn_submit": "登録",
+      "btn_cancel": "キャンセル"
+    },
+    "profile": {
+      "title": "📝 基本情報",
+      "warning": "⚠️ 正確な年齢規範と比較するため、実際の情報を入力してください",
+      "nickname_label": "✏️ ニックネーム *",
+      "nickname_placeholder": "ニックネームを入力",
+      "birth_year_label": "📅 生まれ年 *",
+      "birth_year_placeholder": "年を選択",
+      "birth_year_suffix": "年",
+      "birth_month_label": "📅 生まれ月 *",
+      "birth_month_placeholder": "月を選択",
+      "months": ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+      "gender_label": "⚧ 性別 *",
+      "gender_placeholder": "性別を選択",
+      "gender_male": "男性",
+      "gender_female": "女性",
+      "btn_start": "テスト開始 →",
+      "btn_history": "📊 テスト履歴を見る"
+    },
+    "instructions": {
+      "title": "📖 テスト説明",
+      "practice_hint": "💡 <strong>ヒント：</strong>練習問題は何度でも繰り返せます。本番の成績には影響しません",
+      "btn_practice": "練習問題を始める →",
+      "mem": {
+        "title": "🧠 記憶力テスト説明",
+        "how_label": "テスト方法",
+        "steps": [
+          "画面に <strong>{min}〜{max} 個の図形</strong>が順番に表示されます",
+          "各図形は <strong>2秒間</strong>表示されます。順序を覚えてください",
+          "表示後、選択肢から<strong>順番通りに</strong>図形をタップしてください",
+          "間違えた場合は<strong>もう一度タップ</strong>で選択解除できます",
+          "制限時間は<strong>10秒ずつ増加</strong>し、全部で<strong>5問</strong>です"
+        ],
+        "tip": "図形には異なる色と形の組み合わせがあります。よく見て区別してください"
+      },
+      "rea": {
+        "title": "⚡ 反応力テスト説明",
+        "how_label": "テスト方法",
+        "steps": [
+          "まず<strong>ターゲット図形</strong>が表示されます",
+          "次にテスト図形が表示され、ターゲットと<strong>形・色が完全に一致するか</strong>判断します",
+          "完全一致なら <span style=\"color:#5cb85c;font-weight:bold;\">「同じ」</span>、違う場合は <span style=\"color:#d9534f;font-weight:bold;\">「違う」</span> をタップ",
+          "各問の制限時間は <strong>5秒</strong>、全部で <strong>10問</strong>です"
+        ],
+        "tip": "形と色の<strong>両方が一致</strong>して初めて「同じ」と判断します"
+      },
+      "seq": {
+        "title": "⚡ 数字順序テスト説明",
+        "how_label": "テスト方法",
+        "steps": [
+          "画面にランダムに並んだ数字のマスが表示されます",
+          "<strong>できるだけ速く</strong> <strong>1 → 2 → 3 → …</strong> の順にタップしてください",
+          "2ステージ構成：<strong>3×3（9マス）→ 4×4（16マス）</strong>",
+          "間違えてもミスにはなりませんが、<strong>+2秒のペナルティ</strong>が加算されます",
+          "制限時間はありません。できるだけ速く完了してください"
+        ],
+        "tip": "焦らず、まずマス全体を見渡してから始めると速くなります！"
+      },
+      "spa": {
+        "title": "🔄 空間能力テスト説明",
+        "how_label": "テスト方法",
+        "steps": [
+          "画面に<strong>2つの図形</strong>が同時に表示されます",
+          "一方の図形は回転されています。<strong>同じ図形かどうか</strong>判断してください",
+          "前半5問：形と色の両方が同じか判断；後半5問：形だけ判断",
+          "各問の制限時間は <strong>5秒</strong>、全部で <strong>10問</strong>です"
+        ],
+        "tip": "頭の中で図形を「元に戻して」、回転の違いを無視してください"
+      }
+    },
+    "test": {
+      "type_labels": {
+        "mem": "記憶テスト",
+        "rea": "反応テスト",
+        "seq": "数字順序",
+        "spa": "空間テスト"
+      },
+      "practice_label": "練習問題",
+      "question_label": "第 {n} 問",
+      "mem_watch": "集中して図形の順序を覚えてください",
+      "mem_answer": "見た図形を順番にタップしてください",
+      "mem_skip": "⏭ この問題をスキップする",
+      "rea_instruction": "形と色の両方が同じ場合のみ「同じ」です",
+      "rea_target_label": "ターゲット図形",
+      "rea_test_label": "テスト図形",
+      "rea_btn_same": "✅ 同じ",
+      "rea_btn_different": "❌ 違う",
+      "seq_title": "数字順序 {size}×{size}｜1 → {total} の順にタップ",
+      "seq_next": "次は：{n}",
+      "seq_done": "✅ 完了！",
+      "seq_penalty": "⚠️ 間違い！累計ペナルティ +{sec} 秒",
+      "spa_strict_question": "2つの図形は<strong>形も色も同じ</strong>ですか？（回転を無視）",
+      "spa_loose_question": "2つの図形は<strong>形が同じ</strong>ですか？（色は関係なし）",
+      "spa_strict_instruction": "2つの図形は形も色も同じですか？（回転は無視）",
+      "spa_loose_instruction": "2つの図形は形が同じですか？（色は無視）",
+      "spa_btn_yes": "✅ はい",
+      "spa_btn_no": "❌ いいえ",
+      "submit_btn": "回答を送信"
+    },
+    "spa_break": {
+      "title": "空間能力テスト — 後半",
+      "subtitle": "前半5問が終わりました。難易度が上がります。<br>以下のルールを確認して続けてください。",
+      "rules_title": "📋 ルール確認",
+      "rules": [
+        "画面に<strong>2つの図形</strong>が表示されます",
+        "後半5問：<strong>形が同じかどうか</strong>だけを判断します（色は関係なし）",
+        "頭の中で図形を「元に戻して」、回転の違いを無視してください",
+        "各問の制限時間は <strong>5秒</strong>。素早く回答してください",
+        "不正解でも即座には知らせません。最終スコアに影響します"
+      ],
+      "tip": "後半は<strong>形だけ見て、色は無視</strong>してください",
+      "btn_continue": "✅ ルールを確認しました。後半へ進む"
+    },
+    "results": {
+      "title": "🎉 テスト結果",
+      "user_info": "{nickname}（{age}歳）",
+      "test_time": "テスト日時：{datetime}",
+      "ability_section": "📊 能力評価結果",
+      "recommend_section": "💡 あなたへのアドバイス",
+      "percentile_section": "🌍 パーセンタイル参照",
+      "history_section": "📈 テスト履歴",
+      "btn_restart": "🔄 もう一度テスト",
+      "btn_learn_more": "💡 認知能力を高める方法をもっと知る",
+      "btn_logout": "🚪 ログアウト",
+      "btn_home": "🏠 ホームに戻る",
+      "footer": "このシステムの技術提供",
+      "ability_names": {
+        "mem": "🧠 記憶力",
+        "rea": "⚡ 反応力",
+        "spa": "🔄 空間能力",
+        "att": "🎯 集中力"
+      },
+      "att_calc_note": "記憶・反応・空間の速度平均で計算",
+      "total_time": "合計時間：",
+      "correct": "正解：",
+      "radar_title": "📡 能力レーダーチャート",
+      "radar_legend_base": "{age}歳の基準値",
+      "radar_legend_user": "今回の結果",
+      "radar_subtitle": "点線 = {age}歳の基準（70%位置）｜赤 = 今回の結果｜基準線を超えると同年代より優秀",
+      "radar_device_note": "📱 {device}モード：基準値を自動補正済み",
+      "recommend_basis": "今回のアドバイス根拠：",
+      "recommend_focus": "最も注目",
+      "recommend_closing_1": "このテストを完了したことは、多くの人より自覚があることを示しています。しかし自覚は始まりに過ぎません。正しい方法とトレーニングこそが、本当に脳を良くする道です。",
+      "recommend_closing_2": "記憶・反応・空間・集中——これらはすべてトレーニングで向上させられる能力です。日常生活で安定して発揮したいなら、認知向上トレーニングの専門家に相談することをお勧めします。",
+      "recommend_closing_3": "あなたの脳は、大切にケアされる価値があります。",
+      "percentile_range": "パーセンタイル比較基準：<strong>{range}</strong>の年齢層基準値",
+      "percentile_hint_1": "📊 上位%が<strong>高いほど</strong>、全体的な成績が<strong>良い</strong>ことを意味します",
+      "percentile_hint_2": "🎯 <strong>上位60%以上</strong>が認知能力を良好に維持している目安です",
+      "percentile_att_note": "記憶力・反応力・空間能力の総合計算",
+      "percentile_lead": "上位",
+      "percentile_barely": "わずか上位",
+      "percentile_pct_people": "{pct}%",
+      "percentile_badge_good": "✓ 達成",
+      "percentile_badge_poor": "要改善",
+      "history_count": "<strong>{n}</strong>件の記録",
+      "history_scroll": "↕ スクロールして全件表示",
+      "history_col_time": "テスト日時",
+      "history_col_mem": "記憶力",
+      "history_col_rea": "反応力",
+      "history_col_spa": "空間能力",
+      "history_latest_badge": "最新",
+      "history_empty_title": "📭 テスト履歴なし",
+      "history_empty_desc": "テスト完了後にここに記録が表示されます",
+      "history_loading": "⏳ 読み込み中...",
+      "history_load_fail": "❌ 履歴の読み込みに失敗しました",
+      "history_reload": "🔄 再読み込み"
+    },
+    "level_labels": {
+      "最佳表現": "最高の結果",
+      "良好": "良好",
+      "正常": "普通",
+      "接近正常": "ほぼ普通",
+      "待加強": "要改善",
+      "不太好": "やや低い",
+      "需要加強": "大幅改善が必要"
+    }
+  },
+  "alerts": {
+    "login_success": "✅ ログインしました！",
+    "login_offline": "⚠️ オフラインモードのためログインできません",
+    "login_empty": "⚠️ すべての項目を入力してください",
+    "login_not_found": "このアカウントは見つかりません",
+    "login_wrong_password": "パスワードが間違っています",
+    "login_invalid_email": "メールアドレスの形式が正しくありません",
+    "login_invalid_credential": "メールアドレスまたはパスワードが間違っています",
+    "login_fail": "ログイン失敗：",
+    "register_success": "✅ 登録しました！基本情報を入力してください",
+    "register_offline": "⚠️ オフラインモードのため登録できません",
+    "register_empty": "⚠️ すべての項目を入力してください",
+    "register_mismatch": "❌ パスワードが一致しません",
+    "register_short_pw": "❌ パスワードは6文字以上にしてください",
+    "register_email_used": "このメールアドレスはすでに登録されています",
+    "register_weak_pw": "パスワードの強度が不足しています",
+    "register_fail": "登録失敗：",
+    "google_success": "✅ Googleログインしました！",
+    "google_offline": "⚠️ オフラインモードのためログインできません",
+    "google_fail": "❌ Googleログイン失敗：",
+    "logout_confirm": "ログアウトしますか？",
+    "logout_success": "✅ ログアウトしました",
+    "logout_fail": "❌ ログアウト失敗：",
+    "profile_empty": "⚠️ すべての必須項目を入力してください",
+    "profile_age_range": "⚠️ このテストは5〜120歳を対象としています",
+    "save_fail": "⚠️ 結果の保存に失敗しましたが、今回の成績は確認できます",
+    "restart_confirm": "テストをやり直しますか？",
+    "advice_fail": "⚠️ アドバイステキストの読み込みに失敗しました。ページを更新してください。",
+    "advice_fallback": "現在対応するアドバイスがありません。専門機関にご相談ください。"
+  },
+  "toast": {
+    "practice_correct": "✅ 正解！本番テストを始めます",
+    "practice_wrong": "❌ 不正解。もう一度練習してください",
+    "seq_practice_done": "✅ 練習完了！{time}秒\n本番テストを始めます",
+    "seq_round_done": "✅ {size}×{size} 完了！\n{time}秒、ペナルティ +{penalty}秒",
+    "mem_done": "✅ 記憶力テスト完了！\n次は反応力テストです",
+    "rea_done": "✅ 反応力テスト完了！\n次は数字順序テストです",
+    "seq_done": "✅ 数字順序テスト完了！\n次は空間能力テストです",
+    "spa_done": "🎉 すべてのテスト完了！\n結果を計算中..."
+  },
+  "device_labels": {
+    "tablet": "タブレット",
+    "mobile": "スマートフォン",
+    "tablet_mobile": "タブレット/スマートフォン",
+    "desktop": "パソコン"
+  }
+}
