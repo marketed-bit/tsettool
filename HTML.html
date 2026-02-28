@@ -303,7 +303,6 @@
    </div>
 
 
-    <!-- 快速資訊 -->
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
        <span id="home-badge-age" style="background:#e8f5e9;color:#2e7d32; padding:4px 12px;border-radius:20px;font-size:0.82rem; white-space:nowrap;">✅ 適合 5～120 歲</span>
        <span id="home-badge-duration" style="background:#e3f2fd;color:#1565c0; padding:4px 12px;border-radius:20px;font-size:0.82rem; white-space:nowrap;">⏱ 約 3～5 分鐘</span>
@@ -320,7 +319,7 @@
                 <button class="btn btn-success btn-large" id="btn-show-login" disabled>📧 電子郵件登入</button>
                 <button class="btn btn-success btn-large" id="btn-show-register" disabled>📝 註冊新帳號</button>
             </div>
-            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供0456</p>
+            <p class="sys-footer" style="margin-top:30px; font-size:0.85rem; color:var(--light-text); text-align:center;">此技術由巫奉約提供</p>
         </article>
     </section>
 
@@ -553,7 +552,7 @@ const LANG_MAP = {
     'zh':    'zh-TW',
     'ja':    'ja',
     'ja-JP': 'ja',
-    'en':    'en',       // ✅ 新增英文支援
+    'en':    'en',       
     'en-US': 'en',
     'en-GB': 'en'
 };
@@ -562,7 +561,6 @@ const FALLBACK_LANG = 'zh-TW';
 
 let i18n = null;
 
-// ── 偵測瀏覽器語系 ──────────────────────────────────────
 function detectLang() {
     const preferred = [
         ...(navigator.languages || []),
@@ -576,13 +574,12 @@ function detectLang() {
     return FALLBACK_LANG;
 }
 
-// ── 從 GitHub 抓語系 JSON ────────────────────────────────
 async function fetchLang(langCode) { 
-if (i18n && i18n.meta?.lang === langCode) return i18n; // 1. 已載入則跳過 
+if (i18n && i18n.meta?.lang === langCode) return i18n; 
 const url = `${LANG_BASE_URL}${langCode}.json`; 
 try { 
 const res = await fetch(url, { 
-cache: 'default', // 2. 允許使用快取 
+cache: 'default', 
 headers: { 'Accept': 'application/json; charset=utf-8' } 
 });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -591,11 +588,9 @@ headers: { 'Accept': 'application/json; charset=utf-8' }
         const decoder = new TextDecoder('utf-8');
         i18n = JSON.parse(decoder.decode(buffer));
         
-        // 👇 加入這行，讓 t() 函式能讀取到翻譯資料
         window._i18n = i18n; 
 
         document.documentElement.lang = i18n.meta?.lang || langCode;
-// ... 後面保持原樣 ...
         document.title = i18n.meta?.title || document.title;
 
         console.log(`✅ 語系 [${langCode}] 載入完成`);
@@ -612,11 +607,6 @@ headers: { 'Accept': 'application/json; charset=utf-8' }
     }
 }
 
-// ── 翻譯取值 t() ─────────────────────────────────────────
-// ══════════════════════════════════════════════
-// 翻譯輔助函式（正確順序：t → tLevel → ta）
-// ══════════════════════════════════════════════
-
 function t(path, vars = {}) {
     if (!window._i18n) return path;
     const keys = path.split('.');
@@ -629,12 +619,10 @@ function t(path, vars = {}) {
     return val.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : `{${k}}`));
 }
 
-// ✅ Bug 1 修正：tLevel() 緊接在 t() 之後定義，不再放到全域執行區
 function tLevel(zhLevel) {
     return t(`pages.level_labels.${zhLevel}`) || zhLevel;
 }
 
-// ── 取陣列翻譯 ──
 function ta(path) {
     if (!window._i18n) return [];
     const keys = path.split('.');
@@ -646,28 +634,21 @@ function ta(path) {
     return Array.isArray(val) ? val : [];
 }
 
-// ==================== Advice JSON（建議文字）====================
-
-// ==================== Advice JSON（建議文字）====================
-
-// ==================== Advice JSON（建議文字）====================
-
 let ADVICE_JSON = null;
 
 async function fetchAdviceJSON() { 
-    if (ADVICE_JSON) return ADVICE_JSON; // 已載入則不再請求 
+    if (ADVICE_JSON) return ADVICE_JSON; 
     
-    // ✅ 動態判斷要抓取哪一個檔案：日文抓 ja，英文抓 en，否則預設中文
     const currentLang = (i18n && i18n.meta && i18n.meta.lang) ? i18n.meta.lang : 'zh-TW';
-    let fileName = 'advice.json'; // 預設繁體中文
+    let fileName = 'advice.json'; 
     if (currentLang === 'ja') fileName = 'advice_ja.json';
-    if (currentLang === 'en') fileName = 'advice_en.json'; // ✅ 支援英文
+    if (currentLang === 'en') fileName = 'advice_en.json'; 
     
     const adviceUrl = `https://raw.githubusercontent.com/marketed-bit/tsettool/main/${fileName}`;
 
     try { 
         const res = await fetch(adviceUrl, { 
-            cache: 'default', // 允許使用快取 
+            cache: 'default', 
             headers: { 'Accept': 'application/json; charset=utf-8' } 
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -686,20 +667,12 @@ async function fetchAdviceJSON() {
     }
 }
 
-// ==================== 【新增】對應新 JSON 結構的 getAdvice() ====================
-// JSON 結構：
-//   module_a_performance[stage][level]   → mem / rea / spa / att 的表現文字
-//   module_b_weakness[ability][stage]    → 弱項共鳴描述（mem/rea/spa/att）
-//   module_c_call_to_action[ageKey]      → 結尾呼籲
-
-// age → stage key（module_a / module_b 使用）
 function getStageKey(age) {
     if (age >= 5  && age <= 26) return 'stage_1_foundation';
     if (age >= 27 && age <= 59) return 'stage_2_transition';
-    return 'stage_3_senior';  // 60+
+    return 'stage_3_senior';  
 }
 
-// level 中文 → JSON 英文 key
 const LEVEL_KEY_MAP = {
     '最佳表現': 'L1_best',
     '良好':     'L2_good',
@@ -710,14 +683,13 @@ const LEVEL_KEY_MAP = {
     '需要加強': 'L7_needs_much_improvement',
 };
 
-// ability 中文 key → module_b JSON key
 const ABILITY_B_KEY_MAP = {
     mem: 'mem',
     rea: 'rea',
     spa: 'spa',
     att: 'att',
 };
-// ✅ 需要顯示 module_b 的等級（表現不佳才共鳴）
+
 const WEAK_LEVELS = new Set([
     '待加強',
     '不太好',
@@ -734,22 +706,16 @@ function getAdvice(age, ability, level) {
     const abilityKey = ABILITY_B_KEY_MAP[ability] || ability;
 
     try {
-        // ── Module A：表現評語（所有等級都顯示）─────────────────
         const moduleA = json.module_a_performance?.[stageKey]?.[levelKey]
             ?? '目前無對應建議，請尋求專業單位協助評估。';
 
-        // ── Module B：弱項共鳴
-        //    ✅ 只在「待加強 / 不太好 / 需要加強」才顯示
-        //    ✅ att 沒有對應的 module_b，跳過
         let moduleB = '';
         if (ability !== 'att' && WEAK_LEVELS.has(level)) {
             moduleB = json.module_b_weakness?.[abilityKey]?.[stageKey] ?? '';
         }
 
-        // ── Module C：結尾呼籲（所有等級都顯示）─────────────────
         const moduleC = json.module_c_call_to_action?.[ageKey] ?? '';
 
-        // ── 組合（Module B 有內容且符合條件才加入）──────────────
         const parts = [moduleA];
         if (moduleB) parts.push(moduleB);
         if (moduleC) parts.push(moduleC);
@@ -762,14 +728,13 @@ function getAdvice(age, ability, level) {
     }
 }
 
-// ==================== 配置常數 ====================
 const CONFIG = {
     MEM_TIME_LIMITS:    [10, 15, 20, 25, 30],
     MEM_PENALTY_CAPS:   [15, 20, 25, 30, 35],
     MEM_PENALTY_PER_ERROR: 4,
     REACTION_TIME_LIMIT: 5.00,
     VISITOR_TOKEN_TTL: 60 * 60 * 1000,
-BASE_RK: { mem: 35, rea: 10, spa: 12, seq: 15 },
+    BASE_RK: { mem: 35, rea: 10, spa: 12, seq: 15 },
     MEM_AGE_MULTIPLIERS: {
         'toddler': 2.00, 'child': 1.50, 'teen': 0.90,
         'young_adult': 0.80, 'pre_middle': 0.95, 'middle': 1.00,
@@ -787,7 +752,6 @@ BASE_RK: { mem: 35, rea: 10, spa: 12, seq: 15 },
     },
 };
 
-// ==================== 年齡組 ====================
 function getAgeKey(age) {
     if (age >= 5  && age <= 7)  return 'toddler';
     if (age >= 8  && age <= 12) return 'child';
@@ -803,21 +767,13 @@ function getAgeKey(age) {
     return 'middle';
 }
 
-// ==================== 常模函式 ====================
-// ❌ 27-39 歲使用 CONFIG.REA_SPA_AGE_MULTIPLIERS['pre_middle'] = 0.95
-// 40+ 歲使用 CONFIG.AGE_MULTIPLIERS（40歲=1.000）
-// → seq 的 seqNorm = BASE_RK.seq(25) * 1.000 * deviceMult
-//   但 rea 的 norm  = BASE_RK.rea(10) * 1.000 * deviceMult
-// 兩者年齡倍率邏輯不一致，40~49 歲邊界可能有跳變
-
-// ✅ 建議在 getAgeNormMultiplier() 補上 40~49 的明確判斷
 function getAgeNormMultiplier(age) {
     if (age >= 5  && age <= 7)  return CONFIG.REA_SPA_AGE_MULTIPLIERS['toddler'];
     if (age >= 8  && age <= 12) return CONFIG.REA_SPA_AGE_MULTIPLIERS['child'];
     if (age >= 13 && age <= 16) return CONFIG.REA_SPA_AGE_MULTIPLIERS['teen'];
     if (age >= 17 && age <= 26) return CONFIG.REA_SPA_AGE_MULTIPLIERS['young_adult'];
     if (age >= 27 && age <= 39) return CONFIG.REA_SPA_AGE_MULTIPLIERS['pre_middle'];
-    if (age >= 40 && age <= 49) return CONFIG.AGE_MULTIPLIERS[40]; // ✅ 明確指定
+    if (age >= 40 && age <= 49) return CONFIG.AGE_MULTIPLIERS[40]; 
     const ageKey = Math.min(120, Math.ceil(age / 5) * 5);
     return CONFIG.AGE_MULTIPLIERS[ageKey] || CONFIG.AGE_MULTIPLIERS[120];
 }
@@ -828,14 +784,14 @@ function getReaSpaBaseRk(age, ability) {
 }
 
 function getSequenceLengths(age) {
-    if      (age <= 6)  return [2, 3, 3, 4, 4]; // toddler
-    else if (age <= 12) return [3, 3, 4, 4, 5]; // child
-    else if (age <= 17) return [3, 4, 4, 5, 6]; // teen
-    else if (age <= 39) return [3, 4, 5, 6, 7]; // adult（18–39）
-    else if (age <= 59) return [3, 4, 4, 5, 6]; // 中年（40–59）
-    else if (age <= 69) return [3, 3, 4, 4, 5]; // 初老（60–69）
-    else if (age <= 79) return [2, 3, 3, 4, 5]; // 老年（70–79）
-    else                return [2, 2, 3, 3, 4]; // 高齡（80+）
+    if      (age <= 6)  return [2, 3, 3, 4, 4]; 
+    else if (age <= 12) return [3, 3, 4, 4, 5]; 
+    else if (age <= 17) return [3, 4, 4, 5, 6]; 
+    else if (age <= 39) return [3, 4, 5, 6, 7]; 
+    else if (age <= 59) return [3, 4, 4, 5, 6]; 
+    else if (age <= 69) return [3, 3, 4, 4, 5]; 
+    else if (age <= 79) return [2, 3, 3, 4, 5]; 
+    else                return [2, 2, 3, 3, 4]; 
 }
 
 function getReaSpaTimeLimit(age) {
@@ -849,7 +805,6 @@ function getReaSpaTimeLimit(age) {
     return base;
 }
 
-// ==================== 裝置偵測 ====================
 const DeviceDetector = {
     isTouchDevice() {
         const ua = navigator.userAgent || '';
@@ -858,23 +813,21 @@ const DeviceDetector = {
         const hasTouch   = navigator.maxTouchPoints > 1;
         return isMobileUA || (hasTouch && isNarrow);
     },
-// ✅ 改用 t() 取語系文字
-getLabel() {
-    const ua = navigator.userAgent || '';
-    if (/iPad|Tablet|tablet/i.test(ua))
-        return t('device_labels.tablet');
-    if (/iPhone|Android.*Mobile|Mobile/i.test(ua))
-        return t('device_labels.mobile');
-    if (this.isTouchDevice())
-        return t('device_labels.tablet_mobile');
-    return t('device_labels.desktop');
-},
+    getLabel() {
+        const ua = navigator.userAgent || '';
+        if (/iPad|Tablet|tablet/i.test(ua))
+            return t('device_labels.tablet');
+        if (/iPhone|Android.*Mobile|Mobile/i.test(ua))
+            return t('device_labels.mobile');
+        if (this.isTouchDevice())
+            return t('device_labels.tablet_mobile');
+        return t('device_labels.desktop');
+    },
     getNormMultiplier() {
         return this.isTouchDevice() ? (1 / 1.15) : 1.0;
     }
 };
 
-// ==================== 刺激物生成器 ====================
 const StimuliGenerator = {
     colors: [
         { name: 'blue',       fill: '#2980b9' },
@@ -997,7 +950,6 @@ const StimuliGenerator = {
     }
 };
 
-// ==================== Firebase 初始化 ====================
 setStatus('載入 Firebase SDK...');
 let fb;
 try {
@@ -1047,10 +999,6 @@ try {
     fb = null;
 }
 
-// ==================== 【新增】預先載入 ADVICE JSON ====================
-// ✅ Firebase 初始化完成後，立即並行抓取 JSON，不阻塞主流程
-// ==================== 語系 + Advice JSON 並行載入 ====================
-// ==================== 主應用程式 ====================
 const app = {
     currentUser:  null,
     isGuest:      true,
@@ -1072,7 +1020,6 @@ const app = {
     selectedMemoryElement: null,
     isLocked: false,
 
-    // ==================== Toast ====================
     showToast(msg, duration = 1800) {
         return new Promise(resolve => {
             const container = document.getElementById('toast-container');
@@ -1090,7 +1037,6 @@ const app = {
         });
     },
 
-    // ==================== 初始化 ====================
     init() {
         console.log('🚀 app.init() 執行中...');
         this.initYearSelector();
@@ -1114,14 +1060,12 @@ const app = {
                 }
             });
         }
-this.applyI18nToDOM(); // ← 移到 } 之前
+        this.applyI18nToDOM(); 
         document.querySelectorAll('button[disabled]').forEach(b => { b.disabled = false; });
-                hideOverlay();
+        hideOverlay();
         console.log('✅ app.init() 完成');
-        
-    },  // ← init 結束
+    },
 
-// ── 將語系套用到固定 HTML 文字 ──────────────────────────
 applyI18nToDOM() {
     if (!i18n) return;
 
@@ -1130,7 +1074,6 @@ applyI18nToDOM() {
         if (el) el.textContent = t(key, vars);
     };
 
-    // ── 首頁標題與能力卡片 ──────────────────────────────────
     setText('home-title', 'pages.home.title');
     setText('home-subtitle', 'pages.home.subtitle');
     setText('home-mem-title', 'pages.home.ability_cards.mem_title');
@@ -1142,10 +1085,8 @@ applyI18nToDOM() {
     setText('home-att-title', 'pages.home.ability_cards.att_title');
     setText('home-att-desc', 'pages.home.ability_cards.att_desc');
 
-    // ── Loading ───────────────────────────────────────────
     setText('loading-status', 'loading.default');
 
-// ── 基本資料頁面文字與標籤 ────────────────────────────────
     setText('profile-title', 'pages.profile.title');
     setText('profile-warning', 'pages.profile.warning');
     setText('label-nickname', 'pages.profile.nickname_label');
@@ -1155,32 +1096,26 @@ applyI18nToDOM() {
     setText('btn-profile-start', 'pages.profile.btn_start');
     setText('view-history-btn', 'pages.profile.btn_history');
 
-    // ── 基本資料頁面 Placeholder (輸入框提示文字) ─────────────
     const nicknameInput = document.getElementById('nickname');
     if (nicknameInput) {
         nicknameInput.placeholder = t('pages.profile.nickname_placeholder');
     }
 
-    // ── 按鈕文字 ─────────────────────────────────────────
     setText('btn-start-guest',   'pages.home.btn_guest');
     setText('btn-google',        'pages.home.btn_google');
     setText('btn-show-login',    'pages.home.btn_login');
     setText('btn-show-register', 'pages.home.btn_register');
 
-    // ── 說明頁按鈕 ───────────────────────────────────────
     setText('btn-start-practice',     'pages.instructions.btn_practice');
     setText('btn-spa-break-continue', 'pages.spa_break.btn_continue');
 
-    // ── 測驗頁按鈕 ───────────────────────────────────────
     setText('submit-btn', 'pages.test.submit_btn');
 
-    // ── 結果頁按鈕 ───────────────────────────────────────
     setText('btn-restart',  'pages.results.btn_restart');
     setText('btn-learn-more', 'pages.results.btn_learn_more');
     setText('logout-btn',   'pages.results.btn_logout');
     setText('btn-go-home',  'pages.results.btn_home');
 
-// ── 登入/註冊頁面 ──────────────────────────────────────────
     setText('login-title', 'pages.login.title');
     setText('login-info', 'pages.login.info');
     setText('label-login-email', 'pages.login.email_label');
@@ -1204,14 +1139,12 @@ applyI18nToDOM() {
     const regConf = document.getElementById('register-confirm');
     if (regConf) regConf.placeholder = t('pages.register.confirm_placeholder');
 
-    // ── 結果頁面標題 ──────────────────────────────────────────
     setText('results-title', 'pages.results.title');
     setText('results-ability-section', 'pages.results.ability_section');
     setText('results-recommend-section', 'pages.results.recommend_section');
     setText('results-percentile-section', 'pages.results.percentile_section');
     setText('results-history-section', 'pages.results.history_section');
 
-    // ── 空間測驗中場休息頁面 ─────────────────────────────────
     setText('spa-break-title', 'pages.spa_break.title');
     const spaSub = document.getElementById('spa-break-subtitle');
     if (spaSub) spaSub.innerHTML = t('pages.spa_break.subtitle');
@@ -1224,13 +1157,11 @@ applyI18nToDOM() {
     const spaTip = document.getElementById('spa-break-tip');
     if (spaTip) spaTip.innerHTML = `<strong>💡 </strong>${t('pages.spa_break.tip')}`;
 
-// 用於支援包含 HTML 標籤（如 <strong>、<br>）的翻譯
     const setHtml = (id, key, vars = {}) => {
         const el = document.getElementById(id);
         if (el && t(key)) el.innerHTML = t(key, vars);
     };
 
-    // ── 首頁：表格、徽章、警告 ─────────────────────────────
     setText('home-table-title', 'pages.home.info_table.heading');
     setText('home-col-item', 'pages.home.info_table.col_item');
     setText('home-col-count', 'pages.home.info_table.col_count');
@@ -1250,19 +1181,17 @@ applyI18nToDOM() {
     setText('home-seq-time', 'pages.home.info_table.seq_time');
     setText('home-seq-time-sub', 'pages.home.info_table.seq_time_sub');
     
-setText('home-spa-label', 'pages.home.info_table.spa_label');
+    setText('home-spa-label', 'pages.home.info_table.spa_label');
     setText('home-spa-count', 'pages.home.info_table.spa_count');
     setText('home-spa-time', 'pages.home.info_table.spa_time');
     
-    // ✅ 確保專注力表格欄位對應到新的 ID
     setText('home-att-label', 'pages.home.info_table.att_label');
     setText('home-table-att-desc', 'pages.home.info_table.att_desc');
-// ── 快速資訊與警告 ──
-setText('home-badge-age', 'pages.home.badges.age_range');
-setText('home-badge-duration', 'pages.home.badges.duration');
-setHtml('home-guest-warning', 'pages.home.guest_warning'); // 關鍵：補上這行
+    
+    setText('home-badge-age', 'pages.home.badges.age_range');
+    setText('home-badge-duration', 'pages.home.badges.duration');
+    setHtml('home-guest-warning', 'pages.home.guest_warning');
 
-    // ── 月份選單 ─────────────────────────────────────────
     const months   = ta('pages.profile.months');
     const monthSel = document.getElementById('birth-month');
     if (monthSel && months.length === 12) {
@@ -1274,19 +1203,16 @@ setHtml('home-guest-warning', 'pages.home.guest_warning'); // 關鍵：補上這
             ).join('');
     }
 
-    // ── 性別選單 ────────────────────────
-const genderSel = document.getElementById('gender');
-if (genderSel) {
-    genderSel.innerHTML = `
-        <option value="">${t('pages.profile.gender_placeholder')}</option>
-        <option value="male">${t('pages.profile.gender_male')}</option>
-        <option value="female">${t('pages.profile.gender_female')}</option>
-    `;
-}
+    const genderSel = document.getElementById('gender');
+    if (genderSel) {
+        genderSel.innerHTML = `
+            <option value="">${t('pages.profile.gender_placeholder')}</option>
+            <option value="male">${t('pages.profile.gender_male')}</option>
+            <option value="female">${t('pages.profile.gender_female')}</option>
+        `;
+    }
+},
 
-},  // ← applyI18nToDOM 結束
-
-// ==================== 年份選擇器 ====================
 initYearSelector() {
     const sel = document.getElementById('birth-year');
     if (!sel) return;
@@ -1294,13 +1220,12 @@ initYearSelector() {
     sel.innerHTML = `<option value="">${t('pages.profile.birth_year_placeholder')}</option>`;
     for (let y = cur - 5; y >= cur - 120; y--) {
         const o = document.createElement('option');
-o.value = y;
+        o.value = y;
         o.textContent = y + t('pages.profile.birth_year_suffix');
         sel.appendChild(o);
     }
 },
 
-    // ==================== 事件綁定 ====================
     bindAllEvents() {
         const on = (id, ev, fn) => {
             const el = document.getElementById(id);
@@ -1328,7 +1253,6 @@ o.value = y;
         console.log('✅ 事件綁定完成');
     },
 
-    // ==================== 頁面切換 ====================
     showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const target = document.getElementById('page-' + pageId);
@@ -1336,14 +1260,12 @@ o.value = y;
         else console.warn(`⚠️ 找不到頁面 #page-${pageId}`);
     },
 
-    // ==================== 訪客開始 ====================
     startAsGuest() {
         this.isGuest     = true;
         this.currentUser = null;
         this.showPage('profile');
     },
 
-    // ==================== 訪客 Token ====================
     generateVisitorToken() {
         const existing  = localStorage.getItem('visitor_token');
         const tokenTime = localStorage.getItem('visitor_token_time');
@@ -1355,7 +1277,6 @@ o.value = y;
         localStorage.setItem('visitor_token_time', Date.now().toString());
     },
 
-    // ==================== 登入 ====================
     async handleLogin() {
         if (!fb) { alert(t('alerts.login_offline')); return; }
         const email    = document.getElementById('login-email').value.trim();
@@ -1377,63 +1298,56 @@ o.value = y;
         }
     },
 
-    // ==================== 註冊 ====================
-// ✅ 新
-async handleRegister() {
-    if (!fb) { alert(t('alerts.register_offline')); return; }
-    const email    = document.getElementById('register-email').value.trim();
-    const password = document.getElementById('register-password').value;
-    const confirm  = document.getElementById('register-confirm').value;
-    if (!email || !password || !confirm) { alert(t('alerts.register_empty')); return; }
-    if (password !== confirm) { alert(t('alerts.register_mismatch')); return; }
-    if (password.length < 6)  { alert(t('alerts.register_short_pw')); return; }
-    try {
-        await fb.createUserWithEmailAndPassword(fb.auth, email, password);
-        alert(t('alerts.register_success'));
-        this.showPage('profile');
-    } catch (err) {
-        const msgs = {
-            'auth/email-already-in-use': t('alerts.register_email_used'),
-            'auth/invalid-email':        t('alerts.login_invalid_email'),
-            'auth/weak-password':        t('alerts.register_weak_pw')
-        };
-        alert(msgs[err.code] || t('alerts.register_fail') + err.message);
-    }
-},
-
-    // ==================== Google 登入 ====================
-// ✅ 新
-async loginWithGoogle() {
-    if (!fb) { alert(t('alerts.google_offline')); return; }
-    try {
-        await fb.signInWithPopup(fb.auth, fb.googleProvider);
-        alert(t('alerts.google_success'));
-        await this.loadUserProfile();
-        this.showPage('profile');
-    } catch (err) {
-        if (err.code !== 'auth/popup-closed-by-user') {
-            alert(t('alerts.google_fail') + err.message);
+    async handleRegister() {
+        if (!fb) { alert(t('alerts.register_offline')); return; }
+        const email    = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
+        const confirm  = document.getElementById('register-confirm').value;
+        if (!email || !password || !confirm) { alert(t('alerts.register_empty')); return; }
+        if (password !== confirm) { alert(t('alerts.register_mismatch')); return; }
+        if (password.length < 6)  { alert(t('alerts.register_short_pw')); return; }
+        try {
+            await fb.createUserWithEmailAndPassword(fb.auth, email, password);
+            alert(t('alerts.register_success'));
+            this.showPage('profile');
+        } catch (err) {
+            const msgs = {
+                'auth/email-already-in-use': t('alerts.register_email_used'),
+                'auth/invalid-email':        t('alerts.login_invalid_email'),
+                'auth/weak-password':        t('alerts.register_weak_pw')
+            };
+            alert(msgs[err.code] || t('alerts.register_fail') + err.message);
         }
-    }
-},
+    },
 
-    // ==================== 登出 ====================
-// ✅ 新
-async logout() {
-    if (!confirm(t('alerts.logout_confirm'))) return;
-    try {
-        if (fb) await fb.signOut(fb.auth);
-        this.currentUser = null;
-        this.isGuest     = true;
-        this.userData    = null;
-        alert(t('alerts.logout_success'));
-        this.showPage('home');
-    } catch (err) {
-        alert(t('alerts.logout_fail') + err.message);
-    }
-},
+    async loginWithGoogle() {
+        if (!fb) { alert(t('alerts.google_offline')); return; }
+        try {
+            await fb.signInWithPopup(fb.auth, fb.googleProvider);
+            alert(t('alerts.google_success'));
+            await this.loadUserProfile();
+            this.showPage('profile');
+        } catch (err) {
+            if (err.code !== 'auth/popup-closed-by-user') {
+                alert(t('alerts.google_fail') + err.message);
+            }
+        }
+    },
 
-    // ==================== 載入使用者資料 ====================
+    async logout() {
+        if (!confirm(t('alerts.logout_confirm'))) return;
+        try {
+            if (fb) await fb.signOut(fb.auth);
+            this.currentUser = null;
+            this.isGuest     = true;
+            this.userData    = null;
+            alert(t('alerts.logout_success'));
+            this.showPage('home');
+        } catch (err) {
+            alert(t('alerts.logout_fail') + err.message);
+        }
+    },
+
     async loadUserProfile() {
         if (!this.currentUser || !fb) return;
         try {
@@ -1458,7 +1372,6 @@ async logout() {
         }
     },
 
-    // ==================== 儲存個人資料 ====================
     async saveProfile() {
         const nickname   = document.getElementById('nickname').value.trim();
         const birthYear  = document.getElementById('birth-year').value;
@@ -1489,26 +1402,23 @@ async logout() {
             }
         }
 
-        // ✅ 【新增】進入測驗前確保 ADVICE JSON 已載入
-// ✅ 應使用 advice_retry
-if (!ADVICE_JSON) {
-    setStatus(t('loading.advice_retry'));   // ← 顯示「重新載入建議文字資源...」✅
-    await fetchAdviceJSON();
-}
+        if (!ADVICE_JSON) {
+            setStatus(t('loading.advice_retry'));   
+            await fetchAdviceJSON();
+        }
 
         this.testState.results = { mem:[], rea:[], spa:[], seq:[] };
         this.currentTest = 'mem';
         this.showInstructions('mem');
     },
 
-    // ==================== 計算年齡 ====================
     calculateAge(birthYear, birthMonth) {
         const now = new Date();
         let age = now.getFullYear() - birthYear;
         if ((now.getMonth() + 1) < birthMonth) age--;
         return age;
     },
-// ==================== 取得年齡區間文字 ====================
+
     getAgeRange(age) {
         if (age >= 5  && age <= 7)  return '5~7';
         if (age >= 8  && age <= 12) return '8~12';
@@ -1524,55 +1434,52 @@ if (!ADVICE_JSON) {
         return '40~49';
     },
 
-    // ==================== 測驗說明 ====================
-showInstructions(ability) {
-    const page = document.getElementById('page-instructions');
-    if (!page) return;
+    showInstructions(ability) {
+        const page = document.getElementById('page-instructions');
+        if (!page) return;
 
-    let steps;
-    if (ability === 'mem') {
-        const seqLengths = this.getSequenceLengths ? this.getSequenceLengths(this.userData?.age) : { min: 3, max: 7 };
-        steps = ta('pages.instructions.mem.steps').map(s =>
-            s.replace('{min}', seqLengths.min).replace('{max}', seqLengths.max)
-        );
-    } else {
-        steps = ta(`pages.instructions.${ability}.steps`);
-    }
+        let steps;
+        if (ability === 'mem') {
+            const seqLengths = this.getSequenceLengths ? this.getSequenceLengths(this.userData?.age) : { min: 3, max: 7 };
+            steps = ta('pages.instructions.mem.steps').map(s =>
+                s.replace('{min}', seqLengths.min).replace('{max}', seqLengths.max)
+            );
+        } else {
+            steps = ta(`pages.instructions.${ability}.steps`);
+        }
 
-    const stepsHtml = steps.map(s => `<li style="margin-bottom:8px;">${s}</li>`).join('');
+        const stepsHtml = steps.map(s => `<li style="margin-bottom:8px;">${s}</li>`).join('');
 
-    const title   = t(`pages.instructions.${ability}.title`);
-    const howLabel = t(`pages.instructions.${ability}.how_label`);
-    const tip      = t(`pages.instructions.${ability}.tip`);
-    const practiceHint = t('pages.instructions.practice_hint');
-    const btnPractice  = t('pages.instructions.btn_practice');
+        const title   = t(`pages.instructions.${ability}.title`);
+        const howLabel = t(`pages.instructions.${ability}.how_label`);
+        const tip      = t(`pages.instructions.${ability}.tip`);
+        const practiceHint = t('pages.instructions.practice_hint');
+        const btnPractice  = t('pages.instructions.btn_practice');
 
-    const content = `
-        <h3 style="color:var(--primary-color);margin-bottom:15px;">${howLabel}</h3>
-        <ol style="line-height:2;font-size:1.05rem;padding-left:20px;">
-            ${stepsHtml}
-        </ol>
-        <div style="background:#fff3cd;padding:15px;border-radius:8px; margin-top:20px;border-left:4px solid #ffc107;font-size:0.95rem;">
-            <strong>💡 </strong>${tip}
-        </div>
-        <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px; margin-top:14px;font-size:0.88rem;">
-            ${practiceHint}
-        </div>
-    `;
+        const content = `
+            <h3 style="color:var(--primary-color);margin-bottom:15px;">${howLabel}</h3>
+            <ol style="line-height:2;font-size:1.05rem;padding-left:20px;">
+                ${stepsHtml}
+            </ol>
+            <div style="background:#fff3cd;padding:15px;border-radius:8px; margin-top:20px;border-left:4px solid #ffc107;font-size:0.95rem;">
+                <strong>💡 </strong>${tip}
+            </div>
+            <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px; margin-top:14px;font-size:0.88rem;">
+                ${practiceHint}
+            </div>
+        `;
 
-    // 填入 page-instructions 內部元素
-    const titleEl   = page.querySelector('.card-title'); // 改為選取 class
-    const contentEl = document.getElementById('instruction-content');
-    const btnEl     = document.getElementById('btn-start-practice');
-    
-    if (titleEl)   titleEl.textContent  = title;
-    if (contentEl) contentEl.innerHTML  = content;
-    if (btnEl)     btnEl.textContent    = btnPractice;
+        const titleEl   = page.querySelector('.card-title'); 
+        const contentEl = document.getElementById('instruction-content');
+        const btnEl     = document.getElementById('btn-start-practice');
+        
+        if (titleEl)   titleEl.textContent  = title;
+        if (contentEl) contentEl.innerHTML  = content;
+        if (btnEl)     btnEl.textContent    = btnPractice;
 
-    // 👇 使用 showPage 正確切換到說明頁
-    this.showPage('instructions');
-},
-    // ==================== 開始練習題 ====================
+        this.showPage('instructions');
+    },
+
     startPractice() {
         this.testState.ability    = this.currentTest;
         this.testState.level      = 0;
@@ -1581,7 +1488,6 @@ showInstructions(ability) {
         this.loadQuestion();
     },
 
-    // ==================== 開始正式測驗 ====================
     startFormalTest() {
         this.testState.ability    = this.currentTest;
         this.testState.level      = 0;
@@ -1590,7 +1496,6 @@ showInstructions(ability) {
         this.loadQuestion();
     },
 
-    // ==================== 載入題目 ====================
     loadQuestion() {
         this.isSubmitting = false;
         this.isLocked     = false;
@@ -1602,20 +1507,17 @@ showInstructions(ability) {
 
         document.getElementById('progress-fill').style.width = pct + '%';
         document.getElementById('progress-text').textContent = `${level}/${totalQ}`;
-        document.getElementById('test-type').textContent = 
-t(`pages.test.type_labels.${ability}`);
-        document.getElementById('test-level').textContent =
- isPractice ? t('pages.test.practice_label') : t('pages.test.question_label', { n: level + 1 });
+        document.getElementById('test-type').textContent = t(`pages.test.type_labels.${ability}`);
+        document.getElementById('test-level').textContent = isPractice ? t('pages.test.practice_label') : t('pages.test.question_label', { n: level + 1 });
         document.getElementById('submit-btn').style.display  = 'none';
         document.getElementById('question-container').innerHTML = '';
 
-if      (ability === 'mem') this.loadMemoryQuestion();
-else if (ability === 'rea') this.loadReactionQuestion();
-else if (ability === 'seq') this.loadSequenceGridQuestion();
-else if (ability === 'spa') this.loadSpatialQuestion();
+        if      (ability === 'mem') this.loadMemoryQuestion();
+        else if (ability === 'rea') this.loadReactionQuestion();
+        else if (ability === 'seq') this.loadSequenceGridQuestion();
+        else if (ability === 'spa') this.loadSpatialQuestion();
     },
 
-    // ==================== 記憶力題目 ====================
     loadMemoryQuestion() {
         const levelIdx   = this.testState.level;
         const age        = this.userData?.age || 40;
@@ -1631,8 +1533,7 @@ else if (ability === 'spa') this.loadSpatialQuestion();
 
         const container = document.getElementById('question-container');
         container.innerHTML = '<div class="sequence-display" id="sequence-display"></div>';
-        document.getElementById('test-instruction').textContent =
-            t('pages.test.mem_watch');
+        document.getElementById('test-instruction').textContent = t('pages.test.mem_watch');
  
         const display = document.getElementById('sequence-display');
         let idx = 0;
@@ -1649,13 +1550,11 @@ else if (ability === 'spa') this.loadSpatialQuestion();
         setTimeout(showNext, 500);
     },
 
-    // ==================== 記憶力作答 ====================
     showMemoryInput() {
         const card = document.querySelector('#page-test .card');
         if (card) card.classList.remove('mem-watch-mode');
 
-        document.getElementById('test-instruction').textContent =
-            t('pages.test.mem_answer');
+        document.getElementById('test-instruction').textContent = t('pages.test.mem_answer');
 
         const shuffled = [...this.testState.currentSequence].sort(() => Math.random() - 0.5);
         const container = document.getElementById('question-container');
@@ -1668,33 +1567,27 @@ else if (ability === 'spa') this.loadSpatialQuestion();
 
         shuffled.forEach((stimulus) => {
             const elem = StimuliGenerator.render(stimulus, 80, false, 0, true);
-// ❌ 現況：使用者只能逐一選擇，但每次點選後 selectedMemoryElement 
-//    只追蹤最後一個，取消只能取消「最後一個」
-// 多圖題（5~7個）無法取消中間的選擇
+            elem.addEventListener('click', () => {
+                if (this.isLocked) return;
 
-// ✅ 修正建議：改為允許點擊「已選中項目」取消，並支援多選追蹤
-elem.addEventListener('click', () => {
-    if (this.isLocked) return;
+                if (elem.classList.contains('selected')) {
+                    elem.classList.remove('selected');
+                    const idx = this.testState.userSequence.indexOf(stimulus.key);
+                    if (idx !== -1) this.testState.userSequence.splice(idx, 1);
+                    return;
+                }
 
-    if (elem.classList.contains('selected')) {
-        // 取消該項目
-        elem.classList.remove('selected');
-        const idx = this.testState.userSequence.indexOf(stimulus.key);
-        if (idx !== -1) this.testState.userSequence.splice(idx, 1);
-        return;
-    }
+                elem.classList.add('selected');
+                this.testState.userSequence.push(stimulus.key);
 
-    elem.classList.add('selected');
-    this.testState.userSequence.push(stimulus.key);
-
-    if (this.testState.userSequence.length === this.testState.currentSequence.length) {
-        this.isLocked = true;
-        setTimeout(() => {
-            this.isLocked = false;
-            this.submitAnswer();
-        }, 300);
-    }
-});
+                if (this.testState.userSequence.length === this.testState.currentSequence.length) {
+                    this.isLocked = true;
+                    setTimeout(() => {
+                        this.isLocked = false;
+                        this.submitAnswer();
+                    }, 300);
+                }
+            });
             inputArea.appendChild(elem);
         });
 
@@ -1721,7 +1614,6 @@ elem.addEventListener('click', () => {
         this.startTimer(timeLimit);
     },
 
-    // ==================== 反應力題目 ====================
     loadReactionQuestion() {
         const allStimuli = StimuliGenerator.generateForReaction(10);
         const targetStim = allStimuli[0];
@@ -1733,41 +1625,36 @@ elem.addEventListener('click', () => {
         this.testState.userAnswer       = null;
 
         const container = document.getElementById('question-container');
-// ✅ 新
-container.innerHTML = `
-    <div class="test-stimulus-row">
-        <div class="stimulus-box">
-            <p style="font-size:0.9rem;color:var(--light-text);">
-                ${t('pages.test.rea_target_label')}
-            </p>
-            <div id="target-display"></div>
-        </div>
-        <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
-        <div class="stimulus-box">
-            <p style="font-size:0.9rem;color:var(--light-text);">
-                ${t('pages.test.rea_test_label')}
-            </p>
-            <div id="test-display"></div>
-        </div>
-    </div>
-    <div class="reaction-buttons">
-        <button class="btn btn-success btn-large" id="btn-same">
-            ${t('pages.test.rea_btn_same')}
-        </button>
-        <button class="btn btn-danger btn-large" id="btn-different">
-            ${t('pages.test.rea_btn_different')}
-        </button>
-    </div>`;
+        container.innerHTML = `
+            <div class="test-stimulus-row">
+                <div class="stimulus-box">
+                    <p style="font-size:0.9rem;color:var(--light-text);">
+                        ${t('pages.test.rea_target_label')}
+                    </p>
+                    <div id="target-display"></div>
+                </div>
+                <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
+                <div class="stimulus-box">
+                    <p style="font-size:0.9rem;color:var(--light-text);">
+                        ${t('pages.test.rea_test_label')}
+                    </p>
+                    <div id="test-display"></div>
+                </div>
+            </div>
+            <div class="reaction-buttons">
+                <button class="btn btn-success btn-large" id="btn-same">
+                    ${t('pages.test.rea_btn_same')}
+                </button>
+                <button class="btn btn-danger btn-large" id="btn-different">
+                    ${t('pages.test.rea_btn_different')}
+                </button>
+            </div>`;
 
         const stimSize = window.innerWidth <= 768 ? 65 : 100;
-        document.getElementById('target-display')
-            .appendChild(StimuliGenerator.render(targetStim, stimSize, false));
-        document.getElementById('test-display')
-            .appendChild(StimuliGenerator.render(testStim, stimSize, false));
+        document.getElementById('target-display').appendChild(StimuliGenerator.render(targetStim, stimSize, false));
+        document.getElementById('test-display').appendChild(StimuliGenerator.render(testStim, stimSize, false));
 
-        // ✅ instruction 文字
-document.getElementById('test-instruction').textContent =
-            t('pages.test.rea_instruction');
+        document.getElementById('test-instruction').textContent = t('pages.test.rea_instruction');
 
         const btnSame = document.getElementById('btn-same');
         const btnDiff = document.getElementById('btn-different');
@@ -1785,225 +1672,177 @@ document.getElementById('test-instruction').textContent =
         this.testState.currentTimeLimit = reaSpaTime;
         this.startTimer(reaSpaTime);
     },
-// ==================== 數字順序格測驗 ====================
-loadSequenceGridQuestion() {
-    this.stopTimer();
-    const levelIdx  = this.testState.level;
-    const gridSizes = [3, 4];
-    const gridSize  = gridSizes[levelIdx] || 3;
-    const total     = gridSize * gridSize;
 
-    this.testState.seqNextNum   = 1;
-    this.testState.seqTotal     = total;
-    this.testState.seqPenalty   = 0;
-    this.testState.seqStartTime = Date.now();
+    loadSequenceGridQuestion() {
+        this.stopTimer();
+        const levelIdx  = this.testState.level;
+        const gridSizes = [3, 4];
+        const gridSize  = gridSizes[levelIdx] || 3;
+        const total     = gridSize * gridSize;
 
-    // 產生隨機排列
-    const nums = Array.from({ length: total }, (_, i) => i + 1);
-    for (let i = nums.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [nums[i], nums[j]] = [nums[j], nums[i]];
-    }
+        this.testState.seqNextNum   = 1;
+        this.testState.seqTotal     = total;
+        this.testState.seqPenalty   = 0;
+        this.testState.seqStartTime = Date.now();
 
-    // ✅ 響應式格子大小
-    const screenW      = Math.min(window.innerWidth, 480);
-    const padding      = 48;
-    const gap          = 6;
-    const maxCell      = 80;
-    const cellByScreen = Math.floor((screenW - padding - gap * (gridSize - 1)) / gridSize);
-    const cellSize     = Math.min(maxCell, cellByScreen);
-    const fontSize     = Math.max(14, Math.floor(cellSize * 0.42));
+        const nums = Array.from({ length: total }, (_, i) => i + 1);
+        for (let i = nums.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [nums[i], nums[j]] = [nums[j], nums[i]];
+        }
 
-    // ✅ 隱藏頁面上方的 instruction 文字（節省空間）
-    const instrEl = document.getElementById('test-instruction');
-    if (instrEl) instrEl.style.display = 'none';
+        const screenW      = Math.min(window.innerWidth, 480);
+        const padding      = 48;
+        const gap          = 6;
+        const maxCell      = 80;
+        const cellByScreen = Math.floor((screenW - padding - gap * (gridSize - 1)) / gridSize);
+        const cellSize     = Math.min(maxCell, cellByScreen);
+        const fontSize     = Math.max(14, Math.floor(cellSize * 0.42));
 
-    // ✅ 隱藏計時器（不限時）
-    ['timer', 'timer-floating'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.visibility = 'hidden';
-    });
+        const instrEl = document.getElementById('test-instruction');
+        if (instrEl) instrEl.style.display = 'none';
 
-    const container = document.getElementById('question-container');
-    container.innerHTML = '';
-    container.style.cssText = 'padding:6px 0;';   // 減少容器上下 padding
-
-    // ── ① 標題列（最精簡，放最頂部）───────────────────────
-// ── ① 標題列（最精簡，放最頂部）───────────────────────
-    const titleEl = document.createElement('div');
-    titleEl.style.cssText = `
-        text-align:center;
-        font-size:0.95rem;
-        font-weight:700;
-        color:var(--primary-color);
-        margin-bottom:6px;
-        padding:0 8px;`;
-    // ✅ 改用 t() 呼叫語系檔，並傳入 size 與 total 變數
-    titleEl.textContent = t('pages.test.seq_title', { size: gridSize, total: total });
-    container.appendChild(titleEl);
-
-    // ── ② 格子容器（✅ 緊接在標題下方，手機不需滑動）──────
-    const grid = document.createElement('div');
-    grid.style.cssText = `
-        display:grid;
-        grid-template-columns:repeat(${gridSize}, ${cellSize}px);
-        gap:${gap}px;
-        justify-content:center;
-        margin:0 auto 10px;
-        padding:4px;
-        touch-action:manipulation;`;
-    container.appendChild(grid);
-
-    nums.forEach(num => {
-        const cell = document.createElement('button');
-        cell.textContent    = num;
-        cell.dataset.num    = num;
-        cell.style.cssText  = `
-            width:${cellSize}px;
-            height:${cellSize}px;
-            font-size:${fontSize}px;
-            font-weight:700;
-            border:2px solid #bbb;
-            border-radius:10px;
-            background:#fff;
-            cursor:pointer;
-            transition:background 0.12s, transform 0.1s;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            box-shadow:0 2px 5px rgba(0,0,0,0.12);
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;`;
-
-        cell.addEventListener('click', () => {
-            const expected = this.testState.seqNextNum;
-            const clicked  = parseInt(cell.dataset.num);
-
-            if (clicked === expected) {
-                // ✅ 答對
-                cell.style.background    = '#27ae60';
-                cell.style.color         = 'white';
-                cell.style.borderColor   = '#1e8449';
-                cell.style.transform     = 'scale(0.93)';
-                cell.style.pointerEvents = 'none';
-                this.testState.seqNextNum++;
-
-                const prog = document.getElementById('seq-progress');
-                if (prog) {
-                    prog.textContent = this.testState.seqNextNum > total
-                        ? t('pages.test.seq_done')
-                        : t('pages.test.seq_next', { n: this.testState.seqNextNum });
-                }
-
-                if (this.testState.seqNextNum > total) {
-                    setTimeout(() => this.finishSequenceRound(), 300);
-                }
-            } else {
-                // ❌ 答錯：閃紅 + 罰時
-                this.testState.seqPenalty += 2;
-                cell.style.background = '#e74c3c';
-                cell.style.color      = 'white';
-                setTimeout(() => {
-                    cell.style.background = '#fff';
-                    cell.style.color      = '';
-                }, 380);
-
-                const penEl = document.getElementById('seq-penalty');
-                if (penEl) { 
-penEl.textContent = t('pages.test.seq_penalty', {
- sec: this.testState.seqPenalty
- });
-}
-            }
+        ['timer', 'timer-floating'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.visibility = 'hidden';
         });
 
-        grid.appendChild(cell);
-    });
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+        container.style.cssText = 'padding:6px 0;';
 
-    // ── ③ 進度顯示（格子下方）──────────────────────────────
-    const progressEl = document.createElement('div');
-    progressEl.id = 'seq-progress';
-    progressEl.style.cssText = `
-        text-align:center;
-        font-size:1.1rem;
-        font-weight:700;
-        color:var(--primary-color);
-        margin-top:4px;`;
-    progressEl.textContent = t('pages.test.seq_next', { n: 1 });
-    container.appendChild(progressEl);
+        const titleEl = document.createElement('div');
+        titleEl.style.cssText = `
+            text-align:center; font-size:0.95rem; font-weight:700;
+            color:var(--primary-color); margin-bottom:6px; padding:0 8px;`;
+        titleEl.textContent = t('pages.test.seq_title', { size: gridSize, total: total });
+        container.appendChild(titleEl);
 
-    // ── ④ 罰時顯示（進度下方）──────────────────────────────
-    const penaltyEl = document.createElement('div');
-    penaltyEl.id = 'seq-penalty';
-    penaltyEl.style.cssText = `
-        text-align:center;
-        font-size:0.88rem;
-        color:#e74c3c;
-        min-height:22px;
-        margin-top:6px;`;
-    container.appendChild(penaltyEl);
+        const grid = document.createElement('div');
+        grid.style.cssText = `
+            display:grid; grid-template-columns:repeat(${gridSize}, ${cellSize}px);
+            gap:${gap}px; justify-content:center; margin:0 auto 10px;
+            padding:4px; touch-action:manipulation;`;
+        container.appendChild(grid);
 
-    // ✅ 頁面自動滾到最頂部，確保格子在可視範圍
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-},
+        nums.forEach(num => {
+            const cell = document.createElement('button');
+            cell.textContent    = num;
+            cell.dataset.num    = num;
+            cell.style.cssText  = `
+                width:${cellSize}px; height:${cellSize}px; font-size:${fontSize}px;
+                font-weight:700; border:2px solid #bbb; border-radius:10px;
+                background:#fff; cursor:pointer; transition:background 0.12s, transform 0.1s;
+                display:flex; align-items:center; justify-content:center;
+                box-shadow:0 2px 5px rgba(0,0,0,0.12); -webkit-tap-highlight-color:transparent;
+                user-select:none;`;
 
-finishSequenceRound() {
-    // ✅ 還原 instruction 顯示
-    const instrEl = document.getElementById('test-instruction');
-    if (instrEl) instrEl.style.display = '';
+            cell.addEventListener('click', () => {
+                const expected = this.testState.seqNextNum;
+                const clicked  = parseInt(cell.dataset.num);
 
-    const elapsed   = (Date.now() - this.testState.seqStartTime) / 1000;
-    const penalty   = this.testState.seqPenalty || 0;
-    const finalTime = parseFloat((elapsed + penalty).toFixed(3));
-    const levelIdx  = this.testState.level;
+                if (clicked === expected) {
+                    cell.style.background    = '#27ae60';
+                    cell.style.color         = 'white';
+                    cell.style.borderColor   = '#1e8449';
+                    cell.style.transform     = 'scale(0.93)';
+                    cell.style.pointerEvents = 'none';
+                    this.testState.seqNextNum++;
 
-    // 恢復計時器顯示
-    ['timer', 'timer-floating'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.visibility = '';
-    });
+                    const prog = document.getElementById('seq-progress');
+                    if (prog) {
+                        prog.textContent = this.testState.seqNextNum > total
+                            ? t('pages.test.seq_done')
+                            : t('pages.test.seq_next', { n: this.testState.seqNextNum });
+                    }
 
-    this.testState.answers.push({
-        ability:     'seq',
-        level:       levelIdx,
-        correct:     true,
-        time:        parseFloat(elapsed.toFixed(3)),
-        penaltyTime: penalty,
-        finalTime,
-        itemCorrect: null,
-        itemTotal:   null,
-    });
+                    if (this.testState.seqNextNum > total) {
+                        setTimeout(() => this.finishSequenceRound(), 300);
+                    }
+                } else {
+                    this.testState.seqPenalty += 2;
+                    cell.style.background = '#e74c3c';
+                    cell.style.color      = 'white';
+                    setTimeout(() => {
+                        cell.style.background = '#fff';
+                        cell.style.color      = '';
+                    }, 380);
 
-    const gridSizes = [3, 4];   // ✅ 只剩兩關
-    const gridSize  = gridSizes[levelIdx] || 3;
+                    const penEl = document.getElementById('seq-penalty');
+                    if (penEl) { 
+                        penEl.textContent = t('pages.test.seq_penalty', { sec: this.testState.seqPenalty });
+                    }
+                }
+            });
+            grid.appendChild(cell);
+        });
 
-// ✅ 新（含練習題 answers 清空修正）
-if (this.testState.isPractice) {
-    this.showToast(
-        t('toast.seq_practice_done', { time: elapsed.toFixed(1) }), 1800
-    ).then(() => {
-        this.testState.answers = [];    // ← Bug #1 修正
-        this.startFormalTest();
-    });
-    return;
-}
+        const progressEl = document.createElement('div');
+        progressEl.id = 'seq-progress';
+        progressEl.style.cssText = `
+            text-align:center; font-size:1.1rem; font-weight:700;
+            color:var(--primary-color); margin-top:4px;`;
+        progressEl.textContent = t('pages.test.seq_next', { n: 1 });
+        container.appendChild(progressEl);
 
-this.showToast(
-    t('toast.seq_round_done', {
-        size:    gridSize,
-        time:    elapsed.toFixed(1),
-        penalty: penalty
-    }), 1400
-).then(() => {
-    this.testState.level++;
-    if (this.testState.level >= 2) {
-        this.finishAbilityTest();
-    } else {
-        this.loadQuestion();
-    }
-});
-},
-    // ==================== 空間能力題目 ====================
+        const penaltyEl = document.createElement('div');
+        penaltyEl.id = 'seq-penalty';
+        penaltyEl.style.cssText = `
+            text-align:center; font-size:0.88rem; color:#e74c3c;
+            min-height:22px; margin-top:6px;`;
+        container.appendChild(penaltyEl);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    finishSequenceRound() {
+        const instrEl = document.getElementById('test-instruction');
+        if (instrEl) instrEl.style.display = '';
+
+        const elapsed   = (Date.now() - this.testState.seqStartTime) / 1000;
+        const penalty   = this.testState.seqPenalty || 0;
+        const finalTime = parseFloat((elapsed + penalty).toFixed(3));
+        const levelIdx  = this.testState.level;
+
+        ['timer', 'timer-floating'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.visibility = '';
+        });
+
+        this.testState.answers.push({
+            ability:     'seq',
+            level:       levelIdx,
+            correct:     true,
+            time:        parseFloat(elapsed.toFixed(3)),
+            penaltyTime: penalty,
+            finalTime,
+            itemCorrect: null,
+            itemTotal:   null,
+        });
+
+        const gridSizes = [3, 4];
+        const gridSize  = gridSizes[levelIdx] || 3;
+
+        if (this.testState.isPractice) {
+            this.showToast(t('toast.seq_practice_done', { time: elapsed.toFixed(1) }), 1800)
+                .then(() => {
+                    this.testState.answers = [];
+                    this.startFormalTest();
+                });
+            return;
+        }
+
+        this.showToast(t('toast.seq_round_done', { size: gridSize, time: elapsed.toFixed(1), penalty: penalty }), 1400)
+            .then(() => {
+                this.testState.level++;
+                if (this.testState.level >= 2) {
+                    this.finishAbilityTest();
+                } else {
+                    this.loadQuestion();
+                }
+            });
+    },
+
     loadSpatialQuestion() {
         const level      = this.testState.level;
         const strictMode = level < 5;
@@ -2021,30 +1860,18 @@ this.showToast(
                 testStim = allStimuli[1]; isSame = false;
             }
         } else {
-            const diffColorStimuli = allStimuli.filter(
-                s => s.color.name !== correctStim.color.name
-            );
+            const diffColorStimuli = allStimuli.filter(s => s.color.name !== correctStim.color.name);
             if (Math.random() < 0.5) {
-                const sameShapeDiffColor = diffColorStimuli.find(
-                    s => s.shape.name === correctStim.shape.name
-                );
+                const sameShapeDiffColor = diffColorStimuli.find(s => s.shape.name === correctStim.shape.name);
                 if (sameShapeDiffColor) {
                     testStim = sameShapeDiffColor; isSame = true;
                 } else {
-                    const diffColor = StimuliGenerator.colors.find(
-                        c => c.name !== correctStim.color.name
-                    );
-                    testStim = {
-                        color: diffColor,
-                        shape: correctStim.shape,
-                        key:   `${diffColor.name}-${correctStim.shape.name}`
-                    };
+                    const diffColor = StimuliGenerator.colors.find(c => c.name !== correctStim.color.name);
+                    testStim = { color: diffColor, shape: correctStim.shape, key: `${diffColor.name}-${correctStim.shape.name}` };
                     isSame = true;
                 }
             } else {
-                const diffShapeDiffColor = diffColorStimuli.find(
-                    s => s.shape.name !== correctStim.shape.name
-                );
+                const diffShapeDiffColor = diffColorStimuli.find(s => s.shape.name !== correctStim.shape.name);
                 if (diffShapeDiffColor) {
                     testStim = diffShapeDiffColor; isSame = false;
                 } else {
@@ -2058,41 +1885,27 @@ this.showToast(
         this.testState.userAnswer        = null;
 
         const container = document.getElementById('question-container');
-// ✅ 新
-container.innerHTML = `
-    <div style="margin-bottom:8px;">
-        <p style="font-size:0.95rem;color:var(--light-text);text-align:center;">
-            ${strictMode
-                ? t('pages.test.spa_strict_question')
-                : t('pages.test.spa_loose_question')}
-        </p>
-    </div>
-    <div class="test-stimulus-row">
-        <div class="stimulus-box"><div id="spa-left"></div></div>
-        <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
-        <div class="stimulus-box"><div id="spa-right"></div></div>
-    </div>
-    <div class="reaction-buttons">
-        <button class="btn btn-success btn-large" id="btn-spa-yes">
-            ${t('pages.test.spa_btn_yes')}
-        </button>
-        <button class="btn btn-danger btn-large" id="btn-spa-no">
-            ${t('pages.test.spa_btn_no')}
-        </button>
-    </div>`;
-
+        container.innerHTML = `
+            <div style="margin-bottom:8px;">
+                <p style="font-size:0.95rem;color:var(--light-text);text-align:center;">
+                    ${strictMode ? t('pages.test.spa_strict_question') : t('pages.test.spa_loose_question')}
+                </p>
+            </div>
+            <div class="test-stimulus-row">
+                <div class="stimulus-box"><div id="spa-left"></div></div>
+                <div class="test-vs-label" style="font-size:2rem;color:var(--light-text);">VS</div>
+                <div class="stimulus-box"><div id="spa-right"></div></div>
+            </div>
+            <div class="reaction-buttons">
+                <button class="btn btn-success btn-large" id="btn-spa-yes">${t('pages.test.spa_btn_yes')}</button>
+                <button class="btn btn-danger btn-large" id="btn-spa-no">${t('pages.test.spa_btn_no')}</button>
+            </div>`;
 
         const stimSize = window.innerWidth <= 768 ? 65 : 120;
-        document.getElementById('spa-left').appendChild(
-            StimuliGenerator.render(correctStim, stimSize, false, rotation));
-        document.getElementById('spa-right').appendChild(
-            StimuliGenerator.render(testStim, stimSize, false, 0));
+        document.getElementById('spa-left').appendChild(StimuliGenerator.render(correctStim, stimSize, false, rotation));
+        document.getElementById('spa-right').appendChild(StimuliGenerator.render(testStim, stimSize, false, 0));
 
-        // ✅ instruction 文字
-document.getElementById('test-instruction').textContent = strictMode
-           ? t('pages.test.spa_strict_instruction')
-           : t('pages.test.spa_loose_instruction');
-
+        document.getElementById('test-instruction').textContent = strictMode ? t('pages.test.spa_strict_instruction') : t('pages.test.spa_loose_instruction');
 
         const handleSpa = (ans) => {
             document.getElementById('btn-spa-yes').disabled = true;
@@ -2100,17 +1913,14 @@ document.getElementById('test-instruction').textContent = strictMode
             this.testState.userAnswer = ans;
             this.submitAnswer();
         };
-        document.getElementById('btn-spa-yes')
-            .addEventListener('click', () => handleSpa('yes'), { once: true });
-        document.getElementById('btn-spa-no')
-            .addEventListener('click', () => handleSpa('no'),  { once: true });
+        document.getElementById('btn-spa-yes').addEventListener('click', () => handleSpa('yes'), { once: true });
+        document.getElementById('btn-spa-no').addEventListener('click', () => handleSpa('no'),  { once: true });
 
         const reaSpaTime = getReaSpaTimeLimit(this.userData?.age || 40);
         this.testState.currentTimeLimit = reaSpaTime;
         this.startTimer(reaSpaTime);
     },
 
-    // ==================== 計時器 ====================
     startTimer(seconds) {
         this.stopTimer();
         this.testState.timeRemaining = seconds;
@@ -2144,24 +1954,18 @@ document.getElementById('test-instruction').textContent = strictMode
         });
     },
 
-    // ==================== 逾時處理 ====================
-// ❌ seq 不使用計時器，但若意外觸發 handleTimeout()
-//    會執行 this.testState.userAnswer = null 並呼叫 submitAnswer()
-//    造成非預期行為
+    handleTimeout() {
+        this.stopTimer();
+        if (this.isSubmitting) return;
+        if (this.testState.ability === 'seq') return; 
+        if (this.testState.ability === 'mem') {
+            this.testState.userSequence = [];
+        } else {
+            this.testState.userAnswer = null;
+        }
+        this.submitAnswer();
+    },
 
-// ✅ 加上 seq 的防護
-handleTimeout() {
-    this.stopTimer();
-    if (this.isSubmitting) return;
-    if (this.testState.ability === 'seq') return; // ← 新增防護
-    if (this.testState.ability === 'mem') {
-        this.testState.userSequence = [];
-    } else {
-        this.testState.userAnswer = null;
-    }
-    this.submitAnswer();
-},
-    // ==================== 提交答案 ====================
     submitAnswer() {
         if (this.isSubmitting) return;
         this.isSubmitting = true;
@@ -2172,9 +1976,7 @@ handleTimeout() {
         const levelIdx = this.testState.level;
 
         const timeLimit  = this.testState.currentTimeLimit || CONFIG.REACTION_TIME_LIMIT;
-        const timeTaken  = parseFloat(
-            (timeLimit - this.testState.timeRemaining).toFixed(3)
-        );
+        const timeTaken  = parseFloat((timeLimit - this.testState.timeRemaining).toFixed(3));
 
         let isCorrect = false;
         if      (ability === 'mem') isCorrect = this.verifyMemoryAnswer();
@@ -2233,7 +2035,6 @@ handleTimeout() {
         }, 500);
     },
 
-    // ==================== 驗證答案 ====================
     verifyMemoryAnswer() {
         const correct = this.testState.currentSequence.map(s => s.key);
         const user    = this.testState.userSequence;
@@ -2270,7 +2071,6 @@ handleTimeout() {
         return this.testState.userAnswer === this.testState.currentCorrectKey;
     },
 
-    // ==================== 下一題 ====================
     nextQuestion() {
         const ability = this.testState.ability;
         const totalQ = ability === 'mem' ? 5 : ability === 'seq' ? 2 : 10;
@@ -2296,144 +2096,138 @@ handleTimeout() {
         else this.loadQuestion();
     },
 
-    // ==================== 完成單項測驗 ====================
-async finishAbilityTest() {
-    const ability = this.testState.ability;
-    this.testState.results[ability] = [...this.testState.answers];
+    async finishAbilityTest() {
+        const ability = this.testState.ability;
+        this.testState.results[ability] = [...this.testState.answers];
 
-    if (ability === 'mem') {
-        this.currentTest = 'rea';
-        await this.showToast(t('toast.mem_done'), 1800);
-        await new Promise(r => requestAnimationFrame(r));
-        await new Promise(r => setTimeout(r, 50));
-        this.showInstructions('rea');
+        if (ability === 'mem') {
+            this.currentTest = 'rea';
+            await this.showToast(t('toast.mem_done'), 1800);
+            await new Promise(r => requestAnimationFrame(r));
+            await new Promise(r => setTimeout(r, 50));
+            this.showInstructions('rea');
 
-    } else if (ability === 'rea') {
-        this.currentTest = 'seq';
-        await this.showToast(t('toast.rea_done'), 1800);
-        await new Promise(r => requestAnimationFrame(r));
-        await new Promise(r => setTimeout(r, 50));
-        this.showInstructions('seq');
+        } else if (ability === 'rea') {
+            this.currentTest = 'seq';
+            await this.showToast(t('toast.rea_done'), 1800);
+            await new Promise(r => requestAnimationFrame(r));
+            await new Promise(r => setTimeout(r, 50));
+            this.showInstructions('seq');
 
-    } else if (ability === 'seq') {
-        this.currentTest = 'spa';
-        await this.showToast(t('toast.seq_done'), 1800);
-        await new Promise(r => requestAnimationFrame(r));
-        await new Promise(r => setTimeout(r, 50));
-        this.showInstructions('spa');
+        } else if (ability === 'seq') {
+            this.currentTest = 'spa';
+            await this.showToast(t('toast.seq_done'), 1800);
+            await new Promise(r => requestAnimationFrame(r));
+            await new Promise(r => setTimeout(r, 50));
+            this.showInstructions('spa');
 
-    } else if (ability === 'spa') {
-        await this.showToast(t('toast.spa_done'), 1500);
-        await new Promise(r => requestAnimationFrame(r));
-        await new Promise(r => setTimeout(r, 50));
-        this.calculateResults();
-    }
-},
+        } else if (ability === 'spa') {
+            await this.showToast(t('toast.spa_done'), 1500);
+            await new Promise(r => requestAnimationFrame(r));
+            await new Promise(r => setTimeout(r, 50));
+            this.calculateResults();
+        }
+    },
 
-// ==================== 計算結果 (修正未計算的 att 與 score) ====================
-async calculateResults() {
-    const results     = this.testState.results;
-    const age         = this.userData.age;
-    const deviceMult  = DeviceDetector.getNormMultiplier();
-    const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
+    async calculateResults() {
+        const results     = this.testState.results;
+        const age         = this.userData.age;
+        const deviceMult  = DeviceDetector.getNormMultiplier();
+        const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
 
-    this.userData.deviceLabel = deviceLabel;
-    this.userData.deviceMult  = deviceMult;
+        this.userData.deviceLabel = deviceLabel;
+        this.userData.deviceMult  = deviceMult;
 
-    const final = {};
+        const final = {};
 
-    // 🌟 輔助函式：將 Rk (反應係數) 轉換為 0-100 的分數
-    const calcScore = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 45)));
+        // 🌟 新版 100分級公式
+        const calcScore = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 100)));
 
-    // ── mem ───────────────────────────────────────────────────
-    {
-        const ab        = 'mem';
-        const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-        const norm  = CONFIG.BASE_RK.mem * deviceMult;
-        const Rk    = totalTime / norm;
-        final[ab]   = {
-            totalTime:   parseFloat(totalTime.toFixed(2)),
-            norm:        parseFloat(norm.toFixed(2)),
-            Rk:          parseFloat(Rk.toFixed(3)),
-            level:       this._rkToLevel(Rk),
-            score:       calcScore(Rk), // 新增分數計算
-            correctCount: results[ab].reduce((s, a) => s + (a.itemCorrect ?? 0), 0),
-            totalCount:  results[ab].reduce((s, a) => s + (a.itemTotal   ?? 0), 0),
+        {
+            const ab        = 'mem';
+            const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+            const norm  = CONFIG.BASE_RK.mem * deviceMult;
+            const Rk    = totalTime / norm;
+            const score = calcScore(Rk);
+            final[ab]   = {
+                totalTime:   parseFloat(totalTime.toFixed(2)),
+                norm:        parseFloat(norm.toFixed(2)),
+                Rk:          parseFloat(Rk.toFixed(3)),
+                level:       this._scoreToLevel(score),
+                score:       score,
+                correctCount: results[ab].reduce((s, a) => s + (a.itemCorrect ?? 0), 0),
+                totalCount:  results[ab].reduce((s, a) => s + (a.itemTotal   ?? 0), 0),
+            };
+        }
+
+        {
+            const ab        = 'spa';
+            const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+            const norm  = getReaSpaBaseRk(age, ab) * deviceMult;
+            const Rk    = totalTime / norm;
+            const score = calcScore(Rk);
+            final[ab]   = {
+                totalTime:   parseFloat(totalTime.toFixed(2)),
+                norm:        parseFloat(norm.toFixed(2)),
+                Rk:          parseFloat(Rk.toFixed(3)),
+                level:       this._scoreToLevel(score),
+                score:       score,
+                correctCount: results[ab].filter(a => a.correct).length,
+                totalCount:   results[ab].length,
+            };
+        }
+
+        const reaTotalTime = results.rea.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+        const reaNorm = getReaSpaBaseRk(age, 'rea') * deviceMult;
+        const reaRk   = reaTotalTime / reaNorm;
+
+        const seqTotalTime = results.seq.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
+        const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * deviceMult;
+        const seqRk   = seqTotalTime / seqNorm;
+
+        const combinedReaRk = parseFloat(((reaRk + seqRk) / 2).toFixed(3));
+        const reaScore = calcScore(combinedReaRk);
+
+        final.rea = {
+            totalTime:   parseFloat((reaTotalTime + seqTotalTime).toFixed(2)),
+            norm:         parseFloat(((reaNorm + seqNorm) / 2).toFixed(2)),
+            Rk:           combinedReaRk,
+            level:       this._scoreToLevel(reaScore),
+            score:       reaScore,
+            correctCount: results.rea.filter(a => a.correct).length,
+            totalCount:   results.rea.length,
+            _reaRk:      parseFloat(reaRk.toFixed(3)),
+            _seqRk:      parseFloat(seqRk.toFixed(3)),
+            _seqTime:    parseFloat(seqTotalTime.toFixed(2)),
         };
-    }
 
-    // ── spa ───────────────────────────────────────────────────
-    {
-        const ab        = 'spa';
-        const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-        const norm  = getReaSpaBaseRk(age, ab) * deviceMult;
-        const Rk    = totalTime / norm;
-        final[ab]   = {
-            totalTime:   parseFloat(totalTime.toFixed(2)),
-            norm:        parseFloat(norm.toFixed(2)),
-            Rk:          parseFloat(Rk.toFixed(3)),
-            level:       this._rkToLevel(Rk),
-            score:       calcScore(Rk), // 新增分數計算
-            correctCount: results[ab].filter(a => a.correct).length,
-            totalCount:   results[ab].length,
+        const attRk = parseFloat(((final.mem.Rk + final.rea.Rk + final.spa.Rk) / 3).toFixed(3));
+        const attScore = calcScore(attRk);
+        final.att = {
+            totalTime: parseFloat(((final.mem.totalTime + final.rea.totalTime + final.spa.totalTime) / 3).toFixed(2)),
+            correctCount: Math.round((final.mem.correctCount + final.rea.correctCount + final.spa.correctCount) / 3),
+            totalCount: Math.round((final.mem.totalCount + final.rea.totalCount + final.spa.totalCount) / 3),
+            Rk: attRk,
+            level: this._scoreToLevel(attScore),
+            score: attScore
         };
-    }
 
-    // ── rea（舊反應力）───────────────────────────────────────
-    const reaTotalTime = results.rea.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-    const reaNorm = getReaSpaBaseRk(age, 'rea') * deviceMult;
-    const reaRk   = reaTotalTime / reaNorm;
+        console.log(`📊 reaRk=${reaRk.toFixed(3)}, seqRk=${seqRk.toFixed(3)}, combined=${combinedReaRk}, level=${final.rea.level}`);
 
-    // ── seq（數字順序格）────────────────────────────────────
-    const seqTotalTime = results.seq.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-    const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * deviceMult;
-    const seqRk   = seqTotalTime / seqNorm;
+        await this.saveTestRecord(final);
+        this.displayResults(final);
+    },
 
-    const combinedReaRk = parseFloat(((reaRk + seqRk) / 2).toFixed(3));
+    _scoreToLevel(score) {
+        if      (score >= 90) return '最佳表現';
+        else if (score >= 75) return '良好';
+        else if (score >= 65) return '正常';
+        else if (score >= 60) return '接近正常';
+        else if (score >= 50) return '待加強';
+        else if (score >= 40) return '不太好';
+        else                  return '需要加強';
+    },
 
-    final.rea = {
-        totalTime:   parseFloat((reaTotalTime + seqTotalTime).toFixed(2)),
-        norm:         parseFloat(((reaNorm + seqNorm) / 2).toFixed(2)),
-        Rk:           combinedReaRk,
-        level:       this._rkToLevel(combinedReaRk),
-        score:       calcScore(combinedReaRk), // 新增分數計算
-        correctCount: results.rea.filter(a => a.correct).length,
-        totalCount:   results.rea.length,
-        _reaRk:      parseFloat(reaRk.toFixed(3)),
-        _seqRk:      parseFloat(seqRk.toFixed(3)),
-        _seqTime:    parseFloat(seqTotalTime.toFixed(2)),
-    };
-
-    // ── att（專注力：由前三項綜合計算）───────────────────────────
-    const attRk = parseFloat(((final.mem.Rk + final.rea.Rk + final.spa.Rk) / 3).toFixed(3));
-    final.att = {
-        totalTime: parseFloat(((final.mem.totalTime + final.rea.totalTime + final.spa.totalTime) / 3).toFixed(2)),
-        correctCount: Math.round((final.mem.correctCount + final.rea.correctCount + final.spa.correctCount) / 3),
-        totalCount: Math.round((final.mem.totalCount + final.rea.totalCount + final.spa.totalCount) / 3),
-        Rk: attRk,
-        level: this._rkToLevel(attRk),
-        score: calcScore(attRk) // 新增分數計算
-    };
-
-    console.log(`📊 reaRk=${reaRk.toFixed(3)}, seqRk=${seqRk.toFixed(3)}, combined=${combinedReaRk}, level=${final.rea.level}`);
-
-    await this.saveTestRecord(final);
-    this.displayResults(final);
-},
-
-// ==================== Rk → 等級 helper ====================
-_rkToLevel(Rk) {
-    if      (Rk <= 0.80) return '最佳表現';
-    else if (Rk <  0.95) return '良好';
-    else if (Rk <= 1.05) return '正常';
-    else if (Rk <= 1.10) return '接近正常';
-    else if (Rk <= 1.20) return '待加強';
-    else if (Rk <  1.30) return '不太好';
-    else                 return '需要加強';
-},
-
-// ==================== 儲存測驗記錄 ====================
-// ==================== 儲存測驗記錄 ====================
     async saveTestRecord(computed) {
         if (!this.currentUser && this.isGuest == false) return; 
         
@@ -2481,7 +2275,6 @@ _rkToLevel(Rk) {
         const cleanPublicRecord = JSON.parse(JSON.stringify(publicRecord));
 
         if (!this.isGuest && this.currentUser && fb) {
-            // ── 登入狀態：存入 Firebase ──
             try {
                 const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
                 await fb.push(recordsRef, cleanRecord);
@@ -2492,64 +2285,58 @@ _rkToLevel(Rk) {
                 const userRef = fb.ref(fb.database, `users/${this.currentUser.uid}`);
                 await fb.update(userRef, { lastTestDate: cleanRecord.date });
 
-                console.log('✅ Firebase 儲存完成（個人記錄 + 公共統計）');
+                console.log('✅ Firebase 儲存完成');
             } catch (err) {
                 console.error('❌ Firebase 儲存失敗:', err);
                 alert(t('alerts.save_fail'));
             }
         } else {
-            // ── 訪客狀態：存入 LocalStorage ──
             try {
                 const arr = JSON.parse(localStorage.getItem('guest_records') || '[]');
                 arr.push(cleanRecord);
                 if (arr.length > 10) arr.shift();
                 localStorage.setItem('guest_records', JSON.stringify(arr));
-                console.log('✅ localStorage 儲存完成（訪客記錄）');
+                console.log('✅ localStorage 儲存完成');
             } catch (err) {
-                // 📱 解決手機版 LINE/FB 內建瀏覽器阻擋 LocalStorage 的問題
-                console.warn('⚠️ 瀏覽器阻擋了本地儲存 (可能是無痕模式或內建瀏覽器)。成績不會保存，但可繼續查看畫面。', err);
-                // 不再跳出討厭的警告視窗，讓流程直接順利進入結果頁
+                console.warn('⚠️ 瀏覽器阻擋了本地儲存', err);
             }
         }
     },
 
-    // ==================== 即時重算 Rk ====================
-// ==================== 即時重算 Rk ====================
     computeRkFromRecord(record) {
         const age        = record.age;
         const deviceMult = record.deviceMult || 1.0;
         const computed   = {};
-        const calcScore  = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 45)));
+        const calcScore  = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 100)));
 
-        // ── mem ──
         const memTotalTime = record.results?.mem?.totalTime ?? 0;
         const memNorm      = CONFIG.BASE_RK.mem * deviceMult;
         const memRk        = record.results?.mem?.Rk ?? parseFloat((memTotalTime / memNorm).toFixed(3));
+        const memScore     = record.results?.mem?.score ?? calcScore(memRk);
         computed.mem = {
             totalTime:    memTotalTime,
             correctCount: record.results?.mem?.correctCount ?? '—',
             totalCount:   record.results?.mem?.totalCount   ?? '—',
             norm:         parseFloat(memNorm.toFixed(2)),
             Rk:           memRk,
-            level:        this._rkToLevel(memRk),
-            score:        record.results?.mem?.score ?? calcScore(memRk)
+            score:        memScore,
+            level:        this._scoreToLevel(memScore)
         };
 
-        // ── spa ──
         const spaTotalTime = record.results?.spa?.totalTime ?? 0;
         const spaNorm      = getReaSpaBaseRk(age, 'spa') * deviceMult;
         const spaRk        = record.results?.spa?.Rk ?? parseFloat((spaTotalTime / spaNorm).toFixed(3));
+        const spaScore     = record.results?.spa?.score ?? calcScore(spaRk);
         computed.spa = {
             totalTime:    spaTotalTime,
             correctCount: record.results?.spa?.correctCount ?? '—',
             totalCount:   record.results?.spa?.totalCount   ?? '—',
             norm:         parseFloat(spaNorm.toFixed(2)),
             Rk:           spaRk,
-            level:        this._rkToLevel(spaRk),
-            score:        record.results?.spa?.score ?? calcScore(spaRk)
+            score:        spaScore,
+            level:        this._scoreToLevel(spaScore)
         };
 
-        // ── rea ──
         const reaData = record.results?.rea ?? {};
         let finalRk = reaData.combinedRk;
         if (finalRk == null) {
@@ -2560,425 +2347,429 @@ _rkToLevel(Rk) {
                 finalRk         = parseFloat((totalTime / norm).toFixed(3));
             }
         }
+        const reaScore = reaData.score ?? calcScore(finalRk);
         computed.rea = {
             totalTime:    reaData.totalTime    ?? 0,
             correctCount: reaData.correctCount ?? '—',
             totalCount:   reaData.totalCount   ?? '—',
             Rk:           finalRk,
-            level:        this._rkToLevel(finalRk),
-            score:        reaData.score ?? calcScore(finalRk)
+            score:        reaScore,
+            level:        this._scoreToLevel(reaScore)
         };
 
-        // ── att (補齊專注力) ──
         const attData = record.results?.att ?? {};
         if (attData.Rk != null) {
-            computed.att = { ...attData, score: attData.score ?? calcScore(attData.Rk) };
+            const attScore = attData.score ?? calcScore(attData.Rk);
+            computed.att = { ...attData, score: attScore, level: this._scoreToLevel(attScore) };
         } else {
             const attRk = parseFloat(((computed.mem.Rk + computed.rea.Rk + computed.spa.Rk) / 3).toFixed(3));
+            const attScore = calcScore(attRk);
             computed.att = {
                 totalTime: parseFloat(((computed.mem.totalTime + computed.rea.totalTime + computed.spa.totalTime) / 3).toFixed(2)),
                 correctCount: '—', totalCount: '—', Rk: attRk,
-                level: this._rkToLevel(attRk), score: calcScore(attRk)
+                score: attScore, level: this._scoreToLevel(attScore)
             };
         }
         return computed;
     },
 
-// ==================== 顯示結果 (修正版) ====================
-displayResults(computed) {
-    const page = document.getElementById('page-results');
-    if (!page) return;
+    displayResults(computed) {
+        const page = document.getElementById('page-results');
+        if (!page) return;
 
-    // 更新個人資訊
-    const userInfoEl = document.getElementById('result-user-info');
-    if (userInfoEl) userInfoEl.textContent = t('pages.results.user_info', { nickname: this.userData.nickname, age: this.userData.age });
+        const userInfoEl = document.getElementById('result-user-info');
+        if (userInfoEl) userInfoEl.textContent = t('pages.results.user_info', { nickname: this.userData.nickname, age: this.userData.age });
 
-    const testTimeEl = document.getElementById('result-datetime');
-    if (testTimeEl) testTimeEl.textContent = t('pages.results.test_time', { datetime: new Date().toLocaleString() });
+        const testTimeEl = document.getElementById('result-datetime');
+        if (testTimeEl) testTimeEl.textContent = t('pages.results.test_time', { datetime: new Date().toLocaleString() });
 
-    // ── 子模組渲染 ──
-    this.renderAbilityResults(computed);
-    
-    // 【補上這行】渲染雷達圖
-    this.renderRadarChart(computed, this.userData.age); 
+        this.renderAbilityResults(computed);
+        this.renderRadarChart(computed, this.userData.age); 
+        this.renderRecommendations(computed, ADVICE_JSON);
+        this.renderPercentileInfo(computed, this.userData.age, this.userData.gender);
+        this.loadAndDisplayHistory();
 
-    this.renderRecommendations(computed, ADVICE_JSON);
-    this.renderPercentileInfo(computed, this.userData.age, this.userData.gender);
-    this.loadAndDisplayHistory();
+        this.showPage('results');
+    },
 
-    // 切換到結果頁面
-    this.showPage('results');
-},
+    renderAbilityResults(computed) {
+        const container = document.getElementById('ability-results');
+        if (!container) return;
 
-    // ==================== 能力卡片 ====================
-renderAbilityResults(computed) {
-    const container = document.getElementById('ability-results');
-    if (!container) return;
+        const names = {
+            mem: t('pages.results.ability_names.mem'),
+            rea: t('pages.results.ability_names.rea'),
+            spa: t('pages.results.ability_names.spa'),
+            att: t('pages.results.ability_names.att'),
+        };
 
-    // ✅ Bug 4 修正：能力名稱改用 t()
-    const names = {
-        mem: t('pages.results.ability_names.mem'),
-        rea: t('pages.results.ability_names.rea'),
-        spa: t('pages.results.ability_names.spa'),
-        att: t('pages.results.ability_names.att'),
-    };
+        const colors = {
+            mem: 'linear-gradient(135deg,#667eea,#764ba2)',
+            rea: 'linear-gradient(135deg,#f093fb,#f5576c)',
+            spa: 'linear-gradient(135deg,#4facfe,#00f2fe)',
+            att: 'linear-gradient(135deg,#43e97b,#38f9d7)',
+        };
 
-    const colors = {
-        mem: 'linear-gradient(135deg,#667eea,#764ba2)',
-        rea: 'linear-gradient(135deg,#f093fb,#f5576c)',
-        spa: 'linear-gradient(135deg,#4facfe,#00f2fe)',
-        att: 'linear-gradient(135deg,#43e97b,#38f9d7)',
-    };
+        const order = ['mem', 'rea', 'spa', 'att'];
+        container.innerHTML = '';
 
-    const order = ['mem', 'rea', 'spa', 'att'];
-    container.innerHTML = '';
+        order.forEach(ab => {
+            const d = computed[ab];
+            if (!d) return;
 
-    order.forEach(ab => {
-        const d = computed[ab];
-        if (!d) return;
+            const card = document.createElement('div');
+            card.className = 'ability-card';
+            card.style.cssText = `
+                background:${colors[ab]};
+                border-radius:16px;
+                padding:20px;
+                color:white;
+                margin-bottom:16px;
+                box-shadow:0 4px 15px rgba(0,0,0,0.15);
+            `;
 
-        const card = document.createElement('div');
-        card.className = 'ability-card';
-        card.style.cssText = `
-            background:${colors[ab]};
-            border-radius:16px;
-            padding:20px;
-            color:white;
-            margin-bottom:16px;
-            box-shadow:0 4px 15px rgba(0,0,0,0.15);
-        `;
-
-        // ✅ Bug 5 修正：level-badge 改用 tLevel()
-// ✅ Bug 5 修正：level-badge 改用 tLevel()
-        // ✅ 判斷：如果是專注力 (att) 就不顯示額外的時間與答對題數
-        const extraDetails = (ab === 'att') ? '' : `
-            <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
-                ${t('pages.results.total_time')} ${d.totalTime}s
-                &nbsp;|&nbsp;
-                ${t('pages.results.correct')} ${d.correctCount} / ${d.totalCount}
-            </div>
-        `;
-
-        card.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                <div>
-                    <div style="font-size:1.2rem;font-weight:bold;margin-bottom:6px;">
-                        ${names[ab]}
-                    </div>
-                    <div style="font-size:2rem;font-weight:bold;">
-                        ${d.score}<span style="font-size:1rem;"> / 100</span>
-                    </div>
-                    ${extraDetails}
+            const extraDetails = (ab === 'att') ? '' : `
+                <div style="font-size:0.85rem;margin-top:4px;opacity:0.9;">
+                    ${t('pages.results.total_time')} ${d.totalTime}s
+                    &nbsp;|&nbsp;
+                    ${t('pages.results.correct')} ${d.correctCount} / ${d.totalCount}
                 </div>
-                <div class="level-badge level-${d.level}"
-                    style="background:rgba(0,0,0,0.25);
-                           color:white;
-                           padding:6px 14px;
-                           border-radius:20px;
-                           font-size:0.9rem;
-                           font-weight:bold;
-                           white-space:nowrap;">
-                    ${tLevel(d.level)}
+            `;
+
+            card.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                    <div>
+                        <div style="font-size:1.2rem;font-weight:bold;margin-bottom:6px;">
+                            ${names[ab]}
+                        </div>
+                        <div style="font-size:2rem;font-weight:bold;">
+                            ${d.score}<span style="font-size:1rem;"> / 100</span>
+                        </div>
+                        ${extraDetails}
+                    </div>
+                    <div class="level-badge level-${d.level}"
+                        style="background:rgba(0,0,0,0.25);
+                               color:white;
+                               padding:6px 14px;
+                               border-radius:20px;
+                               font-size:0.9rem;
+                               font-weight:bold;
+                               white-space:nowrap;">
+                        ${tLevel(d.level)}
+                    </div>
                 </div>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    renderRadarChart(computed, age) {
+        const container = document.getElementById('radar-chart-container');
+        if (!container) return;
+
+        const memScore = computed.mem?.score ?? 0;
+        const reaScore = computed.rea?.score ?? 0;
+        const spaScore = computed.spa?.score ?? 0;
+        const focScore = computed.att?.score ?? 0;
+
+       const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
+       
+       const deviceNote = deviceLabel !== t('device_labels.desktop')
+           ? `<div style="font-size:0.8rem;color:var(--light-text);margin-top:6px;">
+                  ${t('pages.results.radar_device_note', { device: deviceLabel })}
+              </div>`
+           : '';
+
+        const dirs = [
+            { label: t('pages.results.radar_mem_label') || '記憶', angle: -90, score: memScore },
+            { label: t('pages.results.radar_rea_label') || '反應', angle:   0, score: reaScore },
+            { label: t('pages.results.radar_spa_label') || '空間', angle:  90, score: spaScore },
+            { label: t('pages.results.radar_att_label') || '專注', angle: 180, score: focScore },
+        ];
+
+        const cx = 150, cy = 150, R = 100;
+        const norm = (s) => Math.max(0.1, s / 100);
+
+        const toXY = (angle, r) => {
+            const rad = (angle - 90) * Math.PI / 180;
+            return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+        };
+
+        const baseR  = R * 0.7; // 70分基準線
+        const basePts = dirs.map(d => toXY(d.angle, baseR));
+        const basePolyline = basePts.map(p => `${p.x},${p.y}`).join(' ');
+
+        const userPts = dirs.map(d => toXY(d.angle, R * norm(d.score)));
+        const userPolyline = userPts.map(p => `${p.x},${p.y}`).join(' ');
+
+        let axesSvg = '', labelSvg = '';
+        dirs.forEach(d => {
+            const end = toXY(d.angle, R + 10);
+            axesSvg += `<line x1="${cx}" y1="${cy}"
+                             x2="${end.x}" y2="${end.y}"
+                             stroke="#ddd" stroke-width="1"/>`;
+            const lp = toXY(d.angle, R + 28);
+            labelSvg += `<text x="${lp.x}" y="${lp.y}"
+                               text-anchor="middle"
+                               dominant-baseline="middle"
+                               font-size="13"
+                               font-weight="bold"
+                               fill="#444">${d.label}</text>`;
+        });
+
+        let circlesSvg = '';
+        [0.25, 0.5, 0.75, 1.0].forEach(r => {
+            circlesSvg += `<circle cx="${cx}" cy="${cy}" r="${R * r}"
+                                    fill="none" stroke="#eee" stroke-width="1"/>`;
+        });
+
+        const svgHtml = `
+            <svg viewBox="0 0 300 300" style="width:100%;max-width:320px;display:block;margin:0 auto;">
+                ${circlesSvg}
+                ${axesSvg}
+                <polygon points="${basePolyline}"
+                         fill="rgba(100,126,234,0.08)"
+                         stroke="#667eea"
+                         stroke-width="2"
+                         stroke-dasharray="6,4"/>
+                <polygon points="${userPolyline}"
+                         fill="rgba(244,67,54,0.2)"
+                         stroke="#f44336"
+                         stroke-width="2.5"/>
+                ${userPts.map(p =>
+                    `<circle cx="${p.x}" cy="${p.y}" r="4"
+                             fill="#f44336" stroke="white" stroke-width="1.5"/>`
+                ).join('')}
+                ${labelSvg}
+            </svg>`;
+
+        container.innerHTML = `
+            <h3 style="text-align:center;margin-bottom:12px;
+                 font-size:1.1rem;color:var(--primary-color);">
+                ${t('pages.results.radar_title')}
+            </h3>
+            ${svgHtml}
+            <div style="display:flex;justify-content:center;gap:20px;
+                 margin-top:10px;font-size:0.82rem;">
+                <span>
+                    <span style="display:inline-block;width:20px;height:2px;
+                          background:#667eea;border-top:2px dashed #667eea;
+                          vertical-align:middle;margin-right:4px;"></span>
+                    ${t('pages.results.radar_legend_base', { age })}
+                </span>
+                <span>
+                    <span style="display:inline-block;width:20px;height:3px;
+                          background:#f44336;vertical-align:middle;margin-right:4px;"></span>
+                    ${t('pages.results.radar_legend_user')}
+                </span>
             </div>
+            <div style="text-align:center;font-size:0.78rem;
+                 color:var(--light-text);margin-top:8px;line-height:1.6;">
+                ${t('pages.results.radar_subtitle', { age })}
+            </div>
+            ${deviceNote}
         `;
-        container.appendChild(card);
-    });
-},
+    },
 
-    // ==================== 雷達圖 ====================
-renderRadarChart(computed, age) {
-    const container = document.getElementById('radar-chart-container');
-    if (!container) return;
-
-    const memScore = computed.mem?.score ?? 0;
-    const reaScore = computed.rea?.score ?? 0;
-    const spaScore = computed.spa?.score ?? 0;
-    const focScore = computed.att?.score ?? 0;
-
-    // 取出正確的裝置標籤
-   const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
-   
-   // 修正：使用 deviceLabel 取代 undefined 的 this.deviceMode
-   const deviceNote = deviceLabel !== t('device_labels.desktop')
-       ? `<div style="font-size:0.8rem;color:var(--light-text);margin-top:6px;">
-              ${t('pages.results.radar_device_note', { device: deviceLabel })}
-          </div>`
-       : '';
-
-    // ✅ Bug 10 修正：標籤改用 t()（含備援預設值）
-    const dirs = [
-        { label: t('pages.results.radar_mem_label') || '記憶', angle: -90, score: memScore },
-        { label: t('pages.results.radar_rea_label') || '反應', angle:   0, score: reaScore },
-        { label: t('pages.results.radar_spa_label') || '空間', angle:  90, score: spaScore },
-        { label: t('pages.results.radar_att_label') || '專注', angle: 180, score: focScore },
-    ];
-
-    const cx = 150, cy = 150, R = 100;
-    const norm = (s) => Math.max(0.1, s / 100);
-
-    const toXY = (angle, r) => {
-        const rad = (angle - 90) * Math.PI / 180;
-        return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-    };
-
-    // 基準線（70%處）
-    const baseR  = R * 0.7;
-    const basePts = dirs.map(d => toXY(d.angle, baseR));
-    const basePolyline = basePts.map(p => `${p.x},${p.y}`).join(' ');
-
-    // 用戶分數
-    const userPts = dirs.map(d => toXY(d.angle, R * norm(d.score)));
-    const userPolyline = userPts.map(p => `${p.x},${p.y}`).join(' ');
-
-    // 軸線 & 標籤
-    let axesSvg = '', labelSvg = '';
-    dirs.forEach(d => {
-        const end = toXY(d.angle, R + 10);
-        axesSvg += `<line x1="${cx}" y1="${cy}"
-                         x2="${end.x}" y2="${end.y}"
-                         stroke="#ddd" stroke-width="1"/>`;
-        const lp = toXY(d.angle, R + 28);
-        labelSvg += `<text x="${lp.x}" y="${lp.y}"
-                           text-anchor="middle"
-                           dominant-baseline="middle"
-                           font-size="13"
-                           font-weight="bold"
-                           fill="#444">${d.label}</text>`;
-    });
-
-    // 同心圓
-    let circlesSvg = '';
-    [0.25, 0.5, 0.75, 1.0].forEach(r => {
-        circlesSvg += `<circle cx="${cx}" cy="${cy}" r="${R * r}"
-                                fill="none" stroke="#eee" stroke-width="1"/>`;
-    });
-
-    const svgHtml = `
-        <svg viewBox="0 0 300 300" style="width:100%;max-width:320px;display:block;margin:0 auto;">
-            ${circlesSvg}
-            ${axesSvg}
-            <!-- 基準線 -->
-            <polygon points="${basePolyline}"
-                     fill="rgba(100,126,234,0.08)"
-                     stroke="#667eea"
-                     stroke-width="2"
-                     stroke-dasharray="6,4"/>
-            <!-- 用戶 -->
-            <polygon points="${userPolyline}"
-                     fill="rgba(244,67,54,0.2)"
-                     stroke="#f44336"
-                     stroke-width="2.5"/>
-            ${userPts.map(p =>
-                `<circle cx="${p.x}" cy="${p.y}" r="4"
-                         fill="#f44336" stroke="white" stroke-width="1.5"/>`
-            ).join('')}
-            ${labelSvg}
-        </svg>`;
-
-    // ✅ Bug 10 修正：圖例、標題、說明全部使用 t()
-    container.innerHTML = `
-        <h3 style="text-align:center;margin-bottom:12px;
-             font-size:1.1rem;color:var(--primary-color);">
-            ${t('pages.results.radar_title')}
-        </h3>
-        ${svgHtml}
-        <div style="display:flex;justify-content:center;gap:20px;
-             margin-top:10px;font-size:0.82rem;">
-            <span>
-                <span style="display:inline-block;width:20px;height:2px;
-                      background:#667eea;border-top:2px dashed #667eea;
-                      vertical-align:middle;margin-right:4px;"></span>
-                ${t('pages.results.radar_legend_base', { age })}
-            </span>
-            <span>
-                <span style="display:inline-block;width:20px;height:3px;
-                      background:#f44336;vertical-align:middle;margin-right:4px;"></span>
-                ${t('pages.results.radar_legend_user')}
-            </span>
-        </div>
-        <div style="text-align:center;font-size:0.78rem;
-             color:var(--light-text);margin-top:8px;line-height:1.6;">
-            ${t('pages.results.radar_subtitle', { age })}
-        </div>
-        ${deviceNote}
-    `;
-},
-
-// ==================== 【修改】建議區塊 — 使用新版 JSON 結構 ====================
     renderRecommendations(computed, adviceData) {
         const container = document.getElementById('recommendations');
         if (!container) return;
         
         const nameMap = {
-            mem: t('pages.results.ability_names.mem'),
-            rea: t('pages.results.ability_names.rea'),
-            spa: t('pages.results.ability_names.spa'),
+            mem: t('pages.results.ability_names.mem') || '記憶力',
+            rea: t('pages.results.ability_names.rea') || '反應力',
+            spa: t('pages.results.ability_names.spa') || '空間力'
         };
         const colorMap = {
             '最佳表現': '#4CAF50', '良好': '#8BC34A', '正常': '#2196F3',
             '接近正常': '#03A9F4', '待加強': '#FF9800', '不太好': '#FF5722', '需要加強': '#F44336',
         };
 
-        // 找出最需要改善的能力
         const scoreOrder = ['mem', 'rea', 'spa']
             .map(ab => ({ ab, score: computed[ab]?.score ?? 100 }))
-            .sort((a, b) => a.score - b.score);
-        const worst      = scoreOrder[0];
+            .sort((a, b) => b.score - a.score); // 降冪排序，最佳在最前面
+            
+        const best       = scoreOrder[0];
+        const worst      = scoreOrder[scoreOrder.length - 1];
+        
+        const bestAb     = best.ab;
+        const bestName   = nameMap[bestAb];
+        const bestLevel  = computed[bestAb]?.level || '正常';
+        
         const worstAb    = worst.ab;
         const worstName  = nameMap[worstAb];
         const worstLevel = computed[worstAb]?.level || '正常';
         const worstColor = colorMap[worstLevel] || '#888';
 
-        // ✅ 修正：使用全域的 getAdvice 函式去讀取新版 JSON
         const age = this.userData?.age || 40;
-        const adviceText = getAdvice(age, worstAb, worstLevel);
+
+        // 產生正面鼓勵文字
+        const getPositiveFeedback = (age, ability) => {
+            let stage = 'stage_2';
+            if (age <= 26) stage = 'stage_1';
+            else if (age >= 60) stage = 'stage_3';
+
+            const texts = {
+                mem: {
+                    stage_1: '你的記憶力非常出色！在學習新知和吸收資訊上擁有極大的優勢，這能幫助你在學業或技能培養上事半功倍。',
+                    stage_2: '您的記憶力保養得非常好！在工作上能精準記住重要細節與待辦事項，是您高效率與專業表現的重要基石。',
+                    stage_3: '您的記憶力令人驚豔！能清晰記住生活大小事，這代表您的大腦狀態非常年輕，請繼續保持這份活力。'
+                },
+                rea: {
+                    stage_1: '你的反應速度極佳！這代表你的神經傳導非常敏捷，不論是在運動表現或面對突發狀況，都能迅速做出正確判斷。',
+                    stage_2: '您的反應力相當敏銳！這讓您在面對工作壓力或多工處理時，能快速切換思緒並做出決策，展現絕佳的應變能力。',
+                    stage_3: '您的反應力保養得很棒！動作敏捷且思路清晰，這不僅讓日常起居更安全，也展現了您充滿活力的一面。'
+                },
+                spa: {
+                    stage_1: '你的空間能力非常優異！這代表你擁有極佳的邏輯與立體想像力，在數理、設計或方向辨識上具有很大的天賦。',
+                    stage_2: '您的空間感知能力非常好！這不僅讓您在駕駛或認路時得心應手，也反映出您在系統性思考與規劃上的優勢。',
+                    stage_3: '您的空間方向感十分敏銳！這代表您大腦的立體建構能力依然活躍，出門在外方向感極佳，請繼續保持。'
+                }
+            };
+            return texts[ability]?.[stage] || '您的這項能力表現非常優異！請繼續保持這份活力與健康。';
+        };
+
+        const positiveText = getPositiveFeedback(age, bestAb);
+        const worstAdviceText = getAdvice(age, worstAb, worstLevel);
 
         container.innerHTML = `
-            <div style="margin-bottom:20px;">
-                <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:8px;">
-                    ${t('pages.results.recommend_basis')}
+            <div style="margin-bottom:20px; padding:15px; background:#e8f5e9; border-left:4px solid #4CAF50; border-radius:8px;">
+                <div style="font-size:0.95rem; color:#2e7d32; margin-bottom:6px; font-weight:bold;">
+                    🌟 您的優勢：${bestName}（${tLevel(bestLevel)}）
                 </div>
-                <strong style="color:${worstColor};font-size:1rem;">
-                    ${t('pages.results.recommend_focus')}：
-                    ${worstName}（${tLevel(worstLevel)}）
+                <div style="font-size:0.95rem; color:#333; line-height:1.6;">
+                    ${positiveText}
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <div style="font-size:0.9rem; color:var(--light-text); margin-bottom:8px;">
+                    當然，大腦各項能力是可以平衡發展的。針對本次稍微落後的項目，我們提供以下建議方針：
+                </div>
+                <strong style="color:${worstColor}; font-size:1rem;">
+                    🔍 需要關注：${worstName}（${tLevel(worstLevel)}）
                 </strong>
             </div>
 
             <div style="line-height:1.9; padding:0 10px 20px; white-space:pre-line;">
-                ${adviceText}
+                ${worstAdviceText}
             </div>
 
             <div style="background:#f0f4ff;padding:16px;border-radius:10px;
                  font-size:0.9rem;color:#444;line-height:1.8;border-left:4px solid #667eea;">
-                <p>${t('pages.results.recommend_closing_1')}</p>
-                <p style="margin-top:10px;">${t('pages.results.recommend_closing_2')}</p>
-                <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3')}</p>
+                <p>${t('pages.results.recommend_closing_1') || '大腦是可塑的！透過規律練習，各項認知能力都能持續進步。'}</p>
+                <p style="margin-top:10px;">${t('pages.results.recommend_closing_2') || '建議持續接受好的新刺激，持續 4 週後再次測驗，觀察自己的成長。'}</p>
+                <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3') || '💪 加油！您的進步從今天開始。'}</p>
             </div>
         `;
     },
-    // ==================== 百分位 ====================
-renderPercentileInfo(computed, age, gender) {
-    const container = document.getElementById('percentile-info');
-    if (!container) return;
 
-    const ageRange = this.getAgeRange(age);
+    renderPercentileInfo(computed, age, gender) {
+        const container = document.getElementById('percentile-info');
+        if (!container) return;
 
-    // 百分位計算（示例邏輯，實際依您原始公式保留）
-    const getPercentile = (ab) => {
-        const score = computed[ab]?.score ?? 0;
-        return Math.min(99, Math.max(1, Math.round(score)));
-    };
+        const ageRange = this.getAgeRange(age);
 
-    const abilities = ['mem', 'rea', 'spa', 'att'];
-    const abilityNames = {
-        mem: t('pages.results.ability_names.mem'),
-        rea: t('pages.results.ability_names.rea'),
-        spa: t('pages.results.ability_names.spa'),
-        att: t('pages.results.ability_names.att'),
-    };
+        const getPercentile = (ab) => {
+            const score = computed[ab]?.score ?? 0;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        };
 
-    const colorMap = {
-        '最佳表現': '#4CAF50', '良好': '#8BC34A',
-        '正常':     '#2196F3', '接近正常': '#03A9F4',
-        '待加強':   '#FF9800', '不太好':   '#FF5722',
-        '需要加強': '#F44336',
-    };
+        const abilities = ['mem', 'rea', 'spa', 'att'];
+        const abilityNames = {
+            mem: t('pages.results.ability_names.mem'),
+            rea: t('pages.results.ability_names.rea'),
+            spa: t('pages.results.ability_names.spa'),
+            att: t('pages.results.ability_names.att'),
+        };
 
-    let html = `
-        <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:16px;">
-            ${t('pages.results.percentile_range', { range: ageRange })}
-        </div>
-        <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px;
-             margin-bottom:20px;font-size:0.88rem;">
-            <div>${t('pages.results.percentile_hint_1')}</div>
-            <div style="margin-top:6px;">${t('pages.results.percentile_hint_2')}</div>
-        </div>
-    `;
+        const colorMap = {
+            '最佳表現': '#4CAF50', '良好': '#8BC34A',
+            '正常':     '#2196F3', '接近正常': '#03A9F4',
+            '待加強':   '#FF9800', '不太好':   '#FF5722',
+            '需要加強': '#F44336',
+        };
 
-    abilities.forEach(ab => {
-        const pct      = getPercentile(ab);
-        const leadPct  = pct;
-        const isGood   = pct >= 60;
-        const lv       = computed[ab]?.level || '正常';
-        const barColor = colorMap[lv] || '#888';
+        let html = `
+            <div style="font-size:0.85rem;color:var(--light-text);margin-bottom:16px;">
+                ${t('pages.results.percentile_range', { range: ageRange })}
+            </div>
+            <div style="background:#e8f4fd;padding:12px 16px;border-radius:8px;
+                 margin-bottom:20px;font-size:0.88rem;">
+                <div>${t('pages.results.percentile_hint_1')}</div>
+                <div style="margin-top:6px;">${t('pages.results.percentile_hint_2')}</div>
+            </div>
+        `;
 
-        // ✅ Bug 9 修正：leadLabel 改用 t()
-        const leadLabel = leadPct <= 49
-            ? t('pages.results.percentile_barely')
-            : t('pages.results.percentile_lead');
+        abilities.forEach(ab => {
+            const pct      = getPercentile(ab);
+            const leadPct  = pct;
+            const isGood   = pct >= 70; // 基準線調為 70 分
+            const lv       = computed[ab]?.level || '正常';
+            const barColor = colorMap[lv] || '#888';
 
-        // ✅ Bug 9 修正：attNote 改用 t()
-        const attNote = (ab === 'att')
-            ? `<div style="font-size:0.78rem;color:var(--light-text);margin-top:4px;">
-                   ${t('pages.results.percentile_att_note')}
-               </div>`
-            : '';
+            const leadLabel = leadPct < 70
+                ? (t('pages.results.percentile_barely') || '僅領先')
+                : (t('pages.results.percentile_lead') || '領先同齡');
 
-        // ✅ Bug 9 修正：badge 改用 t()
-        const badge = isGood
-            ? `<span style="background:#e8f5e9;color:#2e7d32;
-                   padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
-                   ${t('pages.results.percentile_badge_good')}
-               </span>`
-            : `<span style="background:#fff3e0;color:#e65100;
-                   padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
-                   ${t('pages.results.percentile_badge_poor')}
-               </span>`;
+            const attNote = (ab === 'att')
+                ? `<div style="font-size:0.78rem;color:var(--light-text);margin-top:4px;">
+                       ${t('pages.results.percentile_att_note')}
+                   </div>`
+                : '';
 
-        html += `
-            <div style="margin-bottom:20px;padding:14px;
-                 background:white;border-radius:10px;
-                 box-shadow:0 2px 6px rgba(0,0,0,0.08);">
-                <div style="display:flex;justify-content:space-between;
-                     align-items:center;margin-bottom:8px;">
-                    <span style="font-weight:bold;">${abilityNames[ab]}</span>
-                    ${badge}
-                </div>
-                <div style="background:#f0f0f0;border-radius:20px;
-                     height:10px;overflow:hidden;margin-bottom:6px;">
-                    <div style="width:${pct}%;height:100%;
-                         background:${barColor};border-radius:20px;
-                         transition:width 0.8s ease;"></div>
-                </div>
-                <div style="font-size:0.85rem;color:var(--light-text);">
-                    ${t('pages.results.percentile_lead')}
-${t('pages.results.percentile_pct_people', { pct: leadPct })} 
-                </div>
-                ${attNote}
-            </div>`;
-    });
+            const badge = isGood
+                ? `<span style="background:#e8f5e9;color:#2e7d32;
+                       padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
+                       ${t('pages.results.percentile_badge_good') || '✓ 達標'}
+                   </span>`
+                : `<span style="background:#fff3e0;color:#e65100;
+                       padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
+                       ${t('pages.results.percentile_badge_poor') || '需加強'}
+                   </span>`;
 
-    container.innerHTML = html;
-},
-    // ==================== 歷史記錄 ====================
+            html += `
+                <div style="margin-bottom:20px;padding:14px;
+                     background:white;border-radius:10px;
+                     box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+                    <div style="display:flex;justify-content:space-between;
+                         align-items:center;margin-bottom:8px;">
+                        <span style="font-weight:bold;">${abilityNames[ab]}</span>
+                        ${badge}
+                    </div>
+                    <div style="background:#f0f0f0;border-radius:20px;
+                         height:10px;overflow:hidden;margin-bottom:6px;">
+                        <div style="width:${pct}%;height:100%;
+                             background:${barColor};border-radius:20px;
+                             transition:width 0.8s ease;"></div>
+                    </div>
+                    <div style="font-size:0.85rem;color:var(--light-text);">
+                        ${leadLabel} ${pct}% 的同齡受測者
+                    </div>
+                    ${attNote}
+                </div>`;
+        });
+
+        container.innerHTML = html;
+    },
+
     async loadAndDisplayHistory() {
         const container = document.getElementById('history-records');
         if (!container) { console.warn('⚠️ 找不到 history-records 容器'); return; }
-        container.innerHTML =
-            '<p style="text-align:center;color:var(--light-text);">⏳ 載入中...</p>';
+        container.innerHTML = '<p style="text-align:center;color:var(--light-text);">⏳ 載入中...</p>';
 
         try {
             let records = [];
 
             if (!this.isGuest && this.currentUser && fb) {
-                console.log('📡 從 Firebase 讀取歷史記錄, uid:', this.currentUser.uid);
                 const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
-                const q = fb.query(
-                    recordsRef,
-                    fb.orderByChild('timestamp'),
-                    fb.limitToLast(100)
-                );
+                const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(100));
                 const snapshot = await fb.get(q);
                 if (snapshot.exists()) {
                     records = Object.values(snapshot.val())
                         .sort((a, b) => b.timestamp - a.timestamp);
-                    console.log(`✅ 讀取到 ${records.length} 筆記錄`);
-                } else {
-                    console.log('ℹ️ Firebase 無歷史記錄');
-                }
+                } 
             } else {
-                console.log('📦 從 localStorage 讀取歷史記錄');
                 const raw = localStorage.getItem('guest_records');
                 if (raw) records = JSON.parse(raw).reverse();
             }
@@ -3003,9 +2794,6 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
                     <p style="color:var(--danger-color);margin-bottom:10px;">
                         ${t('pages.results.history_load_fail')}
                     </p>
-                    <p style="font-size:0.9rem;color:var(--light-text);">
-                        錯誤原因：${err.message || '未知錯誤'}
-                    </p>
                     <button class="btn btn-primary" style="margin-top:15px;"
                         onclick="app.loadAndDisplayHistory()">
                         ${t('pages.results.history_reload')}
@@ -3014,7 +2802,6 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
         }
     },
 
-// ==================== 渲染歷史表格 (修正舊記錄相容性與翻譯問題) ====================
    renderHistoryTable(records, targetContainer = null) {
        const container = targetContainer || document.getElementById('history-records');
        if (!container) return;
@@ -3053,16 +2840,12 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
 
        records.forEach((rec, idx) => {
            const isLatest = (idx === 0);
-           
-           // ✅ 關鍵修正：將所有新舊記錄都丟給 computeRkFromRecord 重新補齊缺失的 level 與 score
            const computed = this.computeRkFromRecord(rec);
 
            const cell = (ab) => {
                const lv  = computed[ab]?.level || '—';
                const bg  = levelColors[lv] || '#888';
                const sec = computed[ab]?.totalTime ?? '—';
-               
-               // ✅ 關鍵修正：如果是 '—' 就不要丟給 tLevel 翻譯，避免出現 pages.level_labels.—
                const displayLevel = (lv === '—') ? '—' : tLevel(lv);
 
                return `
@@ -3087,42 +2870,37 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
        container.innerHTML = html;
    },
 
-// ==================== 查看歷史 ====================
    async viewHistory() {
-    if (!this.currentUser) return;
-    try {
-        const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
-        const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(1)); // 只取最新一筆
-        const snapshot = await fb.get(q);
+        if (!this.currentUser) return;
+        try {
+            const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
+            const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(1));
+            const snapshot = await fb.get(q);
 
-        if (snapshot.exists()) {
-            const records = Object.values(snapshot.val());
-            const latestRecord = records[0];
-            
-            // ✅ 新增防呆：確保 userData 存在，避免 displayResults 渲染資訊時崩潰
-            if (!this.userData) {
-                this.userData = {
-                    nickname: latestRecord.nickname || '使用者',
-                    age: latestRecord.age || 40,
-                    gender: latestRecord.gender || 'male',
-                    deviceLabel: latestRecord.deviceLabel || DeviceDetector.getLabel(),
-                    deviceMult: latestRecord.deviceMult || 1.0
-                };
+            if (snapshot.exists()) {
+                const records = Object.values(snapshot.val());
+                const latestRecord = records[0];
+                
+                if (!this.userData) {
+                    this.userData = {
+                        nickname: latestRecord.nickname || '使用者',
+                        age: latestRecord.age || 40,
+                        gender: latestRecord.gender || 'male',
+                        deviceLabel: latestRecord.deviceLabel || DeviceDetector.getLabel(),
+                        deviceMult: latestRecord.deviceMult || 1.0
+                    };
+                }
+
+                const computed = this.computeRkFromRecord(latestRecord);
+                this.displayResults(computed); 
+            } else {
+                alert(t('pages.results.history_empty_title'));
             }
-
-            // 1. 利用現有的工具重算 Rk 與等級
-            const computed = this.computeRkFromRecord(latestRecord);
-            
-            // 2. 呼叫 displayResults，這會自動切換到結果頁並顯示雷達圖與建議
-            this.displayResults(computed); 
-        } else {
-            alert(t('pages.results.history_empty_title'));
+        } catch (err) {
+            console.error('❌ 讀取歷史失敗:', err);
         }
-    } catch (err) {
-        console.error('❌ 讀取歷史失敗:', err);
-    }
-},
-    // ==================== 重新開始 ====================
+    },
+
     restart() {
         if (!window.confirm(t('alerts.restart_confirm'))) return;
 
@@ -3142,22 +2920,18 @@ ${t('pages.results.percentile_pct_people', { pct: leadPct })}
         this.showPage('profile');
     }
 
-}; // ← app 物件結束
+};
 
-// ==================== 啟動 ====================
 window.app = app;
-// ✅ 最先執行：偵測語系並載入對應 JSON
-// ✅ 正確順序
 const detectedLang = detectLang();
 console.log(`🌐 偵測到語系：${detectedLang}`);
 await fetchLang(detectedLang);
-await fetchAdviceJSON();    // ← 補回這行！
+await fetchAdviceJSON();    
 app.init();
 
 })();
 </script>
 
-<!-- 全域錯誤捕捉 -->
 <script>
 window.addEventListener('error', e => {
     console.error('🔴 全域錯誤:', e.message, `${e.filename}:${e.lineno}`);
@@ -3170,5 +2944,3 @@ window.addEventListener('unhandledrejection', e => {
 
 </body>
 </html>
-
-
