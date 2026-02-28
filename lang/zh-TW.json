@@ -306,16 +306,6 @@
       "待加強": "待加強",
       "不太好": "不太好",
       "需要加強": "需要加強"
-      {
-  "pages": {
-    "result": {
-      "advice_best_prefix":    "您的強項：",
-      "advice_improve_prefix": "建議加強：",
-      "score_unit":            "分",
-      "advice_card_title":     "💡 給您的建議"
-    }
-  }
-}
 
     }
   }
