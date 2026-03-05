@@ -707,7 +707,7 @@ function getAdvice(age, ability, level) {
 
     try {
         const moduleA = json.module_a_performance?.[stageKey]?.[levelKey]
-            ?? '目前無對應建議，請尋求專業單位協助評估。';
+            ?? t('alerts.advice_fallback_detail');
 
         let moduleB = '';
         if (ability !== 'att' && WEAK_LEVELS.has(level)) {
@@ -838,7 +838,7 @@ const StimuliGenerator = {
     ],
     shapes: [
         {
-            name: 'circle', display: '圓形',
+            name: 'circle',
             draw(fill) {
                 const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 el.setAttribute('cx', '50'); el.setAttribute('cy', '50'); el.setAttribute('r', '38');
@@ -847,7 +847,7 @@ const StimuliGenerator = {
             }
         },
         {
-            name: 'square', display: '方形',
+            name: 'square',
             draw(fill) {
                 const el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                 el.setAttribute('x', '12'); el.setAttribute('y', '12');
@@ -857,7 +857,7 @@ const StimuliGenerator = {
             }
         },
         {
-            name: 'star', display: '星形',
+            name: 'star',
             draw(fill) {
                 const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                 el.setAttribute('points', '50,10 61,35 88,38 68,58 74,85 50,70 26,85 32,58 12,38 39,35');
@@ -866,7 +866,7 @@ const StimuliGenerator = {
             }
         },
         {
-            name: 'diamond', display: '菱形',
+            name: 'diamond',
             draw(fill) {
                 const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                 el.setAttribute('points', '50,8 92,50 50,92 8,50');
@@ -875,7 +875,7 @@ const StimuliGenerator = {
             }
         },
         {
-            name: 'triangle', display: '三角形',
+            name: 'triangle',
             draw(fill) {
                 const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                 el.setAttribute('points', '50,8 94,92 6,92');
@@ -2309,6 +2309,9 @@ initYearSelector() {
         const computed   = {};
         const calcScore  = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 100)));
 
+        // 繼承紀錄的原始時間
+        computed.date = record.date || (record.timestamp ? new Date(record.timestamp).toLocaleString() : '');
+
         const memTotalTime = record.results?.mem?.totalTime ?? 0;
         const memNorm      = CONFIG.BASE_RK.mem * deviceMult;
         const memRk        = record.results?.mem?.Rk ?? parseFloat((memTotalTime / memNorm).toFixed(3));
@@ -2381,7 +2384,8 @@ initYearSelector() {
         if (userInfoEl) userInfoEl.textContent = t('pages.results.user_info', { nickname: this.userData.nickname, age: this.userData.age });
 
         const testTimeEl = document.getElementById('result-datetime');
-        if (testTimeEl) testTimeEl.textContent = t('pages.results.test_time', { datetime: new Date().toLocaleString() });
+        const displayDate = computed.date || new Date().toLocaleString();
+        if (testTimeEl) testTimeEl.textContent = t('pages.results.test_time', { datetime: displayDate });
 
         this.renderAbilityResults(computed);
         this.renderRadarChart(computed, this.userData.age); 
@@ -2481,10 +2485,10 @@ initYearSelector() {
            : '';
 
         const dirs = [
-            { label: t('pages.results.radar_mem_label') || '記憶', angle: -90, score: memScore },
-            { label: t('pages.results.radar_rea_label') || '反應', angle:   0, score: reaScore },
-            { label: t('pages.results.radar_spa_label') || '空間', angle:  90, score: spaScore },
-            { label: t('pages.results.radar_att_label') || '專注', angle: 180, score: focScore },
+            { label: t('pages.results.radar_mem_label'), angle: -90, score: memScore },
+            { label: t('pages.results.radar_rea_label'), angle:   0, score: reaScore },
+            { label: t('pages.results.radar_spa_label'), angle:  90, score: spaScore },
+            { label: t('pages.results.radar_att_label'), angle: 180, score: focScore },
         ];
 
         const cx = 150, cy = 150, R = 100;
@@ -2571,19 +2575,20 @@ initYearSelector() {
         `;
     },
 
+    getFeedbackStage(age) {
+        if (age >= 5  && age <= 7)  return 'stage_1';
+        if (age >= 8  && age <= 12) return 'stage_2';
+        if (age >= 13 && age <= 26) return 'stage_3';
+        if (age >= 27 && age <= 36) return 'stage_4';
+        if (age >= 37 && age <= 65) return 'stage_5';
+        if (age >= 66 && age <= 79) return 'stage_6';
+        if (age >= 80 && age <= 89) return 'stage_7';
+        return 'stage_8';
+    },
+
     renderRecommendations(computed, adviceData) {
         const container = document.getElementById('recommendations');
         if (!container) return;
-        
-        const nameMap = {
-            mem: t('pages.results.ability_names.mem') || '記憶力',
-            rea: t('pages.results.ability_names.rea') || '反應力',
-            spa: t('pages.results.ability_names.spa') || '空間力'
-        };
-        const colorMap = {
-            '最佳表現': '#4CAF50', '良好': '#8BC34A', '正常': '#2196F3',
-            '接近正常': '#03A9F4', '待加強': '#FF9800', '不太好': '#FF5722', '需要加強': '#F44336',
-        };
 
         const scoreOrder = ['mem', 'rea', 'spa']
             .map(ab => ({ ab, score: computed[ab]?.score ?? 100 }))
@@ -2593,73 +2598,35 @@ initYearSelector() {
         const worst      = scoreOrder[scoreOrder.length - 1];
         
         const bestAb     = best.ab;
-        const bestName   = nameMap[bestAb];
-        const bestLevel  = computed[bestAb]?.level || '正常';
-        
         const worstAb    = worst.ab;
-        const worstName  = nameMap[worstAb];
         const worstLevel = computed[worstAb]?.level || '正常';
-        const worstColor = colorMap[worstLevel] || '#888';
-
         const age = this.userData?.age || 40;
 
-        // 產生正面鼓勵文字
-        const getPositiveFeedback = (age, ability) => {
-            let stage = 'stage_2';
-            if (age <= 26) stage = 'stage_1';
-            else if (age >= 60) stage = 'stage_3';
+        // 取得專為肯定用所設計的 8 階段判別器
+        const stage = this.getFeedbackStage(age);
 
-            const texts = {
-                mem: {
-                    stage_1: '你的記憶力非常出色！在學習新知和吸收資訊上擁有極大的優勢，這能幫助你在學業或技能培養上事半功倍。',
-                    stage_2: '您的記憶力保養得非常好！在工作上能精準記住重要細節與待辦事項，是您高效率與專業表現的重要基石。',
-                    stage_3: '您的記憶力令人驚豔！能清晰記住生活大小事，這代表您的大腦狀態非常年輕，請繼續保持這份活力。'
-                },
-                rea: {
-                    stage_1: '你的反應速度極佳！這代表你的神經傳導非常敏捷，不論是在運動表現或面對突發狀況，都能迅速做出正確判斷。',
-                    stage_2: '您的反應力相當敏銳！這讓您在面對工作壓力或多工處理時，能快速切換思緒並做出決策，展現絕佳的應變能力。',
-                    stage_3: '您的反應力保養得很棒！動作敏捷且思路清晰，這不僅讓日常起居更安全，也展現了您充滿活力的一面。'
-                },
-                spa: {
-                    stage_1: '你的空間能力非常優異！這代表你擁有極佳的邏輯與立體想像力，在數理、設計或方向辨識上具有很大的天賦。',
-                    stage_2: '您的空間感知能力非常好！這不僅讓您在駕駛或認路時得心應手，也反映出您在系統性思考與規劃上的優勢。',
-                    stage_3: '您的空間方向感十分敏銳！這代表您大腦的立體建構能力依然活躍，出門在外方向感極佳，請繼續保持。'
-                }
-            };
-            return texts[ability]?.[stage] || '您的這項能力表現非常優異！請繼續保持這份活力與健康。';
-        };
-
-        const positiveText = getPositiveFeedback(age, bestAb);
+        // 從 JSON 獲取對應的陣列資料並隨機三選一
+        const feedbackArr = ta(`pages.results.positive_feedback.${bestAb}.${stage}`);
+        let positiveText = '';
+        if (feedbackArr && feedbackArr.length > 0) {
+            positiveText = feedbackArr[Math.floor(Math.random() * feedbackArr.length)];
+        } else {
+            // 如果忘記設定 JSON 的備援文字
+            positiveText = t('pages.results.positive_feedback_fallback') || '您的這項能力表現非常優異！請繼續保持這份活力與健康。';
+        }
+        
+        // 抓取 advice.json 給予針對最弱項目的建議
         const worstAdviceText = getAdvice(age, worstAb, worstLevel);
+        
+        // 從 i18n JSON 取得呼籲與鼓勵結尾
+        const closingText = t('pages.results.recommend_closing');
 
+        // 自然段落排版
         container.innerHTML = `
-            <div style="margin-bottom:20px; padding:15px; background:#e8f5e9; border-left:4px solid #4CAF50; border-radius:8px;">
-                <div style="font-size:0.95rem; color:#2e7d32; margin-bottom:6px; font-weight:bold;">
-                    🌟 您的優勢：${bestName}（${tLevel(bestLevel)}）
-                </div>
-                <div style="font-size:0.95rem; color:#333; line-height:1.6;">
-                    ${positiveText}
-                </div>
-            </div>
-
-            <div style="margin-bottom:20px;">
-                <div style="font-size:0.9rem; color:var(--light-text); margin-bottom:8px;">
-                    當然，大腦各項能力是可以平衡發展的。針對本次稍微落後的項目，我們提供以下建議方針：
-                </div>
-                <strong style="color:${worstColor}; font-size:1rem;">
-                    🔍 需要關注：${worstName}（${tLevel(worstLevel)}）
-                </strong>
-            </div>
-
-            <div style="line-height:1.9; padding:0 10px 20px; white-space:pre-line;">
-                ${worstAdviceText}
-            </div>
-
-            <div style="background:#f0f4ff;padding:16px;border-radius:10px;
-                 font-size:0.9rem;color:#444;line-height:1.8;border-left:4px solid #667eea;">
-                <p>${t('pages.results.recommend_closing_1') || '大腦是可塑的！透過規律練習，各項認知能力都能持續進步。'}</p>
-                <p style="margin-top:10px;">${t('pages.results.recommend_closing_2') || '建議持續接受好的新刺激，持續 4 週後再次測驗，觀察自己的成長。'}</p>
-                <p style="margin-top:10px;font-weight:bold;">${t('pages.results.recommend_closing_3') || '💪 加油！您的進步從今天開始。'}</p>
+            <div style="font-size:1.05rem; color:var(--text-color); line-height:1.9; text-align:left; padding: 10px 15px;">
+                <p style="margin-bottom:18px;">${positiveText}</p>
+                <p style="margin-bottom:18px; white-space:pre-line;">${worstAdviceText}</p>
+                <p style="margin-bottom:0; font-weight:bold;">${closingText}</p>
             </div>
         `;
     },
@@ -2709,8 +2676,8 @@ initYearSelector() {
             const barColor = colorMap[lv] || '#888';
 
             const leadLabel = leadPct < 70
-                ? (t('pages.results.percentile_barely') || '僅領先')
-                : (t('pages.results.percentile_lead') || '領先同齡');
+                ? t('pages.results.percentile_barely')
+                : t('pages.results.percentile_lead');
 
             const attNote = (ab === 'att')
                 ? `<div style="font-size:0.78rem;color:var(--light-text);margin-top:4px;">
@@ -2721,11 +2688,11 @@ initYearSelector() {
             const badge = isGood
                 ? `<span style="background:#e8f5e9;color:#2e7d32;
                        padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
-                       ${t('pages.results.percentile_badge_good') || '✓ 達標'}
+                       ${t('pages.results.percentile_badge_good')}
                    </span>`
                 : `<span style="background:#fff3e0;color:#e65100;
                        padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">
-                       ${t('pages.results.percentile_badge_poor') || '需加強'}
+                       ${t('pages.results.percentile_badge_poor')}
                    </span>`;
 
             html += `
