@@ -2133,11 +2133,20 @@ initYearSelector() {
     async calculateResults() {
         const results     = this.testState.results;
         const age         = this.userData.age;
-        const deviceMult  = DeviceDetector.getNormMultiplier();
         const deviceLabel = this.userData?.deviceLabel || DeviceDetector.getLabel();
+        const isTouch     = DeviceDetector.isTouchDevice();
+
+        // 🌟 【獨立比例設定區】
+        // 電腦預設皆為 1.0。數值 > 1 代表放寬標準（分數變高）；數值 < 1 代表收緊標準（分數變低）
+        const mults = {
+            mem: isTouch ? 1.15 : 1.0,  // 記憶力：手機平板放寬 15%
+            rea: isTouch ? 1.15 : 1.0,  // 反應力：手機平板放寬 15%
+            spa: isTouch ? 1.15 : 1.0,  // 空間力：手機平板放寬 15%
+            seq: isTouch ? 0.70 : 1.0   // 數字順序：手機平板收緊 30% (因觸控速度較快)
+        };
 
         this.userData.deviceLabel = deviceLabel;
-        this.userData.deviceMult  = deviceMult;
+        this.userData.deviceMults = mults; // 將獨立比例存入 userData
 
         const final = {};
 
@@ -2147,7 +2156,7 @@ initYearSelector() {
         {
             const ab        = 'mem';
             const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-            const norm  = CONFIG.BASE_RK.mem * deviceMult;
+            const norm  = CONFIG.BASE_RK.mem * mults.mem;
             const Rk    = totalTime / norm;
             const score = calcScore(Rk);
             final[ab]   = {
@@ -2164,7 +2173,7 @@ initYearSelector() {
         {
             const ab        = 'spa';
             const totalTime = results[ab].reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-            const norm  = getReaSpaBaseRk(age, ab) * deviceMult;
+            const norm  = getReaSpaBaseRk(age, ab) * mults.spa;
             const Rk    = totalTime / norm;
             const score = calcScore(Rk);
             final[ab]   = {
@@ -2179,7 +2188,7 @@ initYearSelector() {
         }
 
         const reaTotalTime = results.rea.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-        const reaNorm = getReaSpaBaseRk(age, 'rea') * deviceMult;
+        const reaNorm = getReaSpaBaseRk(age, 'rea') * mults.rea;
         const reaRk   = reaTotalTime / reaNorm;
 
         const seqTotalTime = results.seq.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
@@ -2189,7 +2198,7 @@ initYearSelector() {
         const seqDeviceMult = DeviceDetector.isTouchDevice() ? 0.7 : 1.0;
         
         // 將原本的 deviceMult 替換為 seqDeviceMult
-        const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * seqDeviceMult;
+        const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * mults.seq;
         const seqRk   = seqTotalTime / seqNorm;
 
         const combinedReaRk = parseFloat(((reaRk + seqRk) / 2).toFixed(3));
@@ -2240,12 +2249,12 @@ initYearSelector() {
         
         const record = {
             uid:        this.currentUser ? this.currentUser.uid : 'guest',
-            nickname:  this.userData.nickname,
+            nickname:   this.userData.nickname,
             age:        this.userData.age,
             gender:     this.userData.gender,
             date:       new Date().toLocaleString(),
             timestamp:  Date.now(), 
-            deviceMult: this.userData.deviceMult || 1.0,
+            deviceMults: this.userData.deviceMults || { mem: 1, rea: 1, spa: 1, seq: 1 }, // 儲存各別比例
             results: {
                 mem: computed.mem,
                 att: computed.att,
@@ -2312,7 +2321,15 @@ initYearSelector() {
 
     computeRkFromRecord(record) {
         const age        = record.age;
-        const deviceMult = record.deviceMult || 1.0;
+        
+        // 兼容舊資料：優先讀取新版的獨立比例，如果舊記錄沒有，就沿用原本的單一比例
+        const mults = record.deviceMults || {
+            mem: record.deviceMult || 1.0,
+            rea: record.deviceMult || 1.0,
+            spa: record.deviceMult || 1.0,
+            seq: record.deviceMult || 1.0
+        };
+
         const computed   = {};
         const calcScore  = (Rk) => Math.min(100, Math.max(0, Math.round(100 - (Rk - 0.7) * 100)));
 
@@ -2320,7 +2337,7 @@ initYearSelector() {
         computed.date = record.date || (record.timestamp ? new Date(record.timestamp).toLocaleString() : '');
 
         const memTotalTime = record.results?.mem?.totalTime ?? 0;
-        const memNorm      = CONFIG.BASE_RK.mem * deviceMult;
+        * mults.mem;
         const memRk        = record.results?.mem?.Rk ?? parseFloat((memTotalTime / memNorm).toFixed(3));
         const memScore     = record.results?.mem?.score ?? calcScore(memRk);
         computed.mem = {
@@ -2334,7 +2351,7 @@ initYearSelector() {
         };
 
         const spaTotalTime = record.results?.spa?.totalTime ?? 0;
-        const spaNorm      = getReaSpaBaseRk(age, 'spa') * deviceMult;
+        * mults.spa;
         const spaRk        = record.results?.spa?.Rk ?? parseFloat((spaTotalTime / spaNorm).toFixed(3));
         const spaScore     = record.results?.spa?.score ?? calcScore(spaRk);
         computed.spa = {
@@ -2353,7 +2370,7 @@ initYearSelector() {
             if (reaData.reaRk != null && reaData.seqRk != null) finalRk = parseFloat(((reaData.reaRk + reaData.seqRk) / 2).toFixed(3));
             else {
                 const totalTime = reaData.totalTime ?? 0;
-                const norm      = getReaSpaBaseRk(age, 'rea') * deviceMult;
+                * mults.rea;
                 finalRk         = parseFloat((totalTime / norm).toFixed(3));
             }
         }
