@@ -2586,7 +2586,7 @@ initYearSelector() {
         return 'stage_8';
     },
 
-    renderRecommendations(computed, adviceData) {
+renderRecommendations(computed, adviceData) {
         const container = document.getElementById('recommendations');
         if (!container) return;
 
@@ -2605,13 +2605,18 @@ initYearSelector() {
         // 取得專為肯定用所設計的 8 階段判別器
         const stage = this.getFeedbackStage(age);
 
-        // 從 JSON 獲取對應的陣列資料並隨機三選一
-        const feedbackArr = ta(`pages.results.positive_feedback.${bestAb}.${stage}`);
+        // ⚠️【修改重點】：改從 adviceData (也就是 advice.json) 讀取，而不是用 ta()
+        const feedbackData = adviceData?.positive_feedback?.[bestAb]?.[stage];
+        
         let positiveText = '';
-        if (feedbackArr && feedbackArr.length > 0) {
-            positiveText = feedbackArr[Math.floor(Math.random() * feedbackArr.length)];
+        if (Array.isArray(feedbackData) && feedbackData.length > 0) {
+            // 如果抓到的是陣列，隨機三選一
+            positiveText = feedbackData[Math.floor(Math.random() * feedbackData.length)];
+        } else if (typeof feedbackData === 'string') {
+            // 如果抓到的是一般字串，直接使用
+            positiveText = feedbackData;
         } else {
-            // 如果忘記設定 JSON 的備援文字
+            // 如果 JSON 沒寫好或找不到，才顯示備用語系文字
             positiveText = t('pages.results.positive_feedback_fallback') || '您的這項能力表現非常優異！請繼續保持這份活力與健康。';
         }
         
