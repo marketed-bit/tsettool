@@ -2183,7 +2183,13 @@ initYearSelector() {
         const reaRk   = reaTotalTime / reaNorm;
 
         const seqTotalTime = results.seq.reduce((s, a) => s + (a.finalTime || a.time || 0), 0);
-        const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * deviceMult;
+        
+        // 【新增】針對數字順序 (seq) 的專屬設備加成
+        // 如果是觸控設備（手機/平板）為 0.7，電腦為 1.0
+        const seqDeviceMult = DeviceDetector.isTouchDevice() ? 0.7 : 1.0;
+        
+        // 將原本的 deviceMult 替換為 seqDeviceMult
+        const seqNorm = CONFIG.BASE_RK.seq * getAgeNormMultiplier(age) * seqDeviceMult;
         const seqRk   = seqTotalTime / seqNorm;
 
         const combinedReaRk = parseFloat(((reaRk + seqRk) / 2).toFixed(3));
