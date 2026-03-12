@@ -2838,11 +2838,23 @@ initYearSelector() {
    },
 
    async viewHistory() {
-        if (!this.currentUser) return;
+        if (!this.currentUser) {
+            alert('請先登入！');
+            return;
+        }
+        
+        const btn = document.getElementById('view-history-btn');
+        const originalText = btn ? btn.textContent : '📊 查看歷史成績';
+        
         try {
+            // 點擊時讓按鈕顯示讀取中，給予視覺回饋
+            if (btn) btn.textContent = '⏳ 讀取中...';
+
             const recordsRef = fb.ref(fb.database, `records/${this.currentUser.uid}`);
             const q = fb.query(recordsRef, fb.orderByChild('timestamp'), fb.limitToLast(1));
             const snapshot = await fb.get(q);
+
+            if (btn) btn.textContent = originalText; // 讀取完畢恢復文字
 
             if (snapshot.exists()) {
                 const records = Object.values(snapshot.val());
@@ -2861,10 +2873,14 @@ initYearSelector() {
                 const computed = this.computeRkFromRecord(latestRecord);
                 this.displayResults(computed); 
             } else {
-                alert(t('pages.results.history_empty_title'));
+                // 加入防呆，若翻譯檔沒抓到，直接顯示預設文字
+                alert(t('pages.results.history_empty_title') || '📭 您目前尚無測驗記錄，請先完成一次測驗！');
             }
         } catch (err) {
+            if (btn) btn.textContent = originalText; // 發生錯誤時恢復文字
             console.error('❌ 讀取歷史失敗:', err);
+            // 將錯誤訊息 Alert 出來，不再是沒有反應
+            alert('讀取歷史成績失敗！\n錯誤原因：' + err.message + '\n\n如果是 Permission denied，請檢查 Firebase Database 的 Rules 設定是否正確發布。');
         }
     },
 
