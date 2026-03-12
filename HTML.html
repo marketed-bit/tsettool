@@ -706,7 +706,7 @@ function getAdvice(age, ability, level) {
     const abilityKey = ABILITY_B_KEY_MAP[ability] || ability;
 
     try {
-        const moduleA = json.module_a_performance?.[stageKey]?.[levelKey]
+        const moduleA = json.module_a_performance?.[abilityKey]?.[stageKey]?.[levelKey]
             ?? t('alerts.advice_fallback_detail');
 
         let moduleB = '';
