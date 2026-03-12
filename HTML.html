@@ -2337,7 +2337,7 @@ initYearSelector() {
         computed.date = record.date || (record.timestamp ? new Date(record.timestamp).toLocaleString() : '');
 
         const memTotalTime = record.results?.mem?.totalTime ?? 0;
-        * mults.mem;
+        const memNorm      = CONFIG.BASE_RK.mem * mults.mem; // 👈 已修正這裡
         const memRk        = record.results?.mem?.Rk ?? parseFloat((memTotalTime / memNorm).toFixed(3));
         const memScore     = record.results?.mem?.score ?? calcScore(memRk);
         computed.mem = {
@@ -2351,7 +2351,7 @@ initYearSelector() {
         };
 
         const spaTotalTime = record.results?.spa?.totalTime ?? 0;
-        * mults.spa;
+        const spaNorm      = getReaSpaBaseRk(age, 'spa') * mults.spa; // 👈 已修正這裡
         const spaRk        = record.results?.spa?.Rk ?? parseFloat((spaTotalTime / spaNorm).toFixed(3));
         const spaScore     = record.results?.spa?.score ?? calcScore(spaRk);
         computed.spa = {
@@ -2370,7 +2370,7 @@ initYearSelector() {
             if (reaData.reaRk != null && reaData.seqRk != null) finalRk = parseFloat(((reaData.reaRk + reaData.seqRk) / 2).toFixed(3));
             else {
                 const totalTime = reaData.totalTime ?? 0;
-                * mults.rea;
+                const norm      = getReaSpaBaseRk(age, 'rea') * mults.rea; // 👈 已修正這裡
                 finalRk         = parseFloat((totalTime / norm).toFixed(3));
             }
         }
