@@ -1,61 +1,325 @@
 {
   "module_a_performance": {
-    "stage_1_foundation": {
-      "L1_best": "Your cognitive ability shows an excellent foundation. Your information processing is fast and your learning efficiency is high. Keep up this advantage and continue to challenge yourself with more difficult tasks.",
-      "L2_good": "Overall good results, showing great mental flexibility. You can easily handle daily learning and problem-solving. Maintain this momentum.",
-      "L3_normal": "Your cognitive function is at the standard level for your age. Your current foundation is stable. Try adding slightly more complex tasks to further improve your abilities.",
-      "L4_near_normal": "Basic cognitive functions are maintained, but your performance might drop when faced with heavy information loads or fatigue. Proper rest and regular brain training are recommended.",
-      "L5_needs_improvement": "There is a slight delay in information processing in some cognitive areas. You might feel easily fatigued during tasks requiring long focus. Start by concentrating on one task at a time without rushing.",
-      "L6_poor": "You seem to be feeling somewhat burdened by cognitive tasks right now. Avoid multitasking, break information down into smaller pieces, and ensure you get adequate sleep and brain nutrition.",
-      "L7_needs_much_improvement": "Your cognitive response has decreased significantly. This could be due to stress, fatigue, or lack of sleep. Ensure you get plenty of rest first, and consider a professional evaluation if needed."
+    "mem": {
+      "stage_1_foundation": {
+        "L1_best": "Excellent! Your memory shows top-tier performance, and your brain's absorption capacity is superb. Please maintain your current good sleep, diet, and exercise habits. You are doing great and do not need professional help; just keep up this vibrant lifestyle!",
+        "L2_good": "Your memory is quite outstanding, and your brain is in a very healthy developmental state. Please continue your current lifestyle and healthy habits. There is no need to seek professional help when you are already doing so well; maintaining the status quo is the best care.",
+        "L3_normal": "Your memory is steady, handling your current studies or daily life with ease. You can try some new challenges or memorize new knowledge to give your brain fresh stimuli and maintain this stability!",
+        "L4_near_normal": "Your memory is on the borderline of the standard. You might occasionally feel a bit stuck when memorizing vocabulary or studying. Don't worry, this is not fixed. By adjusting your routine and exercising more, your condition will gradually improve and get back on track.",
+        "L5_needs_improvement": "Recently in your studies, do you often forget a word right after memorizing it? Or blank out during an exam on something you've studied? Rest assured, this is not an unsolvable problem! A young brain is highly plastic and can definitely improve with the right approach. We recommend seeking professional help (e.g., Ai-Nao Center, Wu Feng-Yue's Body-Brain Vitality) to regain your brain's vitality.",
+        "L6_poor": "The test shows your memory is lagging slightly, which might cause severe frustration in your studies. Please don't be discouraged; your current state isn't unsolvable, it just lacks the right stimuli. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality. Through training, you can absolutely improve.",
+        "L7_needs_much_improvement": "Your current memory capacity is somewhat deficient, which is already affecting your learning efficiency. Please understand that this is not an unsolvable problem! To effectively improve the situation, be sure to seek intervention from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality, letting a coach guide you step by step to regain control."
+      },
+      "stage_2_transition": {
+        "L1_best": "Congratulations! Your memory shows top-tier performance, and you can definitely handle work and life with ease. Please be sure to maintain your excellent routine and habits. Your brain is in great shape, so you don't need to deliberately seek professional help—just keep it up!",
+        "L2_good": "Your memory is quite outstanding, and your brain's health is excellent. Please maintain your current lifestyle; you are already on the right track and don't need to spend extra time seeking professional help. Maintaining the status quo is the best care.",
+        "L3_normal": "Your memory is within a stable, healthy standard. If you want to make your thinking even more agile, try adding small challenges to your life, like learning a new skill, to give your brain fresh stimuli.",
+        "L4_near_normal": "Your memory is just on the passing borderline, and occasionally your mind might feel 'stuck', forgetting things right after you turn around. Please note this is just your brain reminding you to take care of it. By adjusting sleep or exercising regularly, your condition will gradually improve.",
+        "L5_needs_improvement": "Have you recently found yourself walking into a room and forgetting what you went there for? Or forgetting a new client's name right after meeting them? Sometimes the words are on the tip of your tongue but you can't recall them. Rest assured, this is not an unsolvable problem, and you can absolutely improve with the right approach! We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to regain your brain's vitality.",
+        "L6_poor": "The test shows clear signs of memory decline, such as frequently forgetting important tasks. Please don't be discouraged; your current state isn't unsolvable, but it does require systematic intervention. We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality as soon as possible. The earlier you train, the better the results.",
+        "L7_needs_much_improvement": "Your memory capacity is currently somewhat deficient and may already be affecting your work efficiency. Do you often forget things in your daily life? This is not an unsolvable problem; neural connections in the brain can be rebuilt. Please be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to elevate yourself."
+      },
+      "stage_3_senior": {
+        "L1_best": "You've maintained your brain brilliantly! The memory test shows excellent capability, and your brain functions very smoothly. Please maintain your current good sleep, diet, and exercise habits. You do not need to seek professional help; just keep up this vibrant state!",
+        "L2_good": "Your memory is quite outstanding, and your brain health is excellent. Please continue your current lifestyle. You are already doing a great job and do not need professional help. Maintaining the status quo is the best care.",
+        "L3_normal": "Your memory is stable and healthy. Please maintain an active social life and daily habits. Participate in activities, stay curious, and give your brain fresh stimuli to keep this stability!",
+        "L4_near_normal": "Your memory is on the borderline of the standard. Occasionally forgetting where you put things is a normal reminder. This is not unsolvable; through approaches like staying mentally active and exercising more, your condition will gradually improve, maintaining your quality of life.",
+        "L5_needs_improvement": "Do you recently feel like you often can't find your keys or glasses? Or frequently repeat the same questions? Rest assured, this is not unsolvable; the brain can be activated and improved! We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality, letting experts plan suitable training for you.",
+        "L6_poor": "The test shows signs of memory degeneration, and you might have even forgotten something burning on the stove. Please don't be discouraged; your current state isn't unsolvable. With the right approach and exercise, it can definitely improve. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to maintain your brain early.",
+        "L7_needs_much_improvement": "Your current memory state is somewhat deficient, and frequent forgetting might cause distress and insecurity in your daily life. Please understand that this is not unsolvable; the brain still has plasticity. To effectively improve the situation, be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to gradually regain the peace of mind of self-care."
+      }
     },
-    "stage_2_transition": {
-      "L1_best": "You are maintaining fantastic cognitive vitality! Your information processing and logical thinking are outstanding, making them strong assets in your work and life.",
-      "L2_good": "You are maintaining high levels of cognitive flexibility and efficiency. You handle daily work and multitasking well. Continue to keep a balanced lifestyle.",
-      "L3_normal": "Your cognitive function is healthy and stable, well within the normal range of natural age-related changes. Continuously learning new skills will help keep your brain youthful.",
-      "L4_near_normal": "You might occasionally feel like you 'forget things easily' or 'react a bit slowly' at work. This is a sign of an overloaded brain. Pay attention to stress management and relaxation.",
-      "L5_needs_improvement": "Have you noticed a drop in concentration or mental blocks recently? Your cognitive functions are signaling fatigue. Adjust your work pace and make time for effective brain rest.",
-      "L6_poor": "Cognitive decline may be starting to affect your daily life and work efficiency. It is highly recommended to review your brain training habits and incorporate a regular lifestyle and exercise.",
-      "L7_needs_much_improvement": "There is a noticeable decline in cognitive function. This may be influenced by health conditions or excessive stress. Improve your lifestyle habits early and consult a medical professional if necessary."
+    "rea": {
+      "stage_1_foundation": {
+        "L1_best": "Awesome! Your reaction shows top-tier performance, and your neural transmission is extremely agile. Please maintain your current good sleep, diet, and exercise habits. You are doing great and do not need professional help!",
+        "L2_good": "Your reaction is quite outstanding, and the connection between your brain and body is in a very healthy state. Please continue your current lifestyle; maintaining the status quo is the best care.",
+        "L3_normal": "Your reaction is steady, handling current sports or games with ease. You can try some ball sports to give your brain fresh stimuli and maintain this stability!",
+        "L4_near_normal": "Your reaction is on the borderline of the standard, and occasionally you might feel a bit slow. Don't worry, this is not fixed. By adjusting your routine and increasing cardio exercises, your condition will gradually improve.",
+        "L5_needs_improvement": "Recently in gym class or while playing games, do you often feel you can't catch the ball or are always half a beat slow? Can't keep up with your classmates' pace? Rest assured, this is not unsolvable! A young brain is highly plastic. We recommend seeking professional help (e.g., Ai-Nao Center, Wu Feng-Yue's Body-Brain Vitality) to regain your agility.",
+        "L6_poor": "The test shows your reaction is lagging slightly, which might frustrate you in situations requiring quick judgment. But don't be discouraged; your current state isn't unsolvable. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality. Through training, you can absolutely improve.",
+        "L7_needs_much_improvement": "Your current reaction capacity is somewhat deficient, which may have already affected your physical coordination. Please understand that this is not an unsolvable problem! To effectively improve, be sure to seek intervention from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality, letting a coach help you regain control."
+      },
+      "stage_2_transition": {
+        "L1_best": "Congratulations! Your reaction shows top-tier performance, and you can definitely adapt quickly to unexpected situations. Please maintain your excellent routine and habits. You don't need to deliberately seek professional help—just keep it up!",
+        "L2_good": "Your reaction is quite outstanding, and your neural transmission health is excellent. Please continue your current lifestyle; you don't need to spend extra time seeking professional help. Maintaining the status quo is the best care.",
+        "L3_normal": "Your reaction is within a stable, healthy standard. If you want your adaptability to be even more agile, try maintaining regular aerobic exercise every week to give your brain and body fresh stimuli.",
+        "L4_near_normal": "Your reaction is just on the passing borderline, and occasionally your thoughts might feel stuck. Please note this is just your brain reminding you to take care of it. By adjusting sleep or exercising regularly, your condition will gradually improve.",
+        "L5_needs_improvement": "Do you recently feel anxious facing sudden situations while driving or riding? Or unable to quickly switch tasks at work, with your mind easily getting stuck? Rest assured, this is not unsolvable! We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to regain your sharp reaction.",
+        "L6_poor": "The test shows clear signs of your reaction becoming sluggish. Please don't be discouraged; your current state isn't unsolvable, but it does require systematic intervention. We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality as soon as possible.",
+        "L7_needs_much_improvement": "Your reaction capacity is currently somewhat deficient, which may pose potential risks to daily safety (like driving or avoiding hazards). This is not an unsolvable problem; neural connections can be rebuilt. Please be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to elevate yourself."
+      },
+      "stage_3_senior": {
+        "L1_best": "You've maintained your brain brilliantly! The reaction test shows excellent capability, and you are still very agile. Please maintain your current good sleep, diet, and exercise habits. You do not need to seek professional help; just keep it up!",
+        "L2_good": "Your reaction is quite outstanding, and your neurological health is excellent. Please continue your current lifestyle. You are doing a great job; maintaining the status quo is the best care.",
+        "L3_normal": "Your reaction is stable and healthy. Please maintain habits like walking or light exercise to keep physical flexibility and give your brain fresh stimuli to keep this stability!",
+        "L4_near_normal": "Your reaction is on the borderline of the standard, and occasional slight sluggishness is a normal reminder. This is not unsolvable; by stretching and staying active, your condition will gradually improve, maintaining your quality of life.",
+        "L5_needs_improvement": "Do you recently feel prone to tripping while walking? Or often fail to catch dropping items in time? Need a moment to think before responding to questions? Rest assured, this is not unsolvable! We recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to plan fall-prevention and reaction training.",
+        "L6_poor": "The test shows signs of reaction degeneration, with movements becoming somewhat stiff. Please don't be discouraged; your current state isn't unsolvable. With the right approach and exercise, it can definitely improve. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to maintain your brain early.",
+        "L7_needs_much_improvement": "Your current reaction state is somewhat deficient, making movement strenuous or leaving you prone to falling. Please understand that this is not unsolvable; neuromusculature still has plasticity. To effectively improve the situation and ensure safety, be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality."
+      }
     },
-    "stage_3_senior": {
-      "L1_best": "Your brain health is top-tier among your peers! You maintain very clear thinking and memory. Keep enjoying an active lifestyle.",
-      "L2_good": "Your brain function is in good condition, helping you maintain independence and vitality in your daily life. Continue to value social connections and provide good stimulation for your brain.",
-      "L3_normal": "Your cognitive function is natural for your age. There are no issues with your daily life. Maintain your current abilities through brain training games and hobbies.",
-      "L4_near_normal": "You might recently feel that you misplace items or can't recall words quickly. This is a common change with aging, but conscious brain training can bring improvements.",
-      "L5_needs_improvement": "A slight decline in cognitive function is becoming noticeable. Try using memos in your daily life and consciously increase activities that use your brain (like reading or puzzles).",
-      "L6_poor": "You might be facing increasing difficulties with memory or spatial awareness. We recommend communicating more with family and doing regular cognitive training in a safe environment.",
-      "L7_needs_much_improvement": "There is a significant decline in cognitive function, and its impact on daily life is a concern. We strongly recommend early consultation with a specialist and creating a proper care plan."
+    "spa": {
+      "stage_1_foundation": {
+        "L1_best": "Awesome! Your spatial ability shows top-tier performance, indicating excellent 3D imagination. Please maintain your current habits. You are doing great and do not need professional help!",
+        "L2_good": "Your spatial ability is quite outstanding, and your brain's perception of geometry and direction is very healthy. Please continue your current lifestyle; maintaining the status quo is the best care.",
+        "L3_normal": "Your spatial ability is steady. You can try puzzles, building blocks, or 3D brain teasers to give your brain fresh stimuli and maintain this stability!",
+        "L4_near_normal": "Your spatial ability is on the borderline of the standard, and occasionally you might find reading 3D shapes slightly difficult. Don't worry, just do more visual-spatial brainstorming, and your condition will gradually improve.",
+        "L5_needs_improvement": "In your studies, do you feel like you can never understand geometry? Or often lose your sense of direction in games, or bump into table corners while walking? Rest assured, this is not unsolvable! We recommend seeking professional help (e.g., Ai-Nao Center, Wu Feng-Yue's Body-Brain Vitality) to regain your spatial perception.",
+        "L6_poor": "The test shows your spatial ability is lagging slightly, which might frustrate you in directional orientation or STEM subjects. But don't be discouraged; your current state isn't unsolvable. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to improve through training.",
+        "L7_needs_much_improvement": "Your current spatial capacity is somewhat deficient. Please understand that this is not an unsolvable problem! To effectively improve, be sure to seek intervention from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality, letting a coach guide you to find your sense of direction."
+      },
+      "stage_2_transition": {
+        "L1_best": "Congratulations! Your spatial ability shows top-tier performance, and your sense of direction is excellent. Please maintain your excellent habits. You don't need to deliberately seek professional help—just keep it up!",
+        "L2_good": "Your spatial perception is quite outstanding and in great condition. Please continue your current lifestyle; you don't need extra time seeking professional help. Maintaining the status quo is the best care.",
+        "L3_normal": "Your spatial ability is within a stable, healthy standard. Occasionally exploring unfamiliar environments or driving without relying on GPS can give your brain fresh stimuli.",
+        "L4_near_normal": "Your spatial ability is just on the passing borderline, and you might occasionally lose your direction in large parking lots. Please note this is just your brain reminding you to stay active; through spatial training, your condition will gradually improve.",
+        "L5_needs_improvement": "Do you recently make wrong turns even when looking at the GPS? Or struggle to judge distance when parallel parking, and get lost just by turning around? Rest assured, this is not unsolvable! We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to regain a good sense of 3D space.",
+        "L6_poor": "The test shows clear signs of spatial perception decline. Please don't be discouraged; your current state isn't unsolvable, but it does require systematic intervention. We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality as soon as possible.",
+        "L7_needs_much_improvement": "Your spatial capacity is currently somewhat deficient, which may cause severe distress when driving or finding your way. This is not an unsolvable problem; neural connections can be rebuilt. Please be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to elevate yourself."
+      },
+      "stage_3_senior": {
+        "L1_best": "You've maintained your brain brilliantly! The spatial test shows excellent capability, and finding your way outside is a piece of cake for you. Please maintain your excellent habits. You do not need to seek professional help; just keep it up!",
+        "L2_good": "Your spatial ability is quite outstanding, and your brain's sense of direction and 3D perception are in great shape. Please continue your current lifestyle; maintaining the status quo is the best care.",
+        "L3_normal": "Your spatial ability is stable and healthy. Please maintain habits like walking and exploring your neighborhood to give your brain fresh directional stimuli and keep this stability!",
+        "L4_near_normal": "Your spatial ability is on the borderline of the standard, and occasionally confusing directions in unfamiliar places is a normal reminder. This is not unsolvable; by traveling with others and looking at maps more, your condition will gradually improve.",
+        "L5_needs_improvement": "Do you recently feel disoriented even in your familiar neighborhood? Or struggle to judge height differences on stairs, feeling a bit afraid to go out? Rest assured, this is not unsolvable! We recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to plan training for you.",
+        "L6_poor": "The test shows signs of spatial ability degeneration, making you prone to getting lost. Please don't be discouraged; your current state isn't unsolvable. With the right approach and exercise, it can definitely improve. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to maintain your brain early.",
+        "L7_needs_much_improvement": "Your current spatial state is somewhat deficient, which might cause you to lose confidence in going out alone. Please understand that this is not unsolvable; the brain still has plasticity. To effectively improve and ensure safety, be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality."
+      }
+    },
+    "att": {
+      "stage_1_foundation": {
+        "L1_best": "Awesome! Your focus shows top-tier performance, allowing you to give your full attention while learning. You don't need professional help; just maintain this vibrant state!",
+        "L2_good": "Your focus is quite outstanding, and your brain is in a very healthy developmental state. Maintaining the status quo is the best care.",
+        "L3_normal": "Your focus is steady, handling your current studies with ease. Keep up this stability!",
+        "L4_near_normal": "Your focus is on the borderline of the standard, and you might occasionally get easily distracted while studying. By adjusting your routine and reducing phone time, you can get back on track.",
+        "L5_needs_improvement": "Do you find yourself zoning out in class? Wanting to check your phone after just ten minutes of studying, and making careless mistakes? Rest assured, this is not unsolvable! We recommend seeking professional help (e.g., Ai-Nao Center, Wu Feng-Yue's Body-Brain Vitality) to regain your focus.",
+        "L6_poor": "The test shows your focus is lagging slightly. Please don't be discouraged; your current state isn't unsolvable. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality.",
+        "L7_needs_much_improvement": "Your focus capacity is currently somewhat deficient, severely affecting your learning efficiency. Please be sure to seek intervention from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality, letting a coach help you regain control."
+      },
+      "stage_2_transition": {
+        "L1_best": "Congratulations! Your focus shows top-tier performance, leading to extreme work efficiency. You don't need to deliberately seek professional help—just keep it up!",
+        "L2_good": "Your focus is quite outstanding. Please continue your current lifestyle; maintaining the status quo is the best care.",
+        "L3_normal": "Your focus is within a stable, healthy standard. Adding deep breathing or meditation to your routine can make your mind even clearer.",
+        "L4_near_normal": "Your focus is just on the passing borderline, and you might occasionally feel your mind wandering. By adjusting sleep or exercising regularly, your condition will gradually improve.",
+        "L5_needs_improvement": "Do you recently zone out during meetings and miss key points? Skip lines while reading documents, or easily forget what you were doing when interrupted? Rest assured, this is not unsolvable! We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to regain your focused mind.",
+        "L6_poor": "The test shows clear signs of focus decline. We recommend seeking help from professional organizations like Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality as soon as possible. The earlier you train, the better the results.",
+        "L7_needs_much_improvement": "Your focus capacity is currently somewhat deficient, which has already affected your work. This is not an unsolvable problem; please be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to elevate yourself."
+      },
+      "stage_3_senior": {
+        "L1_best": "You've maintained your brain brilliantly! Your focus remains clear and sharp. You do not need to seek professional help; just maintain this state!",
+        "L2_good": "Your focus is quite outstanding. Please continue your current lifestyle; maintaining the status quo is the best care.",
+        "L3_normal": "Your focus is stable and healthy. Participating in social activities and conversing with others can give your brain's focus fresh stimuli!",
+        "L4_near_normal": "Your focus is on the borderline of the standard, and occasional inability to concentrate is a normal reminder. By staying mentally active, your condition will gradually improve.",
+        "L5_needs_improvement": "Do you recently find it hard to concentrate and listen when someone is talking? Or easily feel confused and irritable in noisy environments? Rest assured, the brain can be activated and improved! We recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality.",
+        "L6_poor": "The test shows signs of focus degeneration. Please don't be discouraged. We strongly recommend seeking professional help from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to maintain your brain early.",
+        "L7_needs_much_improvement": "Your current focus state is somewhat deficient, making it difficult to receive complete information in daily life. Please be sure to seek professional intervention from Ai-Nao Center or Wu Feng-Yue's Body-Brain Vitality to gradually regain peace of mind."
+      }
     }
   },
   "module_b_weakness": {
     "mem": {
-      "stage_1_foundation": "[Memory Enhancement Needed]\nHave you recently found yourself forgetting what you were just about to do? Short-term memory is the gateway to information processing. Practice repeating information out loud or linking it with visual images.",
-      "stage_2_transition": "[Memory Enhancement Needed]\nAre you experiencing more 'Where did I put that?' or 'What was their name?' moments? This is a sign of declining working memory. Make a habit of taking notes and promote memory consolidation with high-quality sleep.",
-      "stage_3_senior": "[Memory Enhancement Needed]\nDo you feel it takes longer to learn new things lately? Memory weakens if not used. Try keeping a journal or making a habit of recalling yesterday's events to stimulate your brain's memory network."
+      "stage_1_foundation": "In daily life, do you often forget a word you just memorized? Or find yourself always looking for your keys or forgetting your homework before school? These are signs that your memory isn't being effectively integrated.",
+      "stage_2_transition": "In daily life, do you often find yourself walking into a room and forgetting what you went there for? Or forgetting a new client's name right after meeting them? Sometimes words are on the tip of your tongue but you can't recall them—these are warning signs of memory slip.",
+      "stage_3_senior": "In daily life, do you often forget where you put things? Or occasionally forget if you've taken your medicine, and repeat the same questions? These are clear signals that your brain's memory areas need retraining."
     },
     "rea": {
-      "stage_1_foundation": "[Reaction Enhancement Needed]\nDo you ever hesitate in your decisions or have delayed reactions? Reaction time is crucial not just for sports or driving, but for quick problem-solving. Train your hand-eye coordination with sports or action games.",
-      "stage_2_transition": "[Reaction Enhancement Needed]\nDo you feel your processing speed at work has slowed down? This might be due to information overload or brain fatigue. Try 'single-tasking'—handling one thing at a time—to help restore your brain's processing speed.",
-      "stage_3_senior": "[Reaction Enhancement Needed]\nHave you noticed your split-second decisions or movements have become slower? Slower reaction times increase the risk of falls. Incorporate brisk walking into your strolls or do simple exercises to maintain nerve-muscle coordination."
+      "stage_1_foundation": "You might find yourself always half a beat slower than others when playing games or sports; or taking a long time to respond when a teacher asks a question. Your brain's reaction nerves need to be reawakened.",
+      "stage_2_transition": "You might notice needing to pause before responding in conversations, or that your body reacts half a beat too slow to sudden traffic conditions while driving or riding. This increases hidden risks in daily life.",
+      "stage_3_senior": "You might notice your movements becoming more sluggish, or failing to react in time to sudden events like an item falling. Decreased reaction time affects mobility safety; neural transmission needs restimulation."
     },
     "spa": {
-      "stage_1_foundation": "[Spatial Ability Enhancement Needed]\nDo you have a poor sense of direction or struggle with geometry? Spatial ability is the foundation of logical thinking and creativity. Practice rotating objects in your mind using puzzles, building blocks, or 3D games.",
-      "stage_2_transition": "[Spatial Ability Enhancement Needed]\nDo you get lost easily in new places or struggle with parking your car? Don't rely solely on navigation apps. Consciously use your spatial awareness by picturing the map in your head to reach your destination.",
-      "stage_3_senior": "[Spatial Ability Enhancement Needed]\nAre you getting lost more often or having trouble judging distances? This is an important skill for safe living. Try changing your usual walking route or rearranging your room to give your brain new spatial stimulation."
+      "stage_1_foundation": "Do you often feel stuck when doing puzzles or assembling models? Or easily get lost and confused about directions in unfamiliar places? Weakened spatial perception affects your grasp of 3D environments.",
+      "stage_2_transition": "Do you highly depend on GPS when going out, or even make wrong turns while looking at it? Or fail to judge distances when parking in crowded places? This means your spatial perception needs strengthening.",
+      "stage_3_senior": "When you go out, has your judgment of direction become blurrier? Or do you occasionally misjudge the distance and knock things over when reaching for a cup? Loss of spatial awareness can be recovered through specific training."
+    },
+    "att": {
+      "stage_1_foundation": "Do you recently find it hard to settle down and study? Your thoughts wander quickly, and you're easily distracted by classmates or phone notifications? Inability to concentrate greatly reduces your learning efficiency.",
+      "stage_2_transition": "Do you recently find it hard to focus on a document or report? Your train of thought is easily interrupted, and you even zone out during meetings? Insufficient focus drastically lowers work efficiency; your brain needs to relearn how to 'focus'.",
+      "stage_3_senior": "Do you recently find it hard to focus through a whole TV program? Or struggle to concentrate and finish listening when someone is speaking? Decreased focus affects your ability to receive new information; the brain needs to relearn to focus."
     }
   },
   "module_c_call_to_action": {
-    "toddler": "The brain is in its golden age of development! Stimulate the five senses through daily play and exercise to happily nurture cognitive abilities.",
-    "child": "This is a period of rapid learning growth. Actively try things that interest you and learn the joy of thinking without fear of failure.",
-    "teen": "A crucial time for developing logical thinking and planning. Diverse experiences in sports, arts, and studies will enrich your brain's network.",
-    "young_adult": "Your brain functions are peaking. Continue learning new skills and challenging difficult tasks to maximize your potential.",
-    "pre_middle": "Work-life balance is key. Managing stress properly and ensuring high-quality sleep will help you maintain top performance.",
-    "middle": "Your brain is full of experience and wisdom, but fatigue accumulates easily. Make regular exercise and brain training a habit to keep your brain young.",
-    "senior_1": "A new stage of life. Staying connected with society through hobbies or volunteering is the best brain training.",
-    "senior_2": "Small daily habits build brain health. Introduce variety into your life by trying new recipes or growing plants.",
-    "senior_3": "Keep moving your mind and body within a comfortable range. Joyful conversations with family and friends are the best nourishment for your brain.",
-    "senior_4": "It's important to spend your days peacefully with a smile. Refresh your mind and brain by sharing old memories and enjoying music.",
-    "oldest": "Value every day and stay relaxed. Warm communication with those around you provides gentle stimulation for your brain."
+    "toddler": "The young need to know that now is the time to build a foundation. With a solid foundation, everything else becomes easier. Lay a good groundwork for your brain now, and your future learning journey will be full of infinite possibilities!",
+    "child": "The young need to know that now is the time to build a foundation. With a solid foundation, everything else becomes easier. Master the cornerstone of cognitive abilities, and you can confidently face future studies and challenges!",
+    "teen": "The young need to know that now is the time to build a foundation. With a solid foundation, everything else becomes easier. Cultivating clear thoughts and logic is your strongest weapon to overcome academic pressure and explore the world!",
+    "young_adult": "The young need to know that now is the time to build a foundation. With a solid foundation, everything else becomes easier. Step into society with an agile and sharp brain, and you'll be able to solve any challenge in the workplace!",
+    "pre_middle": "At thirty, life is busy. Middle-aged adults, do not underestimate declining cognitive abilities. Stay alert, elevate yourself, and continue to shine in both your family and career!",
+    "middle": "As the backbone of society, your responsibilities are heavy. Middle-aged adults, do not underestimate declining cognitive abilities. Stay alert, elevate yourself, and maintain sharpness to take care of your whole family with ease!",
+    "senior_1": "Preparing to enter the crucial second half of life. Middle-aged adults, do not underestimate declining cognitive abilities. Stay alert, elevate yourself, and buy the best insurance for your joyful senior years!",
+    "senior_2": "Enjoying the freedom of senior life, maintaining your brain is the most important part. To prevent dementia in your senior years, keep your brain active and let's say goodbye to dementia together!",
+    "senior_3": "Maintaining an independent and high-quality life is the primary goal now. It is never too late to prevent dementia in your senior years. Continue to exercise your brain power and confidently say goodbye to dementia!",
+    "senior_4": "With a wealth of life wisdom, delaying brain degeneration is key. To prevent dementia in your senior years, protect your memory through proper cognitive stimulation and say goodbye to dementia!",
+    "oldest": "Longevity is a priceless blessing, and every memory is precious. To prevent dementia at an advanced age, even simple daily cognitive training can bring peace and joy. Bravely say goodbye to dementia!"
+  },
+  "positive_feedback": {
+    "mem": {
+        "stage_1": [
+            "Your child's information encoding ability is excellent, showing an outstanding neural connection foundation.",
+            "Your child demonstrates strong sensory memory retrieval ability, with highly active brain synapse development.",
+            "Your child performs exceptionally well in short-term memory storage and rehearsal, possessing a high potential for learning."
+        ],
+        "stage_2": [
+            "Your brain's information processing efficiency is extremely high, allowing you to accurately retrieve and connect to old knowledge structures.",
+            "You possess an excellent working memory capacity, which gives you an absolute advantage when dealing with complex subjects.",
+            "Your hippocampus functions steadily, allowing you to quickly convert new information into long-term stable storage."
+        ],
+        "stage_3": [
+            "Your semantic and associative memory capabilities are extremely strong, indicating a profound depth of information processing.",
+            "You perform exceptionally well in the encoding and retrieval of complex information, with an extremely high cognitive load capacity.",
+            "Your brain is in its golden age of learning, with both memory accuracy and breadth being top-notch."
+        ],
+        "stage_4": [
+            "Amidst complicated work information, you can still accurately extract key data, demonstrating excellent cognitive management.",
+            "Your episodic memory is strongly connected to factual memory, showing the brain's superb information integration ability.",
+            "You have maintained a high degree of neuroplasticity, balancing the learning of new knowledge and the preservation of experience perfectly."
+        ],
+        "stage_5": [
+            "Your cognitive reserve is very abundant, showing that your brain maintains excellent connection activity even in its mature phase.",
+            "Your memory retrieval system remains robust, accurately connecting past experiences with new information, which is quite rare.",
+            "Test results show that your neurophysiological age is significantly lower than your actual age, with outstanding memory performance."
+        ],
+        "stage_6": [
+            "Your nervous system is extremely healthy, displaying language and short-term recall abilities superior to your peers.",
+            "Your cognitive flexibility is excellent, showing an astonishingly professional level in the accuracy of information retrieval.",
+            "Your memory performance proves that your hippocampus function is well-maintained, serving as a model for 'Body-Brain Vitality'."
+        ],
+        "stage_7": [
+            "You possess immense cognitive resilience, maintaining such precise memory retrieval in your 80s, which is extremely rare.",
+            "Your brain's neuroprotective mechanisms are working effectively, and the completeness and clarity of your memory are awe-inspiring.",
+            "Your test performance shows exceptional brain capital, which is the best return for a lifetime of focusing on brain health."
+        ],
+        "stage_8": [
+            "Your cognitive functions completely break the framework of age; your memory retrieval efficiency is simply a medical miracle.",
+            "Your brain connections remain tight even at the advanced age of 90, and the accuracy of your memory commands deep respect.",
+            "Your mental acuity demonstrates the pinnacle of vitality, serving as a role model for all those dedicated to brain health."
+        ]
+    },
+    "rea": {
+        "stage_1": [
+            "Your child's neural transmission speed is agile, and their processing efficiency of environmental stimuli is above average.",
+            "Your child's hand-eye coordination and visual reaction are extremely fast, showing sound development of the prefrontal cortex.",
+            "The test shows your child's reaction threshold is excellent, possessing great momentary focus and action capability."
+        ],
+        "stage_2": [
+            "Your decision-making speed and accuracy are perfectly balanced, demonstrating outstanding executive function.",
+            "When facing complex stimuli, your anti-interference ability is extremely strong, allowing you to instantly make the most correct judgment.",
+            "Your neural reflexes and judgment are at their peak, which is highly beneficial for both sports and learning."
+        ],
+        "stage_3": [
+            "Your prefrontal cortex exhibits powerful neural efficiency, maintaining a high standard during rapidly changing tasks.",
+            "Your multitasking reaction is extremely fast, showing excellent conduction and collaboration between different areas of the brain.",
+            "Your dynamic visual reaction and motor inhibition abilities are perfectly balanced, demonstrating excellent cognitive control."
+        ],
+        "stage_4": [
+            "You can still maintain an extremely high reaction speed under pressure, reflecting powerful neural regulation.",
+            "Your cognitive flexibility is excellent, allowing you to quickly react to environmental changes and achieve optimal output.",
+            "Your neural reaction system is extremely stable, maintaining accuracy even during high-frequency task switching."
+        ],
+        "stage_5": [
+            "Your processing efficiency remains at a youthful level, and the activity of your brain nerve cells is impressive.",
+            "Facing sudden situations, your judgment and execution speed are very well maintained, showing excellent flexibility.",
+            "Your nervous system demonstrates high resilience, with your reaction speed in the top tier for your age group."
+        ],
+        "stage_6": [
+            "The test shows your neural reaction threshold is ideal, and the coordination between your brain and limbs remains very flexible.",
+            "Your focus during dynamic tasks is excellent, and your reaction speed shows astonishing 'age-reversing' results.",
+            "Your neural transmission speed is extremely stable, reflecting that your brain's processing system is still full of vitality."
+        ],
+        "stage_7": [
+            "Your central nervous system processing speed is amazing, demonstrating an excellent gap between physiological and psychological age.",
+            "Your judgment and reflex speed remain agile, placing you in the 'Super Ager' category in medical observation.",
+            "Your sensory system functions are superior, reflecting the outstanding results of years of maintaining brain stimulation."
+        ],
+        "stage_8": [
+            "Your sensory processing ability is stunning; the agility of your neural reflexes proves the toughness of your brain.",
+            "The reaction speed you demonstrated in the test fully embodies the core values of 'Body-Brain Vitality'.",
+            "Your alertness and decision-making judgment are perfectly maintained; this is an invaluable treasure of health."
+        ]
+    },
+    "spa": {
+        "stage_1": [
+            "Your child possesses good 3D construction logic, with well-developed visual-spatial processing areas.",
+            "Your child is sensitive to the shapes and positions of objects, showing exceptional spatial mapping ability.",
+            "Your child's brain has a very strong spatial representation ability, accurately completing complex spatial recognition tasks."
+        ],
+        "stage_2": [
+            "Your mental rotation and 3D thinking abilities are outstanding, demonstrating excellent geometric logic talent.",
+            "You can quickly construct spatial maps in your mind, an ability highly important in science and design fields.",
+            "Your perception of spatial depth and layout capabilities are extremely precise, showing high cognitive flexibility."
+        ],
+        "stage_3": [
+            "Your parietal lobe function is very mature, possessing excellent multi-dimensional spatial analysis and integration capabilities.",
+            "In logical deduction and spatial reorganization of complex systems, you demonstrate precision far beyond your peers.",
+            "You have exceptional spatial navigation and logical layout abilities, which are highly beneficial for processing advanced knowledge."
+        ],
+        "stage_4": [
+            "You have a strong sense of the big picture and spatial structure, providing a significant cognitive advantage when handling large projects.",
+            "Your ability to understand and respond to abstract spatial relationships is outstanding, demonstrating high-quality decision-making.",
+            "Your brain's visual processing system is highly efficient, quickly sorting out spatial order from chaotic information."
+        ],
+        "stage_5": [
+            "Your visual-spatial integration ability is extremely stable, reflecting high collaborative efficiency between your brain hemispheres.",
+            "Your sense of direction and global recognition perform excellently, showing absolutely no degradation in spatial processing functions.",
+            "Your spatial sensory precision is extremely high, demonstrating the concrete results of your years of managing body and brain health."
+        ],
+        "stage_6": [
+            "Your visual-spatial recognition is very robust, which is crucial for maintaining independent living and navigation.",
+            "Your spatial balance and object positioning abilities are excellent, showing no signs of atrophy in parietal lobe functions.",
+            "Your environmental mastery and 3D perception remain at a peak, demonstrating exceedingly high-quality cognitive functions."
+        ],
+        "stage_7": [
+            "Your parietal cortex activity is excellent, performing very stably in the identification and positioning of complex objects.",
+            "Your precise environmental recognition and directional senses prove that your brain function remains at its peak.",
+            "Despite the passage of time, your spatial logic and organizational abilities remain outstanding, forming a foundation for healthy longevity."
+        ],
+        "stage_8": [
+            "Your visual-spatial senses have barely degraded, showing extremely strong brain structural integrity and activity.",
+            "Your mastery and recognition of spatial relationships demonstrate a cognitive function level that transcends age limits.",
+            "Your balance and spatial judgment are excellent; this is the strongest proof of a well-maintained, unobstructed neural network."
+        ]
+    },
+    "att": {
+        "stage_1": [
+            "Your child shows excellent sustained focus and can effectively filter out environmental interference, which is outstanding.",
+            "Your child's prefrontal cortex is well-developed, able to concentrate completely and without distraction while learning.",
+            "The test shows your child possesses strong attention control, serving as an important cornerstone for future academic development."
+        ],
+        "stage_2": [
+            "You possess an excellent capacity for deep work, capable of maintaining high-intensity focus for long periods.",
+            "Facing complex information, your anti-interference ability is extremely strong, quickly centering your mind on core tasks.",
+            "Your brain's executive function is outstanding, with the switching and maintenance of focus in optimal condition."
+        ],
+        "stage_3": [
+            "Your prefrontal cortex exhibits powerful focusing efficiency, easily navigating high-load cognitive tasks.",
+            "You can still maintain an extremely high level of focus while multitasking, showing very precise brain resource allocation.",
+            "You have a remarkable attention network, able to instantly lock onto a target and block out all irrelevant noise."
+        ],
+        "stage_4": [
+            "In cluttered environments, you can still maintain extremely high-quality focus, reflecting strong psychological resilience.",
+            "Your cognitive control is excellent, keeping you alert and focused on important tasks for extended periods.",
+            "Your brain's focus system is extremely stable, keeping your thoughts clear and concentrated even under pressure."
+        ],
+        "stage_5": [
+            "Your focus is maintained at a youthful level, and the activity of your brain network is impressive.",
+            "Facing tasks requiring high concentration, your performance remains robust, showing excellent brain capital.",
+            "Your nervous system demonstrates high resilience against interference, placing your focus in the top tier for your age group."
+        ],
+        "stage_6": [
+            "The test shows your attention concentration is extremely high, and the brain's executive functions are very well maintained.",
+            "Your focus during tasks shows an astonishing 'age-reversing' effect, with extremely clear thinking.",
+            "Your attention network is extremely stable, reflecting the outstanding results of years of brain maintenance."
+        ],
+        "stage_7": [
+            "Your focus processing efficiency is stunning; maintaining such a high level of concentration in your 80s is extremely rare.",
+            "Your anti-interference ability and mental concentration remain sharp, placing you in the 'Super Ager' category in medical observation.",
+            "Your brain's executive network functions are superior, reflecting the excellent results of maintaining good lifestyle habits over the years."
+        ],
+        "stage_8": [
+            "Your focus completely shatters the limits of age; your state of full concentration proves the toughness of your brain.",
+            "To demonstrate such excellent attention at the advanced age of 90 fully embodies the core values of 'Body-Brain Vitality'.",
+            "Your mental concentration is perfectly maintained; this is an invaluable treasure of health."
+        ]
+    }
   }
 }
