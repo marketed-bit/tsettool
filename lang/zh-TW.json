@@ -302,7 +302,9 @@
       "history_reload": "🔄 重新載入",
       "history_latest_summary": "最新測驗：{date}（共 {count} 筆記錄）",
       "history_load_fail_title": "歷史成績查詢（讀取失敗）",
-      "history_load_fail_desc": "❌ 讀取最新記錄失敗：{msg}"
+      "history_load_fail_desc": "❌ 讀取最新記錄失敗：{msg}"，
+      "positive_feedback_fallback": "您的表現非常優異！請繼續保持這份活力與健康。",
+      "recommend_closing": "大腦是可塑的！透過規律練習，各項認知能力都能持續進步。建議持續接受好的『新刺激』，持續 4 週後再次測驗，觀察自己的成長。💪 加油！您的進步從今天開始。"
     },
     "level_labels": {
       "最佳表現": "最佳表現",
