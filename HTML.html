@@ -734,7 +734,7 @@ const CONFIG = {
     MEM_PENALTY_PER_ERROR: 4,
     REACTION_TIME_LIMIT: 5.00,
     VISITOR_TOKEN_TTL: 60 * 60 * 1000,
-    BASE_RK: { mem: 35, rea: 10, spa: 12, seq: 15 },
+    BASE_RK: { mem: 27, rea: 10, spa: 12, seq: 15 },
     MEM_AGE_MULTIPLIERS: {
         'toddler': 2.00, 'child': 1.50, 'teen': 0.90,
         'young_adult': 0.80, 'pre_middle': 0.95, 'middle': 1.00,
@@ -824,7 +824,8 @@ const DeviceDetector = {
         return t('device_labels.desktop');
     },
     getNormMultiplier() {
-        return this.isTouchDevice() ? (1 / 1.15) : 1.0;
+        // 如果是觸控設備（手機/平板），常模乘上 (1 / 1.4)；否則乘上 1.0
+        return this.isTouchDevice() ? (1 / 1.4) : 1.0;
     }
 };
 
